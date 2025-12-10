@@ -2,7 +2,7 @@ import Link from "next/link";
 
 const Navbar = () => {
   return (
-    <nav className="bg-neutral-primary block fixed w-full z-20 top-0 start-0 border-b border-default">
+    <nav className="bg-neutral-primary  block fixed w-full z-20 top-0 start-0 border-b-primary border border-default">
       <div className="max-w-7xl flex flex-wrap items-center justify-between mx-auto p-4">
         <Link
           href="/"
@@ -20,7 +20,7 @@ const Navbar = () => {
         <button
           data-collapse-toggle="navbar-default"
           type="button"
-          className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-body rounded-base md:hidden hover:bg-neutral-secondary-soft hover:text-heading focus:outline-none focus:ring-2 focus:ring-neutral-tertiary"
+          className="inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-body rounded-base lg:hidden hover:bg-neutral-secondary-soft hover:text-heading focus:outline-none focus:ring-2 focus:ring-neutral-tertiary"
           aria-controls="navbar-default"
           aria-expanded="false"
         >
@@ -55,34 +55,18 @@ const Navbar = () => {
             </li>
             <li>
               <Link
-                href="about"
+                href="/login"
                 className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent"
               >
-                About
+                Login
               </Link>
             </li>
             <li>
               <Link
-                href="products"
+                href="/register"
                 className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent"
               >
-                All Products
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="contact"
-                className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent"
-              >
-                Contact
-              </Link>
-            </li>
-            <li>
-              <Link
-                href="gallery"
-                className="block py-2 px-3 text-heading rounded hover:bg-neutral-tertiary md:hover:bg-transparent md:border-0 md:hover:text-fg-brand md:p-0 md:dark:hover:bg-transparent"
-              >
-                Gallery
+                Register
               </Link>
             </li>
           </ul>
