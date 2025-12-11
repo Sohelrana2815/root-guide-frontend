@@ -1,4 +1,3 @@
-export { default } from "@/Components/modules/DashboardNavbar";
 import { getDefaultDashboardRoute } from "@/lib/auth-utils";
 import DashboardNavbarContent from "./DashboardNavbarContent";
 import { getNavItemsByRole } from "@/lib/navItems.config";

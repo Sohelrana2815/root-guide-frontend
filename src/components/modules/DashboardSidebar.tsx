@@ -1,4 +1,4 @@
-export { default } from "@/Components/modules/DashboardSidebar";
+// shim removed; using actual component implementation below
 import { getDefaultDashboardRoute } from "@/lib/auth-utils";
 import { getNavItemsByRole } from "@/lib/navItems.config";
 import { getUserInfo } from "@/services/auth/getUserInfo";
