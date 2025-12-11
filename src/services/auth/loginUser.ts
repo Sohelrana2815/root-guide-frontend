@@ -55,17 +55,25 @@ export const loginUser = async (
       };
     }
 
-    const res = await serverFetch("http://localhost:5000/api/auth/login", {
-      method: "POST",
+    // Use serverFetch helper which points to BACKEND_API_URL
+    const res = await serverFetch.post("/auth/login", {
       body: JSON.stringify(loginData),
       headers: {
         "Content-Type": "application/json",
       },
+      // include credentials so backend Set-Cookie headers are honored
+      credentials: "include",
     });
 
     const data = await res.json();
 
-    const setCookieHeaders = res.headers.getSetCookie();
+    // Try to read Set-Cookie headers (some runtimes expose getSetCookie)
+    // Fallback to reading raw header if needed
+    const setCookieHeaders = (res.headers as any).getSetCookie
+      ? (res.headers as any).getSetCookie()
+      : res.headers.get("set-cookie")
+      ? [res.headers.get("set-cookie") as string]
+      : null;
 
     if (setCookieHeaders && setCookieHeaders.length > 0) {
       setCookieHeaders.forEach((cookie: string) => {
@@ -79,7 +87,13 @@ export const loginUser = async (
         }
       });
     } else {
-      throw new Error("No Set-Cookie header found");
+      // If backend does not set cookies (or runtime strips them), try to read tokens from JSON body
+      if (data?.accessToken && data?.refreshToken) {
+        accessTokenObject = { accessToken: data.accessToken };
+        refreshTokenObject = { refreshToken: data.refreshToken };
+      } else {
+        throw new Error("No Set-Cookie header found and tokens missing in response");
+      }
     }
 
     if (!accessTokenObject) {

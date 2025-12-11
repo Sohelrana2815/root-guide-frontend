@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
 import z from "zod";
@@ -49,39 +50,24 @@ export const registerUser = async (
     console.log(validatedFields);
     // Console log the data to verify it's being sent correctly (on the server side)
     console.log("Data being sent to API:", registerData);
-    // --- FIX START ---
-
-    // 2. Make the API call
-    const res = await fetch("http://localhost:5000/api/auth/register", {
-      method: "POST",
-      // 3. IMPORTANT: Stringify the body data for the JSON API
+    // Use serverFetch helper to hit BACKEND_API_URL + /auth/register
+    const res = await (await import("@/lib/server-fetch")).serverFetch.post("/auth/register", {
       body: JSON.stringify(registerData),
-      // 4. IMPORTANT: Set the Content-Type header to tell the server it's JSON
-      headers: {
-        "Content-Type": "application/json",
-      },
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
     });
 
-    // Handle non-2xx HTTP status codes (e.g., 400, 500)
-    if (!res.ok) {
-      // Parse the error response from the server if available
-      const errorData = await res.json();
-      console.error("Server Registration Error:", errorData);
-      // Throw an error to be caught by the catch block
-      throw new Error(errorData.message || "Registration failed on server.");
-    }
-
-    // Parse the successful JSON response
     const data = await res.json();
 
+    if (!res.ok) {
+      // bubble server validation errors back to client
+      throw new Error(data.message || "Registration failed on server.");
+    }
+
+    // On success, auto-login the user by calling loginUser (which will set cookies and redirect)
     if (data.success) {
       await loginUser(_currentState, formData);
     }
-
-    // How to see the formatted data in console:
-    console.log("Successful API Response Data (JSON):", data);
-
-    // --- FIX END ---
 
     // Return the response data to the client-side useActionState hook
     return data;

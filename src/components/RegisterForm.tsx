@@ -38,12 +38,19 @@ const RegisterForm = () => {
             />
             <InputFieldError field="email" state={state} />
           </Field>
-          {/* select */}
+          {/* Role */}
           <Field>
-            <FieldLabel htmlFor="password">Select Role</FieldLabel>
-            <Input id="password" name="password" type="password" />
-
-            <InputFieldError field="password" state={state} />
+            <FieldLabel htmlFor="role">Select Role</FieldLabel>
+            <select
+              id="role"
+              name="role"
+              className="w-full rounded-md border px-3 py-2"
+              defaultValue="TOURIST"
+            >
+              <option value="TOURIST">Tourist</option>
+              <option value="GUIDE">Guide</option>
+            </select>
+            <InputFieldError field="role" state={state} />
           </Field>
           {/* Password */}
           <Field>
