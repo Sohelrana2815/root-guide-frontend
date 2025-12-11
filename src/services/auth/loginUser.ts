@@ -12,6 +12,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import z, { success } from "zod";
 import { setCookie } from "./tokenHandlers";
+import { serverFetch } from "@/lib/server-fetch";
 
 const loginValidationZodSchema = z.object({
   email: z.email({
@@ -54,7 +55,7 @@ export const loginUser = async (
       };
     }
 
-    const res = await fetch("http://localhost:5000/api/auth/login", {
+    const res = await serverFetch("http://localhost:5000/api/auth/login", {
       method: "POST",
       body: JSON.stringify(loginData),
       headers: {

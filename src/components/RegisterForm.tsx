@@ -1,119 +1,67 @@
-// shim removed; using actual component implementation below
 "use client";
 
-import { useActionState, useEffect, useState } from "react";
-import { Button } from "./ui/button";
+import { registerUser } from "@/services/auth/registerUser";
+import { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
-import { registerUser } from "@/services/auth/registerUser";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "./ui/select";
-import { toast } from "sonner";
-const PLACEHOLDER_VALUE = "PLACEHOLDER_INVALID";
+import InputFieldError from "./shared/InputFieldError";
+import { Button } from "./ui/button";
+
 const RegisterForm = () => {
-  const [role, setRole] = useState(PLACEHOLDER_VALUE);
   const [state, formAction, isPending] = useActionState(registerUser, null);
 
-  const getFieldError = (fieldName: string) => {
-    if (state && state.errors) {
-      const error = state.errors.find((err: any) => err.field === fieldName);
-      return error?.message;
-    } else {
-      return null;
-    }
-  };
-
-  const handleSubmit = (formData: FormData) => {
-    // Append the selected role value (controlled by useState) to the FormData
-    formData.append("role", role);
-    formAction(formData);
-  };
   useEffect(() => {
     if (state && !state.success && state.message) {
       toast.error(state.message);
     }
   }, [state]);
   return (
-    <form action={handleSubmit} className="space-y-6">
-      {" "}
+    <form action={formAction}>
       <FieldGroup>
-        {/* name field */}
-        <Field>
-          <FieldLabel htmlFor="name">Full name</FieldLabel>
-          <Input id="name" name="name" />
-          <FieldDescription>
-            This appears on invoices and emails.
-          </FieldDescription>
-          {getFieldError("name") && (
-            <FieldDescription className="text-red-500">
-              {getFieldError("name")}
-            </FieldDescription>
-          )}
-        </Field>
-
-        {/* Email Field */}
-        <Field>
-          <FieldLabel htmlFor="email">Email</FieldLabel>
-          <Input id="email" name="email" />
-          {getFieldError("email") && (
-            <FieldDescription className="text-red-500">
-              {getFieldError("email")}
-            </FieldDescription>
-          )}
-        </Field>
-
-        {/* Password Field */}
-        <Field>
-          <FieldLabel htmlFor="password">Password</FieldLabel>
-          <Input id="password" name="password" type="password" />
-          {getFieldError("password") && (
-            <FieldDescription className="text-red-500">
-              {getFieldError("password")}
-            </FieldDescription>
-          )}
-        </Field>
-
-        {/* 🌟  SELECT FIELD 🌟 */}
-        <Field>
-          <FieldLabel htmlFor="role">Role</FieldLabel>
-          <Select
-            value={role}
-            onValueChange={setRole}
-            defaultValue={PLACEHOLDER_VALUE}
-          >
-            <SelectTrigger id="role" className="w-full">
-              <SelectValue placeholder="Select a Role" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value={PLACEHOLDER_VALUE} disabled>
-                Select a Role
-              </SelectItem>
-              <SelectItem value="TOURIST">Tourist</SelectItem>
-              <SelectItem value="GUIDE">Guide</SelectItem>
-            </SelectContent>
-          </Select>
-          {getFieldError("role") && (
-            <FieldDescription className="text-red-500">
-              {getFieldError("role")}
-            </FieldDescription>
-          )}
-        </Field>
-
-        {/* Submit Button Group */}
-        <FieldGroup>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Name */}
           <Field>
-            <Button type="submit" disabled={isPending} className="w-full">
+            <FieldLabel htmlFor="name">Full Name</FieldLabel>
+            <Input id="name" name="name" type="text" placeholder="John Doe" />
+            <InputFieldError field="name" state={state} />
+          </Field>
+
+          {/* Email */}
+          <Field>
+            <FieldLabel htmlFor="email">Email</FieldLabel>
+            <Input
+              id="email"
+              name="email"
+              type="email"
+              placeholder="m@example.com"
+            />
+            <InputFieldError field="email" state={state} />
+          </Field>
+          {/* select */}
+          <Field>
+            <FieldLabel htmlFor="password">Select Role</FieldLabel>
+            <Input id="password" name="password" type="password" />
+
+            <InputFieldError field="password" state={state} />
+          </Field>
+          {/* Password */}
+          <Field>
+            <FieldLabel htmlFor="password">Password</FieldLabel>
+            <Input id="password" name="password" type="password" />
+
+            <InputFieldError field="password" state={state} />
+          </Field>
+        </div>
+        <FieldGroup className="mt-4">
+          <Field>
+            <Button type="submit" disabled={isPending}>
               {isPending ? "Creating Account..." : "Create Account"}
             </Button>
 
-            <FieldDescription>
+            <FieldDescription className="px-6 text-center">
               Already have an account?{" "}
-              <a href="/login" className="text-indigo-600 hover:underline">
+              <a href="/login" className="text-blue-600 hover:underline">
                 Sign in
               </a>
             </FieldDescription>
