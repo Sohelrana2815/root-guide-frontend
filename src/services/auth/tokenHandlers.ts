@@ -1,4 +1,5 @@
 "use server";
+
 import { ResponseCookie } from "next/dist/compiled/@edge-runtime/cookies";
 import { cookies } from "next/headers";
 
@@ -10,12 +11,13 @@ export const setCookie = async (
   const cookieStore = await cookies();
   cookieStore.set(key, value, options);
 };
+
 export const getCookie = async (key: string) => {
   const cookieStore = await cookies();
-  return cookieStore.get(key);
+  return cookieStore.get(key)?.value || null;
 };
 
-export const deleteCookie = async (kay: string) => {
+export const deleteCookie = async (key: string) => {
   const cookieStore = await cookies();
-  cookieStore.delete(kay);
+  cookieStore.delete(key);
 };

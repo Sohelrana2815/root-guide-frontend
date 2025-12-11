@@ -1,11 +1,11 @@
-import RegisterForm from "@/Components/RegisterForm";
+import RegisterForm from "@/components/RegisterForm";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/Components/ui/card";
+} from "@/components/ui/card";
 
 const RegisterPage = () => {
   return (

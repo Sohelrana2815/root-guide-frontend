@@ -1,3 +1,4 @@
+export { default } from "@/Components/LoginForm";
 "use client";
 
 import { useActionState, useEffect } from "react";
