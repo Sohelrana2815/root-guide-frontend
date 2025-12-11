@@ -1,7 +1,8 @@
-import { getUserInfo } from "@/services/auth/getUserInfo";
+import { getUserInfo } from '@/services/auth/getUserInfo';
 
-const TouristProfile = async () => {
+const AdminProfilePage = async () => {
   const userInfo = await getUserInfo();
+
   if (!userInfo) {
     // getUserInfo should return null if not authenticated; leaving redirect to middleware
     return <div className="p-6">Not authenticated</div>;
@@ -9,7 +10,7 @@ const TouristProfile = async () => {
 
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Tourist Profile</h1>
+      <h1 className="text-2xl font-bold mb-4">Admin Profile</h1>
       <p className="mb-2">Name: {userInfo.name}</p>
       <p className="mb-2">Email: {userInfo.email}</p>
       <p className="mb-2">Role: {userInfo.role}</p>
@@ -17,4 +18,4 @@ const TouristProfile = async () => {
   );
 };
 
-export default TouristProfile;
+export default AdminProfilePage;

@@ -30,7 +30,7 @@ export const getCommonNavItems = (role: UserRole): NavSection[] => {
           title: "Change Password",
           href: "/change-password",
           icon: "Settings", // ✅ String
-          roles: ["TOURIST"],
+          roles: ["TOURIST", "GUIDE", "ADMIN"],
         },
       ],
     },
@@ -44,20 +44,20 @@ export const guideNavItems: NavSection[] = [
       {
         title: "Bookings",
         href: "/guide/bookings",
-        icon: "Calendar", // ✅ String
+        icon: "Calendar", // bookings calendar
         badge: "3",
         roles: ["GUIDE"],
       },
       {
         title: "Listings",
         href: "/guide/listings",
-        icon: "Clock", // ✅ String
+        icon: "MapPin", // tour listings (locations)
         roles: ["GUIDE"],
       },
       {
         title: "Profile",
         href: "/guide/profile",
-        icon: "FileText", // ✅ String
+        icon: "User", // guide profile
         roles: ["GUIDE"],
       },
     ],
@@ -71,13 +71,13 @@ export const touristNavItems: NavSection[] = [
       {
         title: "My bookings",
         href: "/tourist/my-bookings",
-        icon: "Calendar", // ✅ String
+        icon: "Ticket", // booking tickets
         roles: ["TOURIST"],
       },
       {
         title: "Profile",
         href: "/tourist/profile",
-        icon: "ClipboardList", // ✅ String
+        icon: "User", // tourist profile
         roles: ["TOURIST"],
       },
     ],
@@ -91,19 +91,19 @@ export const adminNavItems: NavSection[] = [
       {
         title: "Admins",
         href: "/admin/overview",
-        icon: "Shield", // ✅ String
+        icon: "ShieldCheck", // admin overview
         roles: ["ADMIN"],
       },
       {
         title: "Listings",
         href: "/admin/manage-listings",
-        icon: "Stethoscope", // ✅ String
+        icon: "List", // manage listings
         roles: ["ADMIN"],
       },
       {
         title: "Users",
         href: "/admin/users",
-        icon: "Users", // ✅ String
+        icon: "Users", // manage users
         roles: ["ADMIN"],
       },
     ],
