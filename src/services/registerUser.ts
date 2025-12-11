@@ -1,6 +1,7 @@
 "use server";
 
 import z from "zod";
+import { loginUser } from "./loginUser";
 
 const registerValidationZodSchema = z.object({
   name: z.string().nonempty("Name is required."),
@@ -73,6 +74,10 @@ export const registerUser = async (
     // Parse the successful JSON response
     const data = await res.json();
 
+    if (data.success) {
+      await loginUser(_currentState, formData);
+    }
+
     // How to see the formatted data in console:
     console.log("Successful API Response Data (JSON):", data);
 
@@ -81,6 +86,10 @@ export const registerUser = async (
     // Return the response data to the client-side useActionState hook
     return data;
   } catch (error: any) {
+    // Re-throw NEXT_REDIRECT errors so Next.js can handle them
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
     console.error("Client-Side or Network Error:", error.message);
     // Return an error object to the client
     return { error: error.message || "Registration failed" };

@@ -1,31 +1,40 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import z from "zod";
+import {
+  getDefaultDashboardRoute,
+  isValidRedirectForRole,
+  UserRole,
+} from "@/lib/auth-utils";
 import { parse } from "cookie";
+import jwt, { JwtPayload } from "jsonwebtoken";
 import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
+import z from "zod";
 
 const loginValidationZodSchema = z.object({
-  email: z
-    .email("Please enter a valid email address.")
-    .nonempty("Email is required."),
-
+  email: z.email({
+    message: "Email is required",
+  }),
   password: z
-    .string()
-    .nonempty("Password is required.")
-    .min(6, "Password must be at least 6 characters long.")
-    .max(50, "Password cannot exceed 50 characters.")
-    .trim(),
+    .string("Password is required")
+    .min(6, {
+      error: "Password is required and must be at least 6 characters long",
+    })
+    .max(100, {
+      error: "Password must be at most 100 characters long",
+    }),
 });
 
 export const loginUser = async (
   _currentState: any,
-  formData: FormData // Use correct type for clarity
+  formData: any
 ): Promise<any> => {
   try {
+    const redirectTo = formData.get("redirect") || null;
     let accessTokenObject: null | any = null;
     let refreshTokenObject: null | any = null;
     const loginData = {
-      // These will now receive the values because you added the 'name' attributes
       email: formData.get("email"),
       password: formData.get("password"),
     };
@@ -44,9 +53,6 @@ export const loginUser = async (
       };
     }
 
-
-    // Console log the data to verify it's being sent correctly (on the server side)
-
     const res = await fetch("http://localhost:5000/api/auth/login", {
       method: "POST",
       body: JSON.stringify(loginData),
@@ -55,19 +61,10 @@ export const loginUser = async (
       },
     });
 
-    // CRITICAL: Handle API errors (e.g., 401 Unauthorized/Bad Credentials)
-    if (!res.ok) {
-      const errorData = await res.json();
-      console.error("API Login Error:", errorData);
-
-      // Throw the server's error message
-      throw new Error(errorData.message || "Login failed due to server error.");
-    }
-
-    // Parse the successful response
     const data = await res.json();
 
     const setCookieHeaders = res.headers.getSetCookie();
+
     if (setCookieHeaders && setCookieHeaders.length > 0) {
       setCookieHeaders.forEach((cookie: string) => {
         const parsedCookie = parse(cookie);
@@ -80,40 +77,72 @@ export const loginUser = async (
         }
       });
     } else {
-      throw new Error("No Set-cookie header found");
+      throw new Error("No Set-Cookie header found");
     }
 
     if (!accessTokenObject) {
       throw new Error("Tokens not found in cookies");
     }
+
     if (!refreshTokenObject) {
       throw new Error("Tokens not found in cookies");
     }
 
-    // (await cookies()).set()
     const cookieStore = await cookies();
 
     cookieStore.set("accessToken", accessTokenObject.accessToken, {
       secure: true,
       httpOnly: true,
-      maxAge: parseInt(accessTokenObject.MaxAge),
+      maxAge: parseInt(accessTokenObject["Max-Age"]) || 1000 * 60 * 60,
       path: accessTokenObject.Path || "/",
+      sameSite: accessTokenObject["SameSite"] || "none",
     });
 
-    // refresh token
     cookieStore.set("refreshToken", refreshTokenObject.refreshToken, {
       secure: true,
       httpOnly: true,
-      maxAge: parseInt(refreshTokenObject.MaxAge),
+      maxAge:
+        parseInt(refreshTokenObject["Max-Age"]) || 1000 * 60 * 60 * 24 * 90,
       path: refreshTokenObject.Path || "/",
+      sameSite: refreshTokenObject["SameSite"] || "none",
     });
+    // Use the access secret env var used by middleware/backend. Keep a fallback
+    const jwtSecret =
+      (process.env.JWT_ACCESS_SECRET as string) ||
+      (process.env.JWT_SECRET as string) ||
+      "";
 
-    return data;
+    const verifiedToken: JwtPayload | string = jwt.verify(
+      accessTokenObject.accessToken,
+      jwtSecret
+    );
+
+    if (typeof verifiedToken === "string") {
+      throw new Error("Invalid token");
+    }
+
+    const userRole: UserRole = verifiedToken.role;
+
+    if (!data.success) {
+      throw new Error("Login failed");
+    }
+
+    if (redirectTo) {
+      const requestedPath = redirectTo.toString();
+      if (isValidRedirectForRole(requestedPath, userRole)) {
+        redirect(requestedPath);
+      } else {
+        redirect(getDefaultDashboardRoute(userRole));
+      }
+    } else {
+      redirect(getDefaultDashboardRoute(userRole));
+    }
   } catch (error: any) {
-    console.error("Action Error:", error.message);
-    // Return a structured error to the client component's `state`
-    return {
-      error: error.message || "An unknown error occurred during login.",
-    };
+    // Re-throw NEXT_REDIRECT errors so Next.js can handle them
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
+    console.log(error);
+    return { error: "Login failed" };
   }
 };

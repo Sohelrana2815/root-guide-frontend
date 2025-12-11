@@ -6,7 +6,7 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
 import { loginUser } from "@/services/loginUser";
 
-const LoginForm = () => {
+const LoginForm = ({ redirect }: { redirect?: string }) => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
 
   const getFieldError = (fieldName: string) => {
@@ -22,6 +22,7 @@ const LoginForm = () => {
   return (
     <form action={formAction}>
       <FieldGroup>
+        {redirect && <input type="hidden" name="redirect" value={redirect} />}
         <Field>
           <FieldLabel htmlFor="email">Email</FieldLabel>
           {/* FIX: Added name="email" */}
