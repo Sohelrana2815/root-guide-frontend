@@ -1,10 +1,10 @@
 "use client";
 
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { Button } from "./ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
-import { registerUser } from "@/services/registerUser";
+import { registerUser } from "@/services/auth/registerUser";
 import {
   Select,
   SelectContent,
@@ -12,6 +12,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { toast } from "sonner";
 const PLACEHOLDER_VALUE = "PLACEHOLDER_INVALID";
 const RegisterForm = () => {
   const [role, setRole] = useState(PLACEHOLDER_VALUE);
@@ -31,7 +32,11 @@ const RegisterForm = () => {
     formData.append("role", role);
     formAction(formData);
   };
-
+  useEffect(() => {
+    if (state && !state.success && state.message) {
+      toast.error(state.message);
+    }
+  }, [state]);
   return (
     <form action={handleSubmit} className="space-y-6">
       {" "}

@@ -8,16 +8,11 @@ import {
   isAuthRoute,
   UserRole,
 } from "./lib/auth-utils";
-// import {
-//   getDefaultDashboardRoute,
-//   getRouteOwner,
-//   isAuthRoute,
-//   UserRole,
-// } from "./lib/auth-utils";
+import { deleteCookie } from "./services/auth/tokenHandlers";
+
 
 // This function can be marked `async` if using `await` inside
 export async function proxy(request: NextRequest) {
-  const cookieStore = await cookies();
   const pathname = request.nextUrl.pathname;
 
   let accessToken = request.cookies.get("accessToken")?.value || null;
@@ -31,8 +26,10 @@ export async function proxy(request: NextRequest) {
       );
 
       if (typeof verifiedToken === "string") {
-        cookieStore.delete("accessToken");
-        cookieStore.delete("refreshToken");
+        // cookieStore.delete("accessToken");
+        // cookieStore.delete("refreshToken");
+        await deleteCookie("accessToken");
+        await deleteCookie("refreshToken");
         accessToken = null;
       } else {
         userRole = (verifiedToken as JwtPayload).role as UserRole;
@@ -40,8 +37,8 @@ export async function proxy(request: NextRequest) {
     } catch (err) {
       // Token invalid or expired — clear auth cookies and treat as unauthenticated
       try {
-        cookieStore.delete("accessToken");
-        cookieStore.delete("refreshToken");
+        await deleteCookie("accessToken");
+        await deleteCookie("refreshToken");
       } catch (e) {
         // ignore
       }

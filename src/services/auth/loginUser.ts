@@ -10,7 +10,8 @@ import { parse } from "cookie";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
-import z from "zod";
+import z, { success } from "zod";
+import { setCookie } from "./tokenHandlers";
 
 const loginValidationZodSchema = z.object({
   email: z.email({
@@ -88,9 +89,7 @@ export const loginUser = async (
       throw new Error("Tokens not found in cookies");
     }
 
-    const cookieStore = await cookies();
-
-    cookieStore.set("accessToken", accessTokenObject.accessToken, {
+    await setCookie("accessToken", accessTokenObject.accessToken, {
       secure: true,
       httpOnly: true,
       maxAge: parseInt(accessTokenObject["Max-Age"]) || 1000 * 60 * 60,
@@ -98,7 +97,7 @@ export const loginUser = async (
       sameSite: accessTokenObject["SameSite"] || "none",
     });
 
-    cookieStore.set("refreshToken", refreshTokenObject.refreshToken, {
+    await setCookie("refreshToken", refreshTokenObject.refreshToken, {
       secure: true,
       httpOnly: true,
       maxAge:
@@ -124,18 +123,18 @@ export const loginUser = async (
     const userRole: UserRole = verifiedToken.role;
 
     if (!data.success) {
-      throw new Error("Login failed");
+      throw new Error(data.message || "Login failed");
     }
 
     if (redirectTo) {
       const requestedPath = redirectTo.toString();
       if (isValidRedirectForRole(requestedPath, userRole)) {
-        redirect(requestedPath);
+        redirect(`${requestedPath}?loggedIn=true`);
       } else {
-        redirect(getDefaultDashboardRoute(userRole));
+        redirect(`${getDefaultDashboardRoute(userRole)}?loggedIn=true`);
       }
     } else {
-      redirect(getDefaultDashboardRoute(userRole));
+      redirect(`${getDefaultDashboardRoute(userRole)}?loggedIn=true`);
     }
   } catch (error: any) {
     // Re-throw NEXT_REDIRECT errors so Next.js can handle them
@@ -143,6 +142,13 @@ export const loginUser = async (
       throw error;
     }
     console.log(error);
-    return { error: "Login failed" };
+    return {
+      success: false,
+      message: `${
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Login failed. You might have entered the wrong email or password."
+      }`,
+    };
   }
 };

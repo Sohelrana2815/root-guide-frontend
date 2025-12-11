@@ -1,12 +1,18 @@
-import Sidebar from "@/Components/Sidebar";
+import LogoutButton from "@/Components/shared/LogoutButton";
+import { getCookie } from "@/services/auth/tokenHandlers";
 
-const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
+const CommonDashboardLayout = async ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  const accessToken = await getCookie("accessToken");
   return (
-    <div className="flex ">
-      <Sidebar />
-      <div className="ml-80 mt-40">{children}</div>
+    <div>
+      {accessToken && <LogoutButton />}
+      {children}
     </div>
   );
 };
 
-export default DashboardLayout;
+export default CommonDashboardLayout;

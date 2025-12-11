@@ -90,8 +90,15 @@ export const registerUser = async (
     if (error?.digest?.startsWith("NEXT_REDIRECT")) {
       throw error;
     }
-    console.error("Client-Side or Network Error:", error.message);
+    // console.error("Client-Side or Network Error:", error.message);
     // Return an error object to the client
-    return { error: error.message || "Registration failed" };
+    return {
+      success: false,
+      message: `${
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Registration failed. You might have entered the wrong email or password."
+      }`,
+    };
   }
 };
