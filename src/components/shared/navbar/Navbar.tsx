@@ -9,6 +9,7 @@ const Navbar = () => {
   const navItems = [
     { href: "/", label: "Home" },
     { href: "/explore", label: "Explore Tours" },
+    { href: "/register", label: "Register" },
     { href: "#", label: "Become a Guide" },
   ];
 
