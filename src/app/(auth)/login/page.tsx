@@ -7,7 +7,13 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 
-const LoginPage = () => {
+const LoginPage = async ({
+  searchParams,
+}: {
+  searchParams?: Promise<{ redirect: string }>;
+}) => {
+  const params = ((await searchParams) || {}) as { redirect: string };
+  console.log(params.redirect);
   return (
     <Card>
       <CardHeader>
@@ -16,7 +22,7 @@ const LoginPage = () => {
       </CardHeader>
       <CardContent>
         {/* client component login form */}
-        <LoginForm />
+        <LoginForm redirect={params.redirect} />
       </CardContent>
     </Card>
   );

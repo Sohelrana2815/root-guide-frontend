@@ -1,12 +1,31 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Link from "next/link";
 import { Button } from "../ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
+import { useActionState } from "react";
+import { loginUser } from "@/services/auth/loginUser";
 
-const LoginForm = () => {
+const LoginForm = ({ redirect }: { redirect?: string }) => {
+  const [state, formAction, isPending] = useActionState(loginUser, null);
+
+  // get field error message
+
+  const getFieldError = (fieldName: string) => {
+    if (!state || !state.errors) return null;
+    const error = state.errors.find((err: any) => err.field === fieldName);
+    return error ? String(error.message) : null;
+  };
+
+  const emailError = getFieldError("email");
+  const passwordError = getFieldError("password");
+
+  console.log("Action state:", state);
+
   return (
-    <form>
+    <form action={formAction}>
+      {redirect && <input type="hidden" name="redirect" value={redirect} />}
       <FieldGroup>
         {/* email */}
         <Field>
@@ -17,6 +36,11 @@ const LoginForm = () => {
             type="email"
             placeholder="Enter your email"
           />
+          {emailError && (
+            <FieldDescription className="text-red-600">
+              {emailError}
+            </FieldDescription>
+          )}
         </Field>
         {/* password */}
         <Field>
@@ -28,11 +52,18 @@ const LoginForm = () => {
             autoComplete="off"
             placeholder="Enter your password"
           />
+          {passwordError && (
+            <FieldDescription className="text-red-600">
+              {passwordError}
+            </FieldDescription>
+          )}
         </Field>
         {/* submit button */}
         <FieldGroup className="mt-4">
           <Field>
-            <Button type="submit">Login</Button>
+            <Button type="submit" disabled={isPending}>
+              {isPending ? "Logging in..." : "Login"}
+            </Button>
             <FieldDescription>
               Don&apos;t have an account?{" "}
               <Link href="/register" className="text-blue-400">
