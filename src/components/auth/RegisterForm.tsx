@@ -7,8 +7,9 @@ import { Field, FieldDescription, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
 import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 import { Label } from "../ui/label";
-import { useActionState, useState } from "react";
+import { useActionState, useEffect, useState } from "react";
 import { registerUser } from "@/services/auth/registerUser";
+import { toast } from "sonner";
 
 const RegisterForm = () => {
   // Form action state
@@ -23,6 +24,11 @@ const RegisterForm = () => {
     return error ? String(error.message) : null;
   };
 
+  useEffect(() => {
+    if (state && !state.success && state.message) {
+      toast.error(state.message);
+    }
+  }, [state]);
   const nameError = getFieldError("name");
   const emailError = getFieldError("email");
   const passwordError = getFieldError("password");

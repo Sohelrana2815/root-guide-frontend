@@ -110,14 +110,14 @@ export const loginUser = async (
     const userRole: UserRole = verifiedToken.role;
 
     if (!data.success) {
-      throw new Error("Login failed");
+      throw new Error(data.message || "Login failed");
     }
 
     const redirectPath =
       redirectTo && isValidRedirectForRole(redirectTo, userRole)
         ? redirectTo
         : getDefaultDashboardRoute(userRole);
-    redirect(redirectPath);
+    redirect(`${redirectPath}?login=true`);
 
     // return data;
     // console.log({
@@ -133,6 +133,13 @@ export const loginUser = async (
       throw error;
     }
     console.log(error);
-    return { error: "Login failed" };
+    return {
+      success: false,
+      message: `${
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Login Failed. Please try again."
+      }`,
+    };
   }
 };

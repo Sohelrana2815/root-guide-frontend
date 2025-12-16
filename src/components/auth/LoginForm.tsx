@@ -4,8 +4,9 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
 import { loginUser } from "@/services/auth/loginUser";
+import { toast } from "sonner";
 
 const LoginForm = ({ redirect }: { redirect?: string }) => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
@@ -17,6 +18,11 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
     const error = state.errors.find((err: any) => err.field === fieldName);
     return error ? String(error.message) : null;
   };
+  useEffect(() => {
+    if (state && !state.success && state.message) {
+      toast.error(state.message);
+    }
+  }, [state]);
 
   const emailError = getFieldError("email");
   const passwordError = getFieldError("password");

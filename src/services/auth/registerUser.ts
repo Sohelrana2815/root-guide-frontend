@@ -58,6 +58,8 @@ export const registerUser = async (
       await loginUser(_currentState, formData);
     }
 
+  
+
     // console.log(res, data);
     return data;
   } catch (error: any) {
@@ -65,6 +67,10 @@ export const registerUser = async (
       throw error;
     }
     console.log(error);
-    return { error: error.message };
+    return `${
+      process.env.NODE_ENV === "development"
+        ? error.message
+        : "Login Failed. Please try again."
+    }`;
   }
 };
