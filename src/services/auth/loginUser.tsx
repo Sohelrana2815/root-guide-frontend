@@ -3,13 +3,13 @@
 import jwt, { JwtPayload } from "jsonwebtoken";
 import z from "zod";
 import { parse } from "cookie";
-import { cookies } from "next/headers";
 import {
   getDefaultDashboardRoute,
   isValidRedirectForRole,
   UserRole,
 } from "@/lib/auth-utils";
 import { redirect } from "next/navigation";
+import { setCookie } from "./tokenHandlers";
 // zod validation for login
 
 const loginValidationZodSchema = z.object({
@@ -56,7 +56,7 @@ export const loginUser = async (
       },
       body: JSON.stringify(loginData),
     });
-
+    const data = await res.json();
     const setCookieHeaders = res.headers.getSetCookie();
 
     if (setCookieHeaders && setCookieHeaders.length > 0) {
@@ -83,16 +83,14 @@ export const loginUser = async (
       throw new Error("You are not authorized (cookies empty)");
     }
 
-    const cookieStore = await cookies();
-
-    cookieStore.set("accessToken", accessTokenObject.accessToken, {
+    await setCookie("accessToken", accessTokenObject.accessToken, {
       secure: true,
       httpOnly: true,
       maxAge: 1 * 24 * 60 * 60,
       sameSite: accessTokenObject.SameSite || "none",
       path: accessTokenObject.path || "/",
     });
-    cookieStore.set("refreshToken", refreshTokenObject.refreshToken, {
+    await setCookie("refreshToken", refreshTokenObject.refreshToken, {
       secure: true,
       httpOnly: true,
       maxAge: 7 * 24 * 60 * 60,
@@ -111,11 +109,15 @@ export const loginUser = async (
 
     const userRole: UserRole = verifiedToken.role;
 
+    if (!data.success) {
+      throw new Error("Login failed");
+    }
 
-    const redirectPath = redirectTo && isValidRedirectForRole(redirectTo, userRole) 
-    ? redirectTo 
-    : getDefaultDashboardRoute(userRole)
-    redirect(redirectPath)
+    const redirectPath =
+      redirectTo && isValidRedirectForRole(redirectTo, userRole)
+        ? redirectTo
+        : getDefaultDashboardRoute(userRole);
+    redirect(redirectPath);
 
     // return data;
     // console.log({

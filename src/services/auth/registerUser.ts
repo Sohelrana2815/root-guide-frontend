@@ -2,6 +2,7 @@
 "use server";
 
 import z from "zod";
+import { loginUser } from "./loginUser";
 
 const registerValidationZodSchema = z.object({
   name: z
@@ -52,9 +53,17 @@ export const registerUser = async (
       body: JSON.stringify(registerData),
     });
     const data = await res.json();
-    console.log(res, data);
+
+    if (data.success) {
+      await loginUser(_currentState, formData);
+    }
+
+    // console.log(res, data);
     return data;
   } catch (error: any) {
+    if (error?.digest?.startsWith("NEXT_REDIRECT")) {
+      throw error;
+    }
     console.log(error);
     return { error: error.message };
   }
