@@ -24,7 +24,7 @@ export const registerUser = async (
   formData: any
 ): Promise<any> => {
   try {
-    console.log(formData.get("role"));
+    // console.log(formData.get("role"));
     const registerData = {
       name: formData.get("name"),
       email: formData.get("email"),
@@ -52,7 +52,16 @@ export const registerUser = async (
       },
       body: JSON.stringify(registerData),
     });
-    const data = await res.json();
+    let data: any = null;
+    try {
+      data = await res.json();
+    } catch {
+      const text = await res.text().catch(() => "");
+      data = {
+        success: false,
+        message: text || res.statusText || "Registration failed",
+      };
+    }
 
     if (data.success) {
       await loginUser(_currentState, formData);
@@ -67,10 +76,13 @@ export const registerUser = async (
       throw error;
     }
     console.log(error);
-    return `${
-      process.env.NODE_ENV === "development"
-        ? error.message
-        : "Login Failed. Please try again."
-    }`;
+    return {
+      success: false,
+      message: `${
+        process.env.NODE_ENV === "development"
+          ? error?.message || "Registration failed"
+          : "Registration Failed. Please try again."
+      }`,
+    };
   }
 };
