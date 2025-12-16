@@ -18,7 +18,7 @@ export const commonProtectedRoutes: RouteConfig = {
 };
 
 export const touristProtectedRoutes: RouteConfig = {
-  patterns: [/^\/tourist/],
+  patterns: [/^\/dashboard/],
   exact: [],
 };
 
@@ -72,7 +72,7 @@ export const getRouteOwner = (
 export const getDefaultDashboardRoute = (role: UserRole) => {
   switch (role) {
     case "TOURIST":
-      return "/tourist/dashboard";
+      return "/dashboard";
     case "GUIDE":
       return "/guide/dashboard";
     case "ADMIN":
