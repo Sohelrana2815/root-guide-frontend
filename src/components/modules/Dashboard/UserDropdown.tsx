@@ -23,13 +23,20 @@ const UserDropdown = ({ userInfo }: UserDropdownProps) => {
   const handleLogout = async () => {
     await logoutUser();
   };
+  // const userName = (await getUserInfo()) as UserInfo;
+
+  const initial = (
+    userInfo.name?.trim()?.charAt(0) ||
+    userInfo.email?.trim()?.charAt(0) ||
+    "U"
+  ).toUpperCase();
 
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="icon" className="rounded-full">
-          <span className="text-sm font-semibold cursor-pointer">
-            {userInfo.name?.charAt(0).toUpperCase() || "U"}
+          <span className="text-sm font-semibold text-foreground leading-none">
+            {initial}
           </span>
         </Button>
       </DropdownMenuTrigger>

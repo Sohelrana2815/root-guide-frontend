@@ -3,14 +3,16 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { UserInfo } from "@/types/user.interface";
+import { NavSection } from "@/types/dashboard.interface";
 import { Bell, Menu, Search } from "lucide-react";
 import UserDropdown from "./UserDropdown";
 import { useEffect, useState } from "react";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import DashboardMobileSidebar from "./DashboardMobileSidebar";
 
 interface DashboardNavbarContentProps {
   userInfo: UserInfo;
-  navItems?: string;
+  navItems?: NavSection[];
   dashboardHome?: string;
 }
 
@@ -52,6 +54,12 @@ const DashboardNavbarContent = ({
          navItems= {navItems || []}
          dashboardHome={dashboardHome|| ""}
          /> */}
+
+            <DashboardMobileSidebar
+              userInfo={userInfo}
+              navItems={navItems ?? []}
+              dashboardHome={dashboardHome ?? ""}
+            />
           </SheetContent>
         </Sheet>
 
