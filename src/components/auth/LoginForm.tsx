@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Link from "next/link";
 import { Button } from "../ui/button";
@@ -7,25 +6,18 @@ import { Input } from "../ui/input";
 import { useActionState, useEffect } from "react";
 import { loginUser } from "@/services/auth/loginUser";
 import { toast } from "sonner";
+import InputFieldError from "../shared/InputFieldError";
 
 const LoginForm = ({ redirect }: { redirect?: string }) => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
 
   // get field error message
 
-  const getFieldError = (fieldName: string) => {
-    if (!state || !state.errors) return null;
-    const error = state.errors.find((err: any) => err.field === fieldName);
-    return error ? String(error.message) : null;
-  };
   useEffect(() => {
     if (state && !state.success && state.message) {
       toast.error(state.message);
     }
   }, [state]);
-
-  const emailError = getFieldError("email");
-  const passwordError = getFieldError("password");
 
   console.log("Action state:", state);
 
@@ -42,11 +34,8 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
             type="email"
             placeholder="Enter your email"
           />
-          {emailError && (
-            <FieldDescription className="text-red-600">
-              {emailError}
-            </FieldDescription>
-          )}
+
+          <InputFieldError field="email" state={state} />
         </Field>
         {/* password */}
         <Field>
@@ -58,11 +47,7 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
             autoComplete="off"
             placeholder="Enter your password"
           />
-          {passwordError && (
-            <FieldDescription className="text-red-600">
-              {passwordError}
-            </FieldDescription>
-          )}
+          <InputFieldError field="password" state={state} />
         </Field>
         {/* submit button */}
         <FieldGroup className="mt-4">

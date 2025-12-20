@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import Link from "next/link";
@@ -10,7 +9,7 @@ import { Label } from "../ui/label";
 import { useActionState, useEffect, useState } from "react";
 import { registerUser } from "@/services/auth/registerUser";
 import { toast } from "sonner";
-
+import InputFieldError from "../shared/InputFieldError";
 const RegisterForm = () => {
   // Form action state
   const [state, formAction, isPending] = useActionState(registerUser, null);
@@ -18,21 +17,12 @@ const RegisterForm = () => {
 
   const [role, setRole] = useState<"TOURIST" | "GUIDE">("TOURIST");
   // get field error message
-  const getFieldError = (fieldName: string) => {
-    if (!state || !state.errors) return null;
-    const error = state.errors.find((err: any) => err.field === fieldName);
-    return error ? String(error.message) : null;
-  };
 
   useEffect(() => {
     if (state && !state.success && state.message) {
       toast.error(state.message);
     }
   }, [state]);
-  const nameError = getFieldError("name");
-  const emailError = getFieldError("email");
-  const passwordError = getFieldError("password");
-  const roleError = getFieldError("role");
 
   console.log("State: ", state);
   return (
@@ -49,11 +39,7 @@ const RegisterForm = () => {
             type="text"
             placeholder="Enter your name"
           />
-          {nameError && (
-            <FieldDescription className="text-red-600">
-              {nameError}
-            </FieldDescription>
-          )}
+          <InputFieldError field="name" state={state} />
         </Field>
         {/* email */}
         <Field>
@@ -64,11 +50,7 @@ const RegisterForm = () => {
             type="email"
             placeholder="Enter your email"
           />
-          {emailError && (
-            <FieldDescription className="text-red-600">
-              {emailError}
-            </FieldDescription>
-          )}
+          <InputFieldError field="email" state={state} />
         </Field>
         {/* password */}
         <Field>
@@ -80,15 +62,10 @@ const RegisterForm = () => {
             autoComplete="off"
             placeholder="Enter your password"
           />
-          {passwordError && (
-            <FieldDescription className="text-red-600">
-              {passwordError}
-            </FieldDescription>
-          )}
+          <InputFieldError field="password" state={state} />
         </Field>
         {/* choose role (tourist/guide) */}
         <Field>
-          <FieldLabel>Choose your role</FieldLabel>
           <RadioGroup
             defaultValue={role}
             onValueChange={(v) => setRole(v as "TOURIST" | "GUIDE")}
@@ -107,11 +84,7 @@ const RegisterForm = () => {
               </Label>
             </div>
           </RadioGroup>
-          {roleError && (
-            <FieldDescription className="text-red-600">
-              {roleError}
-            </FieldDescription>
-          )}
+          <InputFieldError field="role" state={state} />
         </Field>
         {/* submit button */}
         <FieldGroup className="mt-4">

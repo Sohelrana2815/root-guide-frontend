@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import { serverFetch } from "@/lib/server-fetch";
+import { zodValidator } from "@/lib/zodValidator";
 import z from "zod";
 
 const createTourZodSchema = z.object({
@@ -41,18 +42,14 @@ export async function createTours(_prevState: any, formData: FormData) {
       // image: formData.get("image") as string,
     };
 
-    const validatedPayload = createTourZodSchema.safeParse(payload);
-    if (!validatedPayload.success) {
-      return {
-        success: false,
-        errors: validatedPayload.error.issues.map((issue) => {
-          return {
-            field: issue.path[0],
-            message: issue.message,
-          };
-        }),
-      };
+
+
+    if (zodValidator(payload, createTourZodSchema).success === false) {
+      return zodValidator(payload, createTourZodSchema);
     }
+
+    const validatedPayload = zodValidator(payload, createTourZodSchema).data;
+
     const newFormData = new FormData();
     newFormData.append("data", JSON.stringify(validatedPayload));
 
@@ -95,9 +92,7 @@ export async function getTours() {
   }
 }
 
-
 export async function updateTours() {}
-
 
 export async function deleteTours(id: string) {
   try {

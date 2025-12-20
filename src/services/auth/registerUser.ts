@@ -4,6 +4,7 @@
 import z from "zod";
 import { loginUser } from "./loginUser";
 import { serverFetch } from "@/lib/server-fetch";
+import { zodValidator } from "@/lib/zodValidator";
 
 const registerValidationZodSchema = z.object({
   name: z
@@ -26,30 +27,26 @@ export const registerUser = async (
 ): Promise<any> => {
   try {
     // console.log(formData.get("role"));
-    const registerData = {
+    const payload = {
       name: formData.get("name"),
       email: formData.get("email"),
       password: formData.get("password"),
       role: formData.get("role"),
     };
 
-    const validateRequest = registerValidationZodSchema.safeParse(registerData);
-    if (!validateRequest.success) {
-      return {
-        success: false,
-        errors: validateRequest.error.issues.map((issue) => {
-          return {
-            field: issue.path[0],
-            message: issue.message,
-          };
-        }),
-      };
+    if (zodValidator(payload, registerValidationZodSchema).success === false) {
+      return zodValidator(payload, registerValidationZodSchema);
     }
+
+    const validatedPayload = zodValidator(
+      payload,
+      registerValidationZodSchema
+    ).data;
 
     const res = await serverFetch.post(
       `${process.env.NEXT_PUBLIC_BASE_API_URL}/auth/register`,
       {
-        body: JSON.stringify(registerData),
+        body: JSON.stringify(validatedPayload),
       }
     );
     let data: any = null;

@@ -11,6 +11,7 @@ import {
 import { redirect } from "next/navigation";
 import { setCookie } from "./tokenHandlers";
 import { serverFetch } from "@/lib/server-fetch";
+import { zodValidator } from "@/lib/zodValidator";
 // zod validation for login
 
 const loginValidationZodSchema = z.object({
@@ -32,28 +33,24 @@ export const loginUser = async (
     console.log("redirect from server action: ", redirectTo);
     let accessTokenObject: null | any = null;
     let refreshTokenObject: null | any = null;
-    const loginData = {
+    const payload = {
       email: formData.get("email"),
       password: formData.get("password"),
     };
 
-    const validatedFields = loginValidationZodSchema.safeParse(loginData);
-    if (!validatedFields.success) {
-      return {
-        success: false,
-        errors: validatedFields.error.issues.map((issue) => {
-          return {
-            field: issue.path[0],
-            message: issue.message,
-          };
-        }),
-      };
+    if (zodValidator(payload, loginValidationZodSchema).success === false) {
+      return zodValidator(payload, loginValidationZodSchema);
     }
+
+    const validatedPayload = zodValidator(
+      payload,
+      loginValidationZodSchema
+    ).data;
 
     const res = await serverFetch.post(
       `${process.env.NEXT_PUBLIC_BASE_API_URL}/auth/login`,
       {
-        body: JSON.stringify(loginData),
+        body: JSON.stringify(validatedPayload),
       }
     );
     const data = await res.json();
