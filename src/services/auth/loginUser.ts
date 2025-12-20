@@ -10,6 +10,7 @@ import {
 } from "@/lib/auth-utils";
 import { redirect } from "next/navigation";
 import { setCookie } from "./tokenHandlers";
+import { serverFetch } from "@/lib/server-fetch";
 // zod validation for login
 
 const loginValidationZodSchema = z.object({
@@ -49,13 +50,12 @@ export const loginUser = async (
       };
     }
 
-    const res = await fetch(`${process.env.BASE_API_URL}/auth/login`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(loginData),
-    });
+    const res = await serverFetch.post(
+      `${process.env.NEXT_PUBLIC_BASE_API_URL}/auth/login`,
+      {
+        body: JSON.stringify(loginData),
+      }
+    );
     const data = await res.json();
     const setCookieHeaders = res.headers.getSetCookie();
 

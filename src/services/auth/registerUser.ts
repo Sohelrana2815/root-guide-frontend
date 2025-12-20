@@ -3,6 +3,7 @@
 
 import z from "zod";
 import { loginUser } from "./loginUser";
+import { serverFetch } from "@/lib/server-fetch";
 
 const registerValidationZodSchema = z.object({
   name: z
@@ -45,13 +46,12 @@ export const registerUser = async (
       };
     }
 
-    const res = await fetch(`${process.env.BASE_API_URL}/auth/register`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(registerData),
-    });
+    const res = await serverFetch.post(
+      `${process.env.NEXT_PUBLIC_BASE_API_URL}/auth/register`,
+      {
+        body: JSON.stringify(registerData),
+      }
+    );
     let data: any = null;
     try {
       data = await res.json();
@@ -66,8 +66,6 @@ export const registerUser = async (
     if (data.success) {
       await loginUser(_currentState, formData);
     }
-
-  
 
     // console.log(res, data);
     return data;
