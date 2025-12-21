@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import z from "zod";
 import { parse } from "cookie";
 import {
   getDefaultDashboardRoute,
@@ -12,17 +11,9 @@ import { redirect } from "next/navigation";
 import { setCookie } from "./tokenHandlers";
 import { serverFetch } from "@/lib/server-fetch";
 import { zodValidator } from "@/lib/zodValidator";
+import { loginValidationZodSchema } from "@/zod/auth.validation";
 // zod validation for login
 
-const loginValidationZodSchema = z.object({
-  email: z.email("Please provide a valid email").nonempty("Email is required"),
-
-  password: z
-    .string()
-    .nonempty({ message: "Password is required." })
-    .min(6, { message: "Password must be at least 6 characters long." })
-    .max(50, { message: "Password cannot exceed 50 characters." }),
-});
 
 export const loginUser = async (
   _currentState: any,
@@ -47,12 +38,10 @@ export const loginUser = async (
       loginValidationZodSchema
     ).data;
 
-    const res = await serverFetch.post(
-      `${process.env.NEXT_PUBLIC_BASE_API_URL}/auth/login`,
-      {
-        body: JSON.stringify(validatedPayload),
-      }
-    );
+    const res = await serverFetch.post(`/auth/login`, {
+      body: JSON.stringify(validatedPayload),
+      headers: { "Content-Type": "application/json" },
+    });
     const data = await res.json();
     const setCookieHeaders = res.headers.getSetCookie();
 
