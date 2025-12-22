@@ -9,7 +9,8 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { createTour } from "@/services/guide/toursManagement";
+import { createTour, updateTour } from "@/services/guide/toursManagement";
+import { ITour } from "@/types/tour.interface";
 import { useActionState, useEffect } from "react";
 import { toast } from "sonner";
 
@@ -17,110 +18,173 @@ interface ITourFormDialogProps {
   open: boolean;
   onClose: () => void;
   onSuccess: () => void;
+  tour?: ITour;
 }
-const TourFormDialog = ({ open, onClose, onSuccess }: ITourFormDialogProps) => {
-  const [state, formAction, pending] = useActionState(createTour, null);
+
+const TourFormDialog = ({
+  open,
+  onClose,
+  onSuccess,
+  tour,
+}: ITourFormDialogProps) => {
+  const isEdit = !!tour;
+
+  const [state, formAction, pending] = useActionState(
+    isEdit ? updateTour.bind(null, tour.id!) : createTour,
+    null
+  );
+
   useEffect(() => {
-    if (state && state?.success) {
+    if (state?.success) {
       toast.success(state.message);
       onSuccess();
       onClose();
-    } else if (state && !state?.success) {
+    } else if (state && !state.success) {
       toast.error(state.message);
     }
   }, [state, onSuccess, onClose]);
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Add New Tour</DialogTitle>
+      <DialogContent className="max-h-[90vh] flex flex-col p-0">
+        <DialogHeader className="px-6 pt-6 pb-4">
+          <DialogTitle>{isEdit ? "Edit Tour" : "Add New Tour"}</DialogTitle>
         </DialogHeader>
 
-        <form action={formAction} className="space-y-4">
-          {/* Title */}
-          <Field>
-            <FieldLabel htmlFor="title">Title</FieldLabel>
-            <Input id="title" name="title" placeholder="..." required />
-            <InputFieldError field="title" state={state} />
-          </Field>
-          {/* Description */}
-          <Field>
-            <FieldLabel htmlFor="description">description</FieldLabel>
-            <Input
-              id="description"
-              name="description"
-              placeholder="..."
-              required
-            />
-            <InputFieldError field="description" state={state} />
-          </Field>
-          {/* Itinerary */}
-          <Field>
-            <FieldLabel htmlFor="itinerary">Itinerary</FieldLabel>
-            <Input id="itinerary" name="itinerary" placeholder="..." required />
-            <InputFieldError field="itinerary" state={state} />
-          </Field>
-          {/* Category */}
-          <Field>
-            <FieldLabel htmlFor="category">Category</FieldLabel>
-            <Input id="category" name="category" placeholder="..." required />
-            <InputFieldError field="category" state={state} />
-          </Field>
-          {/* City */}
-          <Field>
-            <FieldLabel htmlFor="city">City</FieldLabel>
-            <Input id="city" name="city" placeholder="..." required />
-            <InputFieldError field="city" state={state} />
-          </Field>
-          {/* Price */}
-          <Field>
-            <FieldLabel htmlFor="price">Price</FieldLabel>
-            <Input id="price" name="price" placeholder="..." required />
-            <InputFieldError field="price" state={state} />
-          </Field>
-          {/* duration */}
-          <Field>
-            <FieldLabel htmlFor="duration">Duration</FieldLabel>
-            <Input id="duration" name="duration" placeholder="..." required />
-            <InputFieldError field="duration" state={state} />
-          </Field>
-          {/* meetingPoint */}
-          <Field>
-            <FieldLabel htmlFor="meetingPoint">Meeting Point</FieldLabel>
-            <Input
-              id="meetingPoint"
-              name="meetingPoint"
-              placeholder="..."
-              required
-            />
-            <InputFieldError field="meetingPoint" state={state} />
-          </Field>
-          {/* maxGroupSize */}
-          <Field>
-            <FieldLabel htmlFor="maxGroupSize">Maximum Group Size</FieldLabel>
-            <Input
-              id="maxGroupSize"
-              name="maxGroupSize"
-              placeholder="..."
-              required
-            />
-            <InputFieldError field="maxGroupSize" state={state} />
-          </Field>
-          {/* image */}
-          <Field>
-            <FieldLabel htmlFor="file">Upload Image</FieldLabel>
-            <Input
-              id="file"
-              name="file"
-              type="file"
-              accept="image/*"
-              required
-            />
-            <InputFieldError field="file" state={state} />
-          </Field>
+        <form action={formAction} className="flex flex-col flex-1 min-h-0">
+          <div className="flex-1 overflow-y-auto px-6 space-y-4 pb-4">
+            {/* title */}
+            <Field>
+              <FieldLabel htmlFor="title">Title</FieldLabel>
+              <Input
+                id="title"
+                name="title"
+                placeholder="e.g, "
+                defaultValue={isEdit ? tour?.title : undefined}
+              />
+              <InputFieldError state={state} field="title" />
+            </Field>
+            {/* description */}
+            <Field>
+              <FieldLabel htmlFor="description">Description</FieldLabel>
+              <Input
+                id="description"
+                name="description"
+                type="text"
+                placeholder="e.g,"
+                defaultValue={isEdit ? tour?.description : undefined}
+                disabled={isEdit}
+              />
+              <InputFieldError state={state} field="description" />
+            </Field>
+            {/* itinerary */}
+            {!isEdit && (
+              <>
+                <Field>
+                  <FieldLabel htmlFor="itinerary">Itinerary</FieldLabel>
+                  <Input
+                    id="itinerary"
+                    name="itinerary"
+                    type="text"
+                    placeholder="Enter itinerary"
+                  />
+                  <InputFieldError state={state} field="itinerary" />
+                </Field>
+                {/* category */}
+                <Field>
+                  <FieldLabel htmlFor="category">Category</FieldLabel>
+                  <Input
+                    id="category"
+                    name="category"
+                    type="text"
+                    placeholder="Enter a category"
+                  />
+                  <InputFieldError state={state} field="category" />
+                </Field>
+              </>
+            )}
+            {/* city */}
 
-          <div className="flex justify-end gap-2">
+            <Field>
+              <FieldLabel htmlFor="city">City</FieldLabel>
+              <Input
+                id="city"
+                name="city"
+                placeholder="Select a city"
+                // defaultValue={isEdit ? doctor?.doctorSpecialties?.[0]?.specialties?.title : ""}
+                defaultValue={tour?.city}
+                type="text"
+              />
+              <InputFieldError state={state} field="city" />
+            </Field>
+            {/* price */}
+
+            <Field>
+              <FieldLabel htmlFor="price">Price</FieldLabel>
+              <Input
+                id="price"
+                name="price"
+                type="number"
+                placeholder="e.g, 100"
+                defaultValue={tour?.price}
+              />
+              <InputFieldError state={state} field="price" />
+            </Field>
+            {/* duration */}
+            <Field>
+              <FieldLabel htmlFor="duration">Duration</FieldLabel>
+              <Input
+                id="duration"
+                name="duration"
+                placeholder="e.g, 5 hours"
+                defaultValue={isEdit ? tour?.duration : undefined}
+              />
+              <InputFieldError state={state} field="duration" />
+            </Field>
+            {/* Meeting point */}
+            <Field>
+              <FieldLabel htmlFor="meetingPoint">Meeting Point</FieldLabel>
+              <Input
+                id="meetingPoint"
+                name="meetingPoint"
+                placeholder="e.g, "
+                defaultValue={isEdit ? tour?.meetingPoint : undefined}
+              />
+              <InputFieldError state={state} field="meetingPoint" />
+            </Field>
+            {/* Max group size */}
+            <Field>
+              <FieldLabel htmlFor="maxGroupSize">Maximum Group Size</FieldLabel>
+              <Input
+                id="maxGroupSize"
+                name="maxGroupSize"
+                type="number"
+                placeholder="5"
+                defaultValue={isEdit ? tour?.maxGroupSize : undefined}
+                min="0"
+              />
+              <InputFieldError state={state} field="maxGroupSize" />
+            </Field>
+            {/* Image */}
+            {!isEdit && (
+              <Field>
+                <FieldLabel htmlFor="image">Image</FieldLabel>
+                <Input
+                  id="image"
+                  name="image"
+                  type="file"
+                  accept="image/*"
+                  placeholder="Select an image"
+                />
+                <p className="text-xs text-gray-500 mt-1">
+                  Upload a photo for the tour
+                </p>
+                <InputFieldError state={state} field="image" />
+              </Field>
+            )}
+          </div>
+
+          <div className="flex justify-end gap-2 px-6 py-4 border-t bg-gray-50">
             <Button
               type="button"
               variant="outline"
@@ -129,7 +193,13 @@ const TourFormDialog = ({ open, onClose, onSuccess }: ITourFormDialogProps) => {
             >
               Cancel
             </Button>
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={pending}>
+              {pending
+                ? "Saving..."
+                : isEdit
+                ? "Update Doctor"
+                : "Create Doctor"}
+            </Button>
           </div>
         </form>
       </DialogContent>

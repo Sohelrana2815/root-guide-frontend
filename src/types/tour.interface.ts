@@ -11,6 +11,7 @@ export interface ITour {
   duration: number;
   meetingPoint: string;
   maxGroupSize: number;
+  averageRating: number;
   image?: string;
   isDeleted?: boolean;
   isActive?: boolean;

@@ -30,7 +30,7 @@ const TourTable = ({ tours }: TourTableProps) => {
   const confirmDelete = async () => {
     if (!deletingTour) return;
     setIsDeletingDialog(true);
-    const result = await deleteTour(deletingTour.id);
+    const result = await deleteTour(deletingTour.id!);
     setIsDeletingDialog(false);
     if (result.success) {
       toast.success(result.message || "Tour deleted successfully");
@@ -47,7 +47,7 @@ const TourTable = ({ tours }: TourTableProps) => {
         data={tours}
         columns={tourColumns}
         onDelete={handleDelete}
-        getRowKey={(tour) => tour.id}
+        getRowKey={(tour) => tour.id!}
         emptyMessage="No Tour found"
       />
       {/* Delete confirmation dialog */}
