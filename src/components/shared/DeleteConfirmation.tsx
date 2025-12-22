@@ -16,7 +16,7 @@ interface DeleteConfirmationProps {
   onConfirm: () => void;
   title?: string;
   description?: string;
-  ItemName: string;
+  ItemName?: string;
   isDeleting: boolean;
 }
 

@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/table";
 import { Edit, Eye, Loader2, MoreHorizontal, Trash } from "lucide-react";
 
-interface Column<T> {
+export interface Column<T> {
   header: string;
   accessor: keyof T | ((row: T) => React.ReactNode);
   className?: string;

@@ -1,4 +1,5 @@
 export interface ITour {
+  id?: string;
   title: string;
   description: string;
   itinerary: string;
@@ -11,4 +12,8 @@ export interface ITour {
   meetingPoint: string;
   maxGroupSize: number;
   image?: string;
+  isDeleted?: boolean;
+  isActive?: boolean;
+  createdAt?: string;
+  updatedAt?: string;
 }
