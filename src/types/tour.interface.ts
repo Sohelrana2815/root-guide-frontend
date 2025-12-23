@@ -1,5 +1,6 @@
 export interface ITour {
-  id?: string;
+  _id?: string;
+  guideId?: string;
   title: string;
   description: string;
   itinerary: string;
@@ -12,8 +13,9 @@ export interface ITour {
   meetingPoint: string;
   maxGroupSize: number;
   averageRating: number;
+  reviewCount?: number;
   image?: string;
-  isDeleted?: boolean;
+  isDelete?: boolean;
   isActive?: boolean;
   createdAt?: string;
   updatedAt?: string;

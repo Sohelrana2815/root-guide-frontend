@@ -18,7 +18,15 @@ const ToursManagementPage = async ({
   const searchParamsObj = await searchParams;
   const queryString = queryStringFormatter(searchParamsObj); // {searchTerm: "sun shine", category: "Food" => "?searchTerm=sun shine&speciality=Food"}
   const toursResult = await getTours(queryString);
-  const totalPages = Math.ceil(toursResult.meta.total / toursResult.meta.limit);
+  const meta = toursResult?.meta ?? { total: 0, page: 1, limit: 10 };
+  const totalPages = Math.ceil((meta.total ?? 0) / (meta.limit ?? 10));
+  const tours = (Array.isArray(toursResult?.data) ? toursResult.data : []) as ITour[];
+  const categoryOptions = Array.from(
+    new Set(tours.map((tour) => tour.category).filter(Boolean))
+  ).map((category) => ({
+    label: category,
+    value: category,
+  }));
 
   return (
     <div className="space-y-6">
@@ -27,18 +35,15 @@ const ToursManagementPage = async ({
         <SearchFilter paramName="searchTerm" placeholder="Search tours..." />
         <SelectFilter
           paramName="category"
-          options={toursResult.data.map((tour: ITour) => ({
-            label: tour.id,
-            value: tour.id,
-          }))}
+          options={categoryOptions}
           placeholder="Filter by category"
         />
         <RefreshButton />
       </div>
       <Suspense fallback={<TableSkeleton columns={8} rows={10} />}>
-        <TourTable tours={toursResult.data} />
+        <TourTable tours={tours} />
         <TablePagination
-          currentPage={toursResult.meta.page}
+          currentPage={meta.page ?? 1}
           totalPages={totalPages}
         />
       </Suspense>

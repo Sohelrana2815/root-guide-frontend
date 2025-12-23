@@ -29,8 +29,10 @@ const TourFormDialog = ({
 }: ITourFormDialogProps) => {
   const isEdit = !!tour;
 
+  const tourId = tour?._id;
+
   const [state, formAction, pending] = useActionState(
-    isEdit ? updateTour.bind(null, tour.id!) : createTour,
+    isEdit ? updateTour.bind(null, tourId!) : createTour,
     null
   );
 
@@ -78,31 +80,27 @@ const TourFormDialog = ({
               <InputFieldError state={state} field="description" />
             </Field>
             {/* itinerary */}
-            {!isEdit && (
-              <>
-                <Field>
-                  <FieldLabel htmlFor="itinerary">Itinerary</FieldLabel>
-                  <Input
-                    id="itinerary"
-                    name="itinerary"
-                    type="text"
-                    placeholder="Enter itinerary"
-                  />
-                  <InputFieldError state={state} field="itinerary" />
-                </Field>
-                {/* category */}
-                <Field>
-                  <FieldLabel htmlFor="category">Category</FieldLabel>
-                  <Input
-                    id="category"
-                    name="category"
-                    type="text"
-                    placeholder="Enter a category"
-                  />
-                  <InputFieldError state={state} field="category" />
-                </Field>
-              </>
-            )}
+            <Field>
+              <FieldLabel htmlFor="itinerary">Itinerary</FieldLabel>
+              <Input
+                id="itinerary"
+                name="itinerary"
+                type="text"
+                placeholder="Enter itinerary"
+              />
+              <InputFieldError state={state} field="itinerary" />
+            </Field>
+            {/* category */}
+            <Field>
+              <FieldLabel htmlFor="category">Category</FieldLabel>
+              <Input
+                id="category"
+                name="category"
+                type="text"
+                placeholder="Enter a category"
+              />
+              <InputFieldError state={state} field="category" />
+            </Field>
             {/* city */}
 
             <Field>
@@ -136,6 +134,7 @@ const TourFormDialog = ({
               <Input
                 id="duration"
                 name="duration"
+                type="number"
                 placeholder="e.g, 5 hours"
                 defaultValue={isEdit ? tour?.duration : undefined}
               />
@@ -168,10 +167,10 @@ const TourFormDialog = ({
             {/* Image */}
             {!isEdit && (
               <Field>
-                <FieldLabel htmlFor="image">Image</FieldLabel>
+                <FieldLabel htmlFor="file">Image</FieldLabel>
                 <Input
-                  id="image"
-                  name="image"
+                  id="file"
+                  name="file"
                   type="file"
                   accept="image/*"
                   placeholder="Select an image"
@@ -179,7 +178,7 @@ const TourFormDialog = ({
                 <p className="text-xs text-gray-500 mt-1">
                   Upload a photo for the tour
                 </p>
-                <InputFieldError state={state} field="image" />
+                <InputFieldError state={state} field="file" />
               </Field>
             )}
           </div>
@@ -194,11 +193,7 @@ const TourFormDialog = ({
               Cancel
             </Button>
             <Button type="submit" disabled={pending}>
-              {pending
-                ? "Saving..."
-                : isEdit
-                ? "Update Doctor"
-                : "Create Doctor"}
+              {pending ? "Saving..." : isEdit ? "Update Tour" : "Create Tour"}
             </Button>
           </div>
         </form>

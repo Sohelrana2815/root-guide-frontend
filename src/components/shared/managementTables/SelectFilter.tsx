@@ -35,6 +35,8 @@ const SelectFilter = ({
       params.delete(paramName);
     }
 
+    params.set("page", "1");
+
     startTransition(() => {
       router.push(`?${params.toString()}`);
     });

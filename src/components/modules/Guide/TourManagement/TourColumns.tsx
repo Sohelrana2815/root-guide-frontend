@@ -1,6 +1,8 @@
 "use client";
 
 import { Column } from "@/components/shared/managementTables/ManagementTable";
+import { StatusBadgeCell } from "@/components/shared/cell/StatusBadgeCell";
+import { TourInfoCell } from "@/components/shared/cell/TourInfoCell";
 import { ITour } from "@/types/tour.interface";
 import { Star } from "lucide-react";
 
@@ -9,8 +11,12 @@ export const TourColumns: Column<ITour>[] = [
     header: "Tour",
     accessor: (tour) => (
       <TourInfoCell
-        name={tour.title}
-        email={tour.description}
+        title={tour.title}
+        subtitle={
+          tour.city
+            ? `${tour.city}${tour.category ? ` • ${tour.category}` : ""}`
+            : tour.category
+        }
         photo={tour.image}
       />
     ),
@@ -35,19 +41,21 @@ export const TourColumns: Column<ITour>[] = [
       </div>
     ),
   },
-  {
-    header: "Itinerary",
-    accessor: (tour) => (
-      <div className="flex flex-col">
-        <span className="text-sm">{tour.itinerary}</span>
-      </div>
-    ),
-  },
+  // {
+  //   header: "Itinerary",
+  //   accessor: (tour) => (
+  //     <div className="flex flex-col">
+  //       <span className="text-sm">{tour.itinerary}</span>
+  //     </div>
+  //   ),
+  // },
   {
     header: "Price",
     accessor: (tour) => (
       <div className="flex flex-col">
-        <span className="text-sm">{tour.price}</span>
+        <span className="text-sm">
+          {typeof tour.price === "number" ? `$${tour.price}` : "N/A"}
+        </span>
       </div>
     ),
   },
@@ -75,13 +83,20 @@ export const TourColumns: Column<ITour>[] = [
       <div className="flex items-center gap-1">
         <Star className="h-4 w-4 fill-yellow-400 text-yellow-400" />
         <span className="text-sm font-medium">
-          {tour.averageRating!.toFixed(1)}
+          {typeof tour.averageRating === "number"
+            ? tour.averageRating.toFixed(1)
+            : "N/A"}
         </span>
       </div>
     ),
   },
   {
     header: "Status",
-    accessor: (tour) => <StatusBadgeCell isDeleted={tour.isActive} />,
+    accessor: (tour) => (
+      <StatusBadgeCell
+        isDeleted={tour.isDelete}
+        activeText={tour.isActive === false ? "Inactive" : "Active"}
+      />
+    ),
   },
 ];

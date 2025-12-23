@@ -10,7 +10,7 @@ import {
 
 export async function createTour(_prevState: any, formData: FormData) {
   try {
-    const payload: ITour = {
+    const payload = {
       title: formData.get("title") as string,
       description: formData.get("description") as string,
       itinerary: formData.get("itinerary") as string,
@@ -20,7 +20,6 @@ export async function createTour(_prevState: any, formData: FormData) {
       duration: Number(formData.get("duration")) as number,
       meetingPoint: formData.get("meetingPoint") as string,
       maxGroupSize: Number(formData.get("maxGroupSize")) as number,
-      image: formData.get("image") as string,
     };
 
     if (zodValidator(payload, createTourZodSchema).success === false) {
@@ -63,16 +62,28 @@ export async function createTour(_prevState: any, formData: FormData) {
 export async function getTours(queryString?: string) {
   try {
     const response = await serverFetch.get(
-      `/tours/all-tours${queryString ? `?${queryString}` : ""}`
+      `/tours/my-tours${queryString ? `?${queryString}` : ""}`
     );
 
     const result = await response.json();
-    // console.log({ result });
-    return result;
+    const meta = result?.meta ?? { total: 0, page: 1, limit: 10 };
+    const data = Array.isArray(result?.data) ? result.data : [];
+
+    return {
+      ...result,
+      data,
+      meta: {
+        total: meta?.total ?? 0,
+        page: meta?.page ?? 1,
+        limit: meta?.limit ?? 10,
+      },
+    };
   } catch (error: any) {
     console.log(error);
     return {
       success: false,
+      data: [],
+      meta: { total: 0, page: 1, limit: 10 },
       message: `${
         process.env.NODE_ENV === "development"
           ? error.message
@@ -107,7 +118,7 @@ export async function updateTour(
   formData: FormData
 ) {
   try {
-    const payload: Partial<ITour> = {
+    const payload = {
       title: formData.get("title") as string,
       description: formData.get("description") as string,
       category: formData.get("category") as string,
@@ -116,7 +127,6 @@ export async function updateTour(
       duration: Number(formData.get("duration")) as number,
       meetingPoint: formData.get("meetingPoint") as string,
       maxGroupSize: Number(formData.get("maxGroupSize")) as number,
-      image: formData.get("image") as string,
     };
 
     const validatedPayload = zodValidator(payload, updateTourZodSchema).data;
