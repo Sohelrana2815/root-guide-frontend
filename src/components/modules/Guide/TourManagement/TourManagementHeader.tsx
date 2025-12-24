@@ -3,7 +3,7 @@ import ManagementPageHeader from "@/components/shared/managementTables/Managemen
 import { ITour } from "@/types/tour.interface";
 import { Plus } from "lucide-react";
 import TourFormDialog from "./TourFormDialog";
-import { useState, useTransition } from "react";
+import { useCallback, useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 
 interface ITourManagementHeaderProps {
@@ -13,16 +13,19 @@ const TourManagementHeader = ({}: ITourManagementHeaderProps) => {
   const router = useRouter();
   const [, startTransition] = useTransition();
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const handleSuccess = () => {
+
+  const handleClose = useCallback(() => setIsDialogOpen(false), []);
+
+  const handleSuccess = useCallback(() => {
     startTransition(() => {
       router.refresh();
     });
-  };
+  }, [router, startTransition]);
   return (
     <>
       <TourFormDialog
         open={isDialogOpen}
-        onClose={() => setIsDialogOpen(false)}
+        onClose={handleClose}
         onSuccess={handleSuccess}
       />
 

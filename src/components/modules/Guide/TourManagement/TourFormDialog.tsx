@@ -11,7 +11,7 @@ import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { createTour, updateTour } from "@/services/guide/toursManagement";
 import { ITour } from "@/types/tour.interface";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useRef } from "react";
 import { toast } from "sonner";
 
 interface ITourFormDialogProps {
@@ -35,17 +35,36 @@ const TourFormDialog = ({
     isEdit ? updateTour.bind(null, tourId!) : createTour,
     null
   );
+  // 1. Create a ref to track if the user actually clicked "Submit"
+  const hasSubmittedRef = useRef(false);
+
+  // 2. Reset everything when the dialog opens
+  useEffect(() => {
+    if (open) {
+      hasSubmittedRef.current = false;
+    }
+  }, [open, tour]);
 
   useEffect(() => {
-    if (state?.success) {
+    // 3. ONLY process if dialog is open, state exists, AND we actually submitted the form
+    if (!open || !state || !hasSubmittedRef.current) return;
+
+    if (state.success) {
       toast.success(state.message);
+      hasSubmittedRef.current = false; // Reset after success
       onSuccess();
       onClose();
-    } else if (state && !state.success) {
+    } else if (state.success === false) {
       toast.error(state.message);
+      hasSubmittedRef.current = false; // Reset after error so toast doesn't repeat
     }
-  }, [state, onSuccess, onClose]);
+  }, [state, onSuccess, onClose, open]);
 
+  // 4. Wrap the form action to set the submission flag
+  const handleSubmit = async (formData: FormData) => {
+    hasSubmittedRef.current = true;
+    formAction(formData);
+  };
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-h-[90vh] flex flex-col p-0">
@@ -53,7 +72,11 @@ const TourFormDialog = ({
           <DialogTitle>{isEdit ? "Edit Tour" : "Add New Tour"}</DialogTitle>
         </DialogHeader>
 
-        <form action={formAction} className="flex flex-col flex-1 min-h-0">
+        <form
+          key={`${isEdit ? "edit" : "create"}-${tourId || "new"}`}
+          action={handleSubmit}
+          className="flex flex-col flex-1 min-h-0"
+        >
           <div className="flex-1 overflow-y-auto px-6 space-y-4 pb-4">
             {/* title */}
             <Field>
@@ -75,7 +98,6 @@ const TourFormDialog = ({
                 type="text"
                 placeholder="e.g,"
                 defaultValue={isEdit ? tour?.description : undefined}
-                disabled={isEdit}
               />
               <InputFieldError state={state} field="description" />
             </Field>
@@ -87,6 +109,7 @@ const TourFormDialog = ({
                 name="itinerary"
                 type="text"
                 placeholder="Enter itinerary"
+                defaultValue={isEdit ? tour?.itinerary : undefined}
               />
               <InputFieldError state={state} field="itinerary" />
             </Field>
@@ -98,6 +121,7 @@ const TourFormDialog = ({
                 name="category"
                 type="text"
                 placeholder="Enter a category"
+                defaultValue={isEdit ? tour?.category : undefined}
               />
               <InputFieldError state={state} field="category" />
             </Field>
@@ -183,7 +207,7 @@ const TourFormDialog = ({
             )}
           </div>
 
-          <div className="flex justify-end gap-2 px-6 py-4 border-t bg-gray-50">
+          <div className="flex justify-end gap-2 px-6 py-4 border-t">
             <Button
               type="button"
               variant="outline"

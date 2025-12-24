@@ -9,7 +9,7 @@ import {
 
 const RegisterPage = () => {
   return (
-    <Card >
+    <Card>
       <CardHeader>
         <CardTitle>Crate an Account</CardTitle>
         <CardDescription>

@@ -2,7 +2,6 @@
 "use server";
 import { serverFetch } from "@/lib/server-fetch";
 import { zodValidator } from "@/lib/zodValidator";
-import { ITour } from "@/types/tour.interface";
 import {
   createTourZodSchema,
   updateTourZodSchema,
@@ -37,8 +36,9 @@ export async function createTour(_prevState: any, formData: FormData) {
     const newFormData = new FormData();
     newFormData.append("data", JSON.stringify(validatedPayload));
 
-    if (formData.get("file")) {
-      newFormData.append("file", formData.get("file") as Blob);
+    const file = formData.get("file");
+    if (file instanceof File && file.size > 0) {
+      newFormData.append("file", file);
     }
 
     const res = await serverFetch.post("/tours/create-tour", {
@@ -79,7 +79,7 @@ export async function getTours(queryString?: string) {
       },
     };
   } catch (error: any) {
-    console.log(error);
+    // console.log(error);
     return {
       success: false,
       data: [],
@@ -112,6 +112,52 @@ export async function getTourById(id: string) {
   }
 }
 
+// export async function updateTour(
+//   id: string,
+//   _prevState: any,
+//   formData: FormData
+// ) {
+//   try {
+//     const payload = {
+//       title: formData.get("title") as string,
+//       description: formData.get("description") as string,
+//       category: formData.get("category") as string,
+//       city: formData.get("city") as string,
+//       price: Number(formData.get("price")) as number,
+//       duration: Number(formData.get("duration")) as number,
+//       meetingPoint: formData.get("meetingPoint") as string,
+//       maxGroupSize: Number(formData.get("maxGroupSize")) as number,
+//     };
+
+//     const validatedPayload = zodValidator(payload, updateTourZodSchema).data;
+
+//     const newFormData = new FormData();
+
+//     newFormData.append("data", JSON.stringify(validatedPayload));
+//     const file = formData.get("file");
+//     if (file instanceof File && file.size > 0) {
+//       newFormData.append("file", file);
+//     }
+
+//     const response = await serverFetch.patch(`/tours/${id}`, {
+//       body: newFormData,
+//     });
+
+//     const result = await response.json();
+//     // console.log({ result });
+//     return result;
+//   } catch (error: any) {
+//     console.log(error);
+//     return {
+//       success: false,
+//       message: `${
+//         process.env.NODE_ENV === "development"
+//           ? error.message
+//           : "Something went wrong"
+//       }`,
+//     };
+//   }
+// }
 export async function updateTour(
   id: string,
   _prevState: any,
@@ -129,13 +175,26 @@ export async function updateTour(
       maxGroupSize: Number(formData.get("maxGroupSize")) as number,
     };
 
-    const validatedPayload = zodValidator(payload, updateTourZodSchema).data;
+    // First validate the payload
+    const validationResult = zodValidator(payload, updateTourZodSchema);
+    
+    // Check if validation failed
+    if (!validationResult.success) {
+      return {
+        success: false,
+        message: "Validation failed",
+        errors: validationResult.errors || [],
+      };
+    }
 
+    // If we get here, validation passed
+    const validatedPayload = validationResult.data;
     const newFormData = new FormData();
-
     newFormData.append("data", JSON.stringify(validatedPayload));
-    if (formData.get("file")) {
-      newFormData.append("file", formData.get("file") as Blob);
+
+    const file = formData.get("file");
+    if (file instanceof File && file.size > 0) {
+      newFormData.append("file", file);
     }
 
     const response = await serverFetch.patch(`/tours/${id}`, {
@@ -143,17 +202,12 @@ export async function updateTour(
     });
 
     const result = await response.json();
-    // console.log({ result });
     return result;
   } catch (error: any) {
-    console.log(error);
+    console.error("Update tour error:", error);
     return {
       success: false,
-      message: `${
-        process.env.NODE_ENV === "development"
-          ? error.message
-          : "Something went wrong"
-      }`,
+      message: error.message || "Failed to update tour",
     };
   }
 }
