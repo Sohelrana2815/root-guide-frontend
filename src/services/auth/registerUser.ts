@@ -17,8 +17,10 @@ export const registerUser = async (
       email: formData.get("email"),
       password: formData.get("password"),
       role: formData.get("role"),
+      languages: formData.getAll("languages").map(String).filter(Boolean),
+      expertise: formData.getAll("expertise").map(String).filter(Boolean),
     };
-
+    console.log("from registerUser server action fn:", payload);
     if (zodValidator(payload, registerValidationZodSchema).success === false) {
       return zodValidator(payload, registerValidationZodSchema);
     }

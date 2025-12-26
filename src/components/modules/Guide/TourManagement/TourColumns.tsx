@@ -20,6 +20,7 @@ export const TourColumns: Column<ITour>[] = [
         photo={tour.image}
       />
     ),
+    sortKey: "title",
   },
   {
     header: "Category",
@@ -58,12 +59,14 @@ export const TourColumns: Column<ITour>[] = [
         </span>
       </div>
     ),
+    sortKey: "price",
   },
   {
     header: "Duration",
     accessor: (tour) => (
       <span className="text-sm font-medium">{tour.duration ?? 0} hours</span>
     ),
+    sortKey: "duration",
   },
   {
     header: "Meeting Point",
@@ -76,6 +79,7 @@ export const TourColumns: Column<ITour>[] = [
     accessor: (tour) => (
       <span className="text-sm font-medium">{tour.maxGroupSize} </span>
     ),
+    sortKey: "maxGroupSize",
   },
   {
     header: "Rating",
@@ -89,6 +93,7 @@ export const TourColumns: Column<ITour>[] = [
         </span>
       </div>
     ),
+    sortKey: "averageRating",
   },
   {
     header: "Status",

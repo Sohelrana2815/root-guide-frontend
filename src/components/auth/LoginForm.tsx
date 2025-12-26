@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Button } from "../ui/button";
 import { Field, FieldDescription, FieldGroup, FieldLabel } from "../ui/field";
 import { Input } from "../ui/input";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useState, startTransition } from "react";
 import { loginUser } from "@/services/auth/loginUser";
 import { toast } from "sonner";
 import InputFieldError from "../shared/InputFieldError";
@@ -11,13 +11,30 @@ import InputFieldError from "../shared/InputFieldError";
 const LoginForm = ({ redirect }: { redirect?: string }) => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
 
-  // get field error message
+  // Form state
+  const [formData, setFormData] = useState({
+    email: "",
+    password: "",
+  });
 
   useEffect(() => {
-    if (state && !state.success && state.message) {
+    if (state?.success) {
+      // Use startTransition to avoid sync cascading-render warning
+      startTransition(() => {
+        setFormData({ email: "", password: "" });
+      });
+    } else if (state && !state.success && state.message) {
       toast.error(state.message);
     }
   }, [state]);
+  // Handle input changes
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
 
   console.log("Action state:", state);
 
@@ -32,6 +49,8 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
             id="email"
             name="email"
             type="email"
+            value={formData.email}
+            onChange={handleInputChange}
             placeholder="Enter your email"
           />
 
@@ -44,6 +63,8 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
             id="password"
             name="password"
             type="password"
+            value={formData.password}
+            onChange={handleInputChange}
             autoComplete="off"
             placeholder="Enter your password"
           />
