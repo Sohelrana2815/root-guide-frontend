@@ -75,7 +75,7 @@ const RegisterForm = () => {
 
       {/* hidden inputs for languages */}
       {selectedLanguages.length > 0 &&
-        selectedLanguages.map((lang) => (
+        Array.from(new Set(selectedLanguages)).map((lang) => (
           <input
             key={`lang-${lang}`}
             type="hidden"
@@ -85,7 +85,7 @@ const RegisterForm = () => {
         ))}
       {/* hidden inputs for expertise */}
       {selectedLanguages.length > 0 &&
-        selectedExpertise.map((exp) => (
+        Array.from(new Set(selectedExpertise)).map((exp) => (
           <input
             key={`exp-${exp}`}
             type="hidden"

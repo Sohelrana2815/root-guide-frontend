@@ -9,9 +9,19 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import {
+  MultiSelect,
+  MultiSelectContent,
+  MultiSelectGroup,
+  MultiSelectItem,
+  MultiSelectTrigger,
+  MultiSelectValue,
+} from "@/components/ui/multi-select";
+import { EXPERTISE_OPTIONS } from "@/constant/expertise";
+import { LANGUAGES } from "@/constant/languages";
 import { createTour, updateTour } from "@/services/guide/toursManagement";
 import { ITour } from "@/types/tour.interface";
-import { useActionState, useEffect, useRef } from "react";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { toast } from "sonner";
 
 interface ITourFormDialogProps {
@@ -35,36 +45,67 @@ const TourFormDialog = ({
     isEdit ? updateTour.bind(null, tourId!) : createTour,
     null
   );
-  // 1. Create a ref to track if the user actually clicked "Submit"
+
+  // 1. Sanitize Initial State
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(() => {
+    const initial =
+      isEdit && Array.isArray(tour?.languages) ? tour!.languages : [];
+    return [...new Set(initial)]; // Ensures uniqueness
+  });
+
+  const [selectedExpertise, setSelectedExpertise] = useState<string[]>(() => {
+    const initial =
+      isEdit && Array.isArray(tour?.expertise) ? tour!.expertise : [];
+    return [...new Set(initial)]; // Ensures uniqueness
+  });
+  // Track manual submit to show toasts only when user actually submitted
   const hasSubmittedRef = useRef(false);
 
-  // 2. Reset everything when the dialog opens
-  useEffect(() => {
-    if (open) {
-      hasSubmittedRef.current = false;
-    }
-  }, [open, tour]);
+  // Reset on successful action (same behavior you had)
 
   useEffect(() => {
-    // 3. ONLY process if dialog is open, state exists, AND we actually submitted the form
     if (!open || !state || !hasSubmittedRef.current) return;
 
-    if (state.success) {
+    if (state?.success) {
       toast.success(state.message);
-      hasSubmittedRef.current = false; // Reset after success
+      // reset selected arrays
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedLanguages([]);
+      setSelectedExpertise([]);
+      hasSubmittedRef.current = false;
       onSuccess();
       onClose();
     } else if (state.success === false) {
       toast.error(state.message);
-      hasSubmittedRef.current = false; // Reset after error so toast doesn't repeat
+      hasSubmittedRef.current = false;
     }
   }, [state, onSuccess, onClose, open]);
 
-  // 4. Wrap the form action to set the submission flag
+  // When opening dialog for edit, prefill selected arrays from tour
+  // 2. Sanitize the Prefill Effect
+  useEffect(() => {
+    if (!open) return;
+    if (isEdit && tour) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setSelectedLanguages([
+        ...new Set(Array.isArray(tour.languages) ? tour.languages : []),
+      ]);
+      setSelectedExpertise([
+        ...new Set(Array.isArray(tour.expertise) ? tour.expertise : []),
+      ]);
+    } else {
+      setSelectedLanguages([]);
+      setSelectedExpertise([]);
+    }
+  }, [open, isEdit, tour]);
+  // wrapper to set flag and run action
   const handleSubmit = async (formData: FormData) => {
+    // Hidden inputs (rendered below) already supply languages/expertise entries to the FormData.
+    // No need to append again here (keeps no duplicates).
     hasSubmittedRef.current = true;
     formAction(formData);
   };
+
   return (
     <Dialog open={open} onOpenChange={onClose}>
       <DialogContent className="max-h-[90vh] flex flex-col p-0">
@@ -72,133 +113,188 @@ const TourFormDialog = ({
           <DialogTitle>{isEdit ? "Edit Tour" : "Add New Tour"}</DialogTitle>
         </DialogHeader>
 
+        {/* Use browser-managed FormData (uncontrolled inputs) — use defaultValue to prefill edit mode */}
         <form
           key={`${isEdit ? "edit" : "create"}-${tourId || "new"}`}
           action={handleSubmit}
           className="flex flex-col flex-1 min-h-0"
         >
           <div className="flex-1 overflow-y-auto px-6 space-y-4 pb-4">
-            {/* title */}
+            {/* Hidden inputs for languages */}
+            {Array.from(new Set(selectedLanguages)).map((lang) => (
+              <input
+                key={`lang-hidden-${lang}`}
+                type="hidden"
+                name="languages"
+                value={lang}
+              />
+            ))}
+            {selectedExpertise.map((exp) => (
+              <input
+                key={`exp-hidden-${exp}`}
+                type="hidden"
+                name="expertise"
+                value={exp}
+              />
+            ))}
+
+            {/* Title (uncontrolled) */}
             <Field>
               <FieldLabel htmlFor="title">Title</FieldLabel>
               <Input
-                id="title"
                 name="title"
-                placeholder="e.g, "
+                placeholder="e.g., Hands-on Scavenger Hunt"
                 defaultValue={isEdit ? tour?.title : undefined}
               />
               <InputFieldError state={state} field="title" />
             </Field>
-            {/* description */}
+
             <Field>
               <FieldLabel htmlFor="description">Description</FieldLabel>
               <Input
-                id="description"
                 name="description"
                 type="text"
-                placeholder="e.g,"
+                placeholder="Short description"
                 defaultValue={isEdit ? tour?.description : undefined}
               />
               <InputFieldError state={state} field="description" />
             </Field>
-            {/* itinerary */}
+
             <Field>
               <FieldLabel htmlFor="itinerary">Itinerary</FieldLabel>
               <Input
-                id="itinerary"
                 name="itinerary"
                 type="text"
-                placeholder="Enter itinerary"
+                placeholder="Itinerary"
                 defaultValue={isEdit ? tour?.itinerary : undefined}
               />
               <InputFieldError state={state} field="itinerary" />
             </Field>
-            {/* category */}
+
             <Field>
               <FieldLabel htmlFor="category">Category</FieldLabel>
               <Input
-                id="category"
                 name="category"
                 type="text"
-                placeholder="Enter a category"
+                placeholder="Category"
                 defaultValue={isEdit ? tour?.category : undefined}
               />
               <InputFieldError state={state} field="category" />
             </Field>
-            {/* city */}
+
+            <Field>
+              <FieldLabel>Languages you speak</FieldLabel>
+              <MultiSelect
+                values={selectedLanguages}
+                onValuesChange={(values) =>
+                  setSelectedLanguages(
+                    Array.isArray(values) ? values : [values]
+                  )
+                }
+              >
+                <MultiSelectTrigger className="w-full">
+                  <MultiSelectValue placeholder="Select languages" />
+                </MultiSelectTrigger>
+                <MultiSelectContent>
+                  <MultiSelectGroup>
+                    {LANGUAGES.map((lang) => (
+                      <MultiSelectItem key={lang.value} value={lang.value}>
+                        {lang.label}
+                      </MultiSelectItem>
+                    ))}
+                  </MultiSelectGroup>
+                </MultiSelectContent>
+              </MultiSelect>
+              <InputFieldError field="languages" state={state} />
+            </Field>
+
+            <Field>
+              <FieldLabel>Expertise (what you offer)</FieldLabel>
+              <MultiSelect
+                values={selectedExpertise}
+                onValuesChange={(values) =>
+                  setSelectedExpertise(
+                    Array.isArray(values) ? values : [values]
+                  )
+                }
+              >
+                <MultiSelectTrigger className="w-full">
+                  <MultiSelectValue placeholder="Select expertise" />
+                </MultiSelectTrigger>
+                <MultiSelectContent>
+                  <MultiSelectGroup>
+                    {EXPERTISE_OPTIONS.map((opt) => (
+                      <MultiSelectItem key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </MultiSelectItem>
+                    ))}
+                  </MultiSelectGroup>
+                </MultiSelectContent>
+              </MultiSelect>
+              <InputFieldError field="expertise" state={state} />
+            </Field>
 
             <Field>
               <FieldLabel htmlFor="city">City</FieldLabel>
               <Input
-                id="city"
                 name="city"
-                placeholder="Select a city"
-                // defaultValue={isEdit ? doctor?.doctorSpecialties?.[0]?.specialties?.title : ""}
-                defaultValue={tour?.city}
-                type="text"
+                placeholder="City"
+                defaultValue={isEdit ? tour?.city : undefined}
               />
               <InputFieldError state={state} field="city" />
             </Field>
-            {/* price */}
 
             <Field>
               <FieldLabel htmlFor="price">Price</FieldLabel>
               <Input
-                id="price"
                 name="price"
                 type="number"
-                placeholder="e.g, 100"
-                defaultValue={tour?.price}
+                placeholder="e.g., 30"
+                defaultValue={isEdit ? String(tour?.price ?? "") : undefined}
               />
               <InputFieldError state={state} field="price" />
             </Field>
-            {/* duration */}
+
             <Field>
-              <FieldLabel htmlFor="duration">Duration</FieldLabel>
+              <FieldLabel htmlFor="duration">Duration (hours)</FieldLabel>
               <Input
-                id="duration"
                 name="duration"
                 type="number"
-                placeholder="e.g, 5 hours"
-                defaultValue={isEdit ? tour?.duration : undefined}
+                placeholder="e.g., 4.5"
+                defaultValue={isEdit ? String(tour?.duration ?? "") : undefined}
               />
               <InputFieldError state={state} field="duration" />
             </Field>
-            {/* Meeting point */}
+
             <Field>
               <FieldLabel htmlFor="meetingPoint">Meeting Point</FieldLabel>
               <Input
-                id="meetingPoint"
                 name="meetingPoint"
-                placeholder="e.g, "
+                placeholder="Meeting point"
                 defaultValue={isEdit ? tour?.meetingPoint : undefined}
               />
               <InputFieldError state={state} field="meetingPoint" />
             </Field>
-            {/* Max group size */}
+
             <Field>
               <FieldLabel htmlFor="maxGroupSize">Maximum Group Size</FieldLabel>
               <Input
-                id="maxGroupSize"
                 name="maxGroupSize"
                 type="number"
-                placeholder="5"
-                defaultValue={isEdit ? tour?.maxGroupSize : undefined}
+                placeholder="e.g., 16"
+                defaultValue={
+                  isEdit ? String(tour?.maxGroupSize ?? "") : undefined
+                }
                 min="0"
               />
               <InputFieldError state={state} field="maxGroupSize" />
             </Field>
-            {/* Image */}
+
+            {/* file input only for create */}
             {!isEdit && (
               <Field>
                 <FieldLabel htmlFor="file">Image</FieldLabel>
-                <Input
-                  id="file"
-                  name="file"
-                  type="file"
-                  accept="image/*"
-                  placeholder="Select an image"
-                />
+                <Input name="file" type="file" accept="image/*" />
                 <p className="text-xs text-gray-500 mt-1">
                   Upload a photo for the tour
                 </p>

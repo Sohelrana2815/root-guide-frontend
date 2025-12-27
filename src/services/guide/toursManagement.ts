@@ -4,6 +4,7 @@ import { serverFetch } from "@/lib/server-fetch";
 import { zodValidator } from "@/lib/zodValidator";
 import {
   createTourZodSchema,
+  // createTourZodSchema,
   updateTourZodSchema,
 } from "@/zod/tour.validation";
 
@@ -15,11 +16,18 @@ export async function createTour(_prevState: any, formData: FormData) {
       itinerary: formData.get("itinerary") as string,
       category: formData.get("category") as string,
       city: formData.get("city") as string,
-      price: Number(formData.get("price")) as number,
-      duration: Number(formData.get("duration")) as number,
+      price: Number(formData.get("price")) || 0,
+      duration: Number(formData.get("duration")) || 0,
       meetingPoint: formData.get("meetingPoint") as string,
-      maxGroupSize: Number(formData.get("maxGroupSize")) as number,
+      maxGroupSize: Number(formData.get("maxGroupSize")) || 0,
+      languages: formData
+        .getAll("languages")
+        .map(String)
+        .filter(Boolean),
+      expertise: formData.getAll("expertise").map(String).filter(Boolean),
     };
+    // log the payload so you can inspect shape in server console
+    console.log("createTour - raw payload from form:", payload);
 
     if (zodValidator(payload, createTourZodSchema).success === false) {
       return zodValidator(payload, createTourZodSchema);
@@ -32,6 +40,7 @@ export async function createTour(_prevState: any, formData: FormData) {
         message: "Invalid payload",
       };
     }
+    console.log("createTour - validated payload:", validatedPayload);
     // console.log(validatedPayload);
     const newFormData = new FormData();
     newFormData.append("data", JSON.stringify(validatedPayload));
@@ -173,11 +182,16 @@ export async function updateTour(
       duration: Number(formData.get("duration")) as number,
       meetingPoint: formData.get("meetingPoint") as string,
       maxGroupSize: Number(formData.get("maxGroupSize")) as number,
+      languages: formData
+        .getAll("languages")
+        .map(String)
+        .filter(Boolean),
+      expertise: formData.getAll("expertise").map(String).filter(Boolean),
     };
 
     // First validate the payload
     const validationResult = zodValidator(payload, updateTourZodSchema);
-    
+
     // Check if validation failed
     if (!validationResult.success) {
       return {
@@ -232,7 +246,7 @@ export async function softDeleteTour(id: string) {
 }
 export async function deleteTour(id: string) {
   try {
-    const response = await serverFetch.patch(`/tours/${id}`);
+    const response = await serverFetch.delete(`/tours/${id}`);
     const result = await response.json();
     // console.log({ result });
     return result;

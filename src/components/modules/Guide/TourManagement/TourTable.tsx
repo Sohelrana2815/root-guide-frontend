@@ -3,12 +3,13 @@ import { ITour } from "@/types/tour.interface";
 import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { softDeleteTour } from "@/services/guide/toursManagement";
+// import { softDeleteTour } from "@/services/guide/toursManagement";
 import { toast } from "sonner";
 import ManagementTable from "@/components/shared/managementTables/ManagementTable";
 import { TourColumns } from "./TourColumns";
 import TourFormDialog from "./TourFormDialog";
 import TourViewDetailDialog from "./TourViewDetailDialog";
+import { deleteTour } from "@/services/guide/toursManagement";
 
 interface TourTableProps {
   tours: ITour[];
@@ -51,7 +52,7 @@ const TourTable = ({ tours }: TourTableProps) => {
     if (!tourId) return;
 
     setIsDeleting(true);
-    const result = await softDeleteTour(tourId);
+    const result = await deleteTour(tourId);
     setIsDeleting(false);
 
     if (result.success) {

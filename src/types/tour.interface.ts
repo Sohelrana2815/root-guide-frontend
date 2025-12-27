@@ -7,7 +7,8 @@ export interface ITour {
 
   category: string;
   city: string;
-
+  languages: string[];
+  expertise: string[];
   price: number;
   duration: number;
   meetingPoint: string;
