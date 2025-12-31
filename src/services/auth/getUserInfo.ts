@@ -4,7 +4,7 @@
 import { serverFetch } from "@/lib/server-fetch";
 import { IUser } from "@/types/user.interface";
 
-export const getUserInfo = async (): Promise<IUser | null> => {
+export const getUserInfo = async (): Promise<IUser | any> => {
   try {
     const response = await serverFetch.get("/users/me", {
       cache: "force-cache",
