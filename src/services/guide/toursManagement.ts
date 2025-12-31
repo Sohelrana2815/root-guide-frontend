@@ -121,52 +121,6 @@ export async function getTourById(id: string) {
   }
 }
 
-// export async function updateTour(
-//   id: string,
-//   _prevState: any,
-//   formData: FormData
-// ) {
-//   try {
-//     const payload = {
-//       title: formData.get("title") as string,
-//       description: formData.get("description") as string,
-//       category: formData.get("category") as string,
-//       city: formData.get("city") as string,
-//       price: Number(formData.get("price")) as number,
-//       duration: Number(formData.get("duration")) as number,
-//       meetingPoint: formData.get("meetingPoint") as string,
-//       maxGroupSize: Number(formData.get("maxGroupSize")) as number,
-//     };
-
-//     const validatedPayload = zodValidator(payload, updateTourZodSchema).data;
-
-//     const newFormData = new FormData();
-
-//     newFormData.append("data", JSON.stringify(validatedPayload));
-//     const file = formData.get("file");
-//     if (file instanceof File && file.size > 0) {
-//       newFormData.append("file", file);
-//     }
-
-//     const response = await serverFetch.patch(`/tours/${id}`, {
-//       body: newFormData,
-//     });
-
-//     const result = await response.json();
-//     // console.log({ result });
-//     return result;
-//   } catch (error: any) {
-//     console.log(error);
-//     return {
-//       success: false,
-//       message: `${
-//         process.env.NODE_ENV === "development"
-//           ? error.message
-//           : "Something went wrong"
-//       }`,
-//     };
-//   }
-// }
 export async function updateTour(
   id: string,
   _prevState: any,

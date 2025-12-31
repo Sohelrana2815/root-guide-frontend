@@ -23,7 +23,7 @@ const SelectFilter = ({
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
-  const currentValue = searchParams.get(paramName) || "All";
+  const currentValue = searchParams.get(paramName) || "All"  ;
   const handleChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
 

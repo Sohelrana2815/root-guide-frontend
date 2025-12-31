@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+"use client";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -17,11 +19,13 @@ import {
   ArrowDown,
   ArrowUp,
   ArrowUpDown,
+  Ban,
   Edit,
   Eye,
   Loader2,
   MoreHorizontal,
   Trash,
+  Unlock,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition } from "react";
@@ -39,6 +43,8 @@ interface ManagementTableProps<T> {
   onView?: (row: T) => void;
   onEdit?: (row: T) => void;
   onDelete?: (row: T) => void;
+  onBlock?: (row: T) => void;
+  onUnblock?: (row: T) => void;
   getRowKey: (row: T) => string;
   emptyMessage?: string;
   isRefreshing?: boolean;
@@ -50,9 +56,11 @@ function ManagementTable<T>({
   onView,
   onEdit,
   onDelete,
+  onBlock,
+  onUnblock,
   getRowKey,
-  emptyMessage,
-  isRefreshing,
+  emptyMessage = "No records found.",
+  isRefreshing = false,
 }: ManagementTableProps<T>) {
   const hasActions = onView || onEdit || onDelete;
   const router = useRouter();
@@ -112,12 +120,6 @@ function ManagementTable<T>({
       <Table>
         <TableHeader>
           <TableRow>
-            {/* {columns?.map((column, colIdx) => (
-              <TableHead key={colIdx} className={column.className}>
-                {column.header}
-              </TableHead>
-            ))} */}
-
             {columns?.map((column, colIndex) => (
               <TableHead key={colIndex} className={column.className}>
                 {column.sortKey ? (
@@ -183,6 +185,35 @@ function ManagementTable<T>({
                           <DropdownMenuItem onClick={() => onDelete(item)}>
                             <Trash className="mr-2 h-4 w-4" />
                             Delete
+                          </DropdownMenuItem>
+                        )}
+
+                        {onBlock && (
+                          <DropdownMenuItem
+                            onClick={() => onBlock(item)}
+                            disabled={(item as any).userStatus === "BLOCKED"}
+                            className={
+                              (item as any).userStatus === "BLOCKED"
+                                ? "opacity-50 cursor-not-allowed"
+                                : ""
+                            }
+                          >
+                            <Ban className="mr-2 h-4 w-4" />
+                            Block
+                          </DropdownMenuItem>
+                        )}
+                        {onUnblock && (
+                          <DropdownMenuItem
+                            onClick={() => onUnblock(item)}
+                            disabled={(item as any).userStatus !== "BLOCKED"}
+                            className={
+                              (item as any).userStatus !== "BLOCKED"
+                                ? "opacity-50 cursor-not-allowed"
+                                : ""
+                            }
+                          >
+                            <Unlock className="mr-2 h-4 w-4" />
+                            Unblock
                           </DropdownMenuItem>
                         )}
                       </DropdownMenuContent>

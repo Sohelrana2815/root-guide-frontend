@@ -42,14 +42,7 @@ export const TourColumns: Column<ITour>[] = [
       </div>
     ),
   },
-  // {
-  //   header: "Itinerary",
-  //   accessor: (tour) => (
-  //     <div className="flex flex-col">
-  //       <span className="text-sm">{tour.itinerary}</span>
-  //     </div>
-  //   ),
-  // },
+
   {
     header: "Price",
     accessor: (tour) => (

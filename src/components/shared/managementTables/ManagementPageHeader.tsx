@@ -5,12 +5,13 @@ import React from "react";
 interface ManagementPageHeaderProps {
   title: string;
   description?: string;
+  children?: React.ReactNode;
+
   action?: {
     icon: LucideIcon;
     label: string;
     onClick: () => void;
   };
-  children?: React.ReactNode;
 }
 
 const ManagementPageHeader = ({

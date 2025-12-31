@@ -1,27 +1,29 @@
 "use client";
-import { ITour } from "@/types/tour.interface";
-import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
-import { useState, useTransition } from "react";
-import { useRouter } from "next/navigation";
-import { softDeleteTour } from "@/services/guide/toursManagement";
-import { toast } from "sonner";
 import ManagementTable from "@/components/shared/managementTables/ManagementTable";
-import TourFormDialog from "../../Guide/TourManagement/TourFormDialog";
-import { TourColumns } from "../../Guide/TourManagement/TourColumns";
-import TourViewDetailDialog from "../../Guide/TourManagement/TourViewDetailDialog";
+import { IUser } from "@/types/user.interface";
+import { UserColumns } from "./UserColumns";
+import DeleteConfirmation from "@/components/shared/DeleteConfirmation";
+import { useRouter } from "next/navigation";
+import { useState, useTransition } from "react";
+import {
+  blockUser,
+  deleteUser,
+  unblockUser,
+} from "@/services/admin/usersManagement";
+import { toast } from "sonner";
+import UserViewDetailDialog from "./UserViewDetailDialog";
 
-interface TourTableProps {
-  tours: ITour[];
+interface UserTableProps {
+  users: IUser[];
 }
-const TourTable = ({ tours }: TourTableProps) => {
+
+const UserTable = ({ users }: UserTableProps) => {
   const router = useRouter();
   const [, startTransition] = useTransition();
-  const [deletingTour, setDeletingTour] = useState<ITour | null>(null);
-  const [viewingTour, setViewingTour] = useState<ITour | null>(null);
-  const [editingTour, setEditingTour] = useState<ITour | null>(null);
+  const [viewingUser, setViewingUser] = useState<IUser | null>(null);
+  const [deletingUser, setDeletingUser] = useState<IUser | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
-
-  const getTourId = (tour: ITour) => tour._id;
+  const getUserId = (user: IUser) => user._id;
 
   // Refresh
   const handleRefresh = () => {
@@ -29,81 +31,92 @@ const TourTable = ({ tours }: TourTableProps) => {
       router.refresh();
     });
   };
-  // view tour
-  const handleView = (tour: ITour) => {
-    setViewingTour(tour);
+  // // view user
+  const handleView = (user: IUser) => {
+    setViewingUser(user);
   };
-  // Edit tour
-  const handleEdit = (tour: ITour) => {
-    setEditingTour(tour);
-  };
-  // delete tour
-  const handleDelete = (tour: ITour) => {
-    setDeletingTour(tour);
+  const handleDelete = (user: IUser) => {
+    setDeletingUser(user);
   };
 
-  // confirm to delete a tour
+  // block user
+  const handleBlock = async (user: IUser) => {
+    const userId = getUserId(user);
+    if (!userId) return;
+
+    const result = await blockUser(userId);
+    if (result.success) {
+      toast.success(result.message || "User blocked successfully");
+      handleRefresh();
+    } else {
+      toast.error(result.message || "Failed to block user");
+    }
+  };
+
+  const handleUnblock = async (user: IUser) => {
+    const userId = getUserId(user);
+    if (!userId) return;
+
+    const result = await unblockUser(userId);
+    if (result.success) {
+      toast.success(result.message || "User unblocked successfully");
+      handleRefresh();
+    } else {
+      toast.error(result.message || "Failed to unblock user");
+    }
+  };
+
+  // confirm to delete a user
 
   const confirmDelete = async () => {
-    if (!deletingTour) return;
+    if (!deletingUser) return;
 
-    const tourId = getTourId(deletingTour);
-    if (!tourId) return;
+    const userId = getUserId(deletingUser);
+    if (!userId) return;
 
     setIsDeleting(true);
-    const result = await softDeleteTour(tourId);
+    const result = await deleteUser(userId);
     setIsDeleting(false);
 
     if (result.success) {
-      toast.success(result.message || "Tour deleted successfully");
-      setDeletingTour(null);
+      toast.success(result.message || "User deleted successfully");
+      setDeletingUser(null);
       handleRefresh();
     } else {
-      toast.error(result.message || "Failed to delete tour");
+      toast.error(result.message || "Failed to delete user");
     }
   };
 
   return (
     <>
       <ManagementTable
-        data={tours}
-        columns={TourColumns}
-        onView={handleView}
-        onEdit={handleEdit}
+        data={users}
+        columns={UserColumns}
         onDelete={handleDelete}
-        getRowKey={(tour) => getTourId(tour) ?? tour.title}
-        emptyMessage="No tours found"
+        onView={handleView}
+        onBlock={handleBlock}
+        onUnblock={handleUnblock}
+        getRowKey={(user) => user._id!}
+        emptyMessage="No users found"
       />
-      {/* Edit tour form dialog */}
-      <TourFormDialog
-        open={!!editingTour}
-        onClose={() => setEditingTour(null)}
-        tour={editingTour!}
-        onSuccess={() => {
-          setEditingTour(null);
-          handleRefresh();
-        }}
+      {/* view user detail */}
+      <UserViewDetailDialog
+        open={!!viewingUser}
+        onClose={() => setViewingUser(null)}
+        user={viewingUser}
       />
-
-      {/* view tour details dialog */}
-      <TourViewDetailDialog
-        open={!!viewingTour}
-        onClose={() => setViewingTour(null)}
-        tour={viewingTour}
-      />
-
-      {/* delete confirmation dialog */}
+      {/* Delete confirmation dialog */}
 
       <DeleteConfirmation
-        open={!!deletingTour}
-        onOpenChange={(open) => !open && setDeletingTour(null)}
+        open={!!deletingUser}
+        onOpenChange={(open) => !open && setDeletingUser(null)}
         onConfirm={confirmDelete}
-        title="Delete Tour"
-        description={`Are you sure you want to delete ${deletingTour?.title}? This action cannot be undone.`}
+        title="Delete User"
+        description={`Are you sure you want to delete ${deletingUser?.name}? This action cannot be undone.`}
         isDeleting={isDeleting}
       />
     </>
   );
 };
 
-export default TourTable;
+export default UserTable;

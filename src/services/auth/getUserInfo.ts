@@ -1,26 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 
-import { UserInfo } from "@/types/user.interface";
-import { getCookie } from "./tokenHandlers";
-import jwt, { JwtPayload } from "jsonwebtoken";
+import { serverFetch } from "@/lib/server-fetch";
+import { IUser } from "@/types/user.interface";
 
-export const getUserInfo = async (): Promise<UserInfo | null> => {
+export const getUserInfo = async (): Promise<IUser | null> => {
   try {
-    const accessToken = await getCookie("accessToken");
-    if (!accessToken) return null;
+    const response = await serverFetch.get("/users/me", {
+      cache: "force-cache",
+      next: { tags: ["user-info"] },
+    });
+    const result = await response.json();
 
-    const verifiedToken = jwt.verify(
-      accessToken,
-      process.env.JWT_ACCESS_SECRET as string
-    ) as JwtPayload;
-
-    if (!verifiedToken) return null;
-
-    const userInfo: UserInfo = {
-      name: verifiedToken.name,
-      email: verifiedToken.email,
-      role: verifiedToken.role,
+    const userInfo: IUser = {
+      name: result.data?.name || "Unknown User",
+      ...result.data,
     };
     return userInfo;
   } catch (error: any) {
