@@ -40,22 +40,15 @@ export const touristNavItems: NavSection[] = [
     title: "See Tours and Bookings",
     items: [
       {
-        title: "Explore Tours",
-        href: "/explore",
-        icon: "Tours",
-        roles: ["TOURIST"],
-      },
-
-      {
-        title: "Book Tours",
-        href: "/dashboard/bookings",
-        icon: "Booking",
+        title: "Book Tour",
+        href: "/tours",
+        icon: "Bus",
         roles: ["TOURIST"],
       },
       {
         title: "My Wishlist",
-        href: "/dashboard/my-tours",
-        icon: "Tours",
+        href: "/dashboard/my-bookings",
+        icon: "Archive",
         roles: ["TOURIST"],
       },
     ],

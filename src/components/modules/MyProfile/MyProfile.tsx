@@ -177,7 +177,6 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
                   id="phoneNumber"
                   name="phoneNumber"
                   defaultValue={profileData?.phoneNumber || ""}
-                  required
                   disabled={isPending}
                 />
               </div>

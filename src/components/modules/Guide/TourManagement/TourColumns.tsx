@@ -17,7 +17,6 @@ export const TourColumns: Column<ITour>[] = [
             ? `${tour.city}${tour.category ? ` • ${tour.category}` : ""}`
             : tour.category
         }
-        photo={tour.image}
       />
     ),
     sortKey: "title",
