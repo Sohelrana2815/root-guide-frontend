@@ -10,7 +10,6 @@ import { ITour } from "@/types/tour.interface";
 import { IUser } from "@/types/user.interface";
 import {
   Award,
-  CalendarDays,
   CheckCircle2,
   Languages,
   MapPin,
@@ -22,22 +21,25 @@ import {
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
-interface TourConfirmationProps {
+interface TourConfirmProps {
   tour: ITour;
   guide: Partial<IUser>;
+  initialGuestCount: number;
 }
 
-const TourBookingConfirmation = ({ tour, guide }: TourConfirmationProps) => {
+const TourBookingConfirmation = ({
+  tour,
+  guide,
+  initialGuestCount,
+}: TourConfirmProps) => {
   const router = useRouter();
   const [isBooking, setIsBooking] = useState(false);
   const [bookingSuccess, setBookingSuccess] = useState(false);
-  const [guestCount, setGuestCount] = useState(1);
+  const [guestCount, setGuestCount] = useState(initialGuestCount);
   const totalPrice = (tour.price || 0) * guestCount;
-  const handleConfirmationBooking = async () => {
-    if (guestCount > (tour.maxGroupSize || 0)) {
-      return toast.error(`Max group size is ${tour.maxGroupSize}`);
-    }
 
+  // confirm handler function
+  const handleConfirmationBooking = async () => {
     setIsBooking(true);
 
     try {
@@ -47,7 +49,7 @@ const TourBookingConfirmation = ({ tour, guide }: TourConfirmationProps) => {
         guestCount: guestCount,
       });
 
-      if (result.success && result.data?.paymentUrl) {
+      if (result.success) {
         setBookingSuccess(true);
         toast.success("Tour booked successfully!");
         // Redirect after 2 seconds
@@ -182,54 +184,41 @@ const TourBookingConfirmation = ({ tour, guide }: TourConfirmationProps) => {
           <CardTitle>Booking Summary</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-1">
-            <p className="font-bold text-lg">{tour.title}</p>
-            <p className="text-sm text-muted-foreground flex items-center gap-1">
-              <MapPin className="w-3 h-3" /> {tour.city}
-            </p>
-          </div>
-
-          <Separator />
-
-          <div className="space-y-3">
-            <div className="flex justify-between items-center">
-              <span className="text-sm text-muted-foreground flex items-center gap-2">
-                <Users className="w-4 h-4" /> Guests
-              </span>
-              <div className="flex items-center gap-2">
-                <button
-                  onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
-                  className="w-8 h-8 rounded border flex items-center justify-center hover:bg-gray-50"
-                >
-                  -
-                </button>
-                <span className="w-4 text-center font-medium">
-                  {guestCount}
-                </span>
-                <button
-                  onClick={() =>
-                    setGuestCount(
-                      Math.min(tour.maxGroupSize || 10, guestCount + 1)
-                    )
-                  }
-                  className="w-8 h-8 rounded border flex items-center justify-center hover:bg-gray-50"
-                >
-                  +
-                </button>
-              </div>
-            </div>
-
-            <div className="flex justify-between text-sm">
-              <span className="text-muted-foreground flex items-center gap-2">
-                <CalendarDays className="w-4 h-4" /> Price per person
-              </span>
-              <span>${tour.price}</span>
+          {/* Displaying Dynamic Totals */}
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-muted-foreground flex items-center gap-2">
+              <Users className="w-4 h-4" /> Guests
+            </span>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => setGuestCount(Math.max(1, guestCount - 1))}
+              >
+                {" "}
+                -{" "}
+              </Button>
+              <span className="w-4 text-center font-bold">{guestCount}</span>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() =>
+                  setGuestCount(Math.min(tour.maxGroupSize, guestCount + 1))
+                }
+              >
+                {" "}
+                +{" "}
+              </Button>
             </div>
           </div>
 
-          <div className="bg-primary/5 p-4 rounded-lg border border-primary/10">
+          <div className="bg-primary/5 p-4 rounded-lg border border-primary/20">
             <div className="flex justify-between items-center">
-              <span className="font-bold">Total Amount</span>
+              <span className="font-semibold text-muted-foreground">
+                Total Price
+              </span>
               <span className="text-2xl font-black text-primary">
                 ${totalPrice}
               </span>
@@ -237,22 +226,16 @@ const TourBookingConfirmation = ({ tour, guide }: TourConfirmationProps) => {
           </div>
 
           <Button
-            className="w-full h-12 text-lg font-bold shadow-lg shadow-primary/20"
+            className="w-full h-12 text-lg font-bold"
             onClick={handleConfirmationBooking}
             disabled={isBooking}
           >
-            {isBooking ? "Processing..." : "Confirm & Pay Now"}
+            {isBooking ? "Confirming..." : "Confirm & Pay Now"}
           </Button>
-
-          <p className="text-[10px] text-center text-muted-foreground">
-            By clicking &quot;Confirm&quot;, you agree to our terms of service
-            and cancellation policy.
-          </p>
         </CardContent>
       </Card>
     </div>
   );
-  
 };
 
 export default TourBookingConfirmation;

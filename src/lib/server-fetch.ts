@@ -28,16 +28,24 @@ export const serverFetch = {
   get: async (endPoint: string, options: RequestInit = {}): Promise<Response> =>
     serverFetchHelper(endPoint, { ...options, method: "GET" }),
 
-  post: async (endPoint: string, options: RequestInit = {}):Promise<Response> =>
+  post: async (
+    endPoint: string,
+    options: RequestInit = {}
+  ): Promise<Response> =>
     serverFetchHelper(endPoint, { ...options, method: "POST" }),
 
- put: async (endPoint: string, options: RequestInit = {}):Promise<Response> =>
+  put: async (endPoint: string, options: RequestInit = {}): Promise<Response> =>
     serverFetchHelper(endPoint, { ...options, method: "PUT" }),
- 
- patch: async (endPoint: string, options: RequestInit = {}):Promise<Response> =>
-    serverFetchHelper(endPoint, { ...options, method: "PATCH" }),
- 
- delete: async (endPoint: string, options: RequestInit = {}):Promise<Response> =>
-    serverFetchHelper(endPoint, { ...options, method: "DELETE" }),
 
+  patch: async (
+    endPoint: string,
+    options: RequestInit = {}
+  ): Promise<Response> =>
+    serverFetchHelper(endPoint, { ...options, method: "PATCH" }),
+
+  delete: async (
+    endPoint: string,
+    options: RequestInit = {}
+  ): Promise<Response> =>
+    serverFetchHelper(endPoint, { ...options, method: "DELETE" }),
 };
