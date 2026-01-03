@@ -1,4 +1,4 @@
-import TourBookingConfirmation from "@/components/modules/Tours/TourBookingConfirmation";
+import TourBookingConfirmation from "@/components/modules/Tourist/TourBookings/TourBookingConfirmation";
 import { getTourById } from "@/services/guide/toursManagement";
 import { getGuideById } from "@/services/tourist/booking.service";
 import { notFound } from "next/navigation";

@@ -54,6 +54,27 @@ export const getMyBookings = async () => {
   }
 };
 
+export const getBookingById = async (id: string) => {
+  try {
+    const response = await serverFetch.get(`/bookings/${id}`);
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to fetch booking details");
+    }
+    return result;
+  } catch (error: any) {
+    console.error("Error while fetching bookings:", error);
+    return {
+      success: false,
+      data: null,
+      message:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Something went wrong while fetching the booking details.",
+    };
+  }
+};
+
 export async function getGuideById(id: string) {
   try {
     const response = await serverFetch.get(`/users/guide/${id}`);

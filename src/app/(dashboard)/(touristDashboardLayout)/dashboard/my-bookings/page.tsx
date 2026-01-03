@@ -1,4 +1,4 @@
-import TourBookingList from "@/components/modules/TouristBookings/TourBookingList";
+import TourBookingList from "@/components/modules/Tourist/TourBookings/TourBookingList";
 import { getMyBookings } from "@/services/tourist/booking.service";
 import { IBooking } from "@/types/booking.interface";
 

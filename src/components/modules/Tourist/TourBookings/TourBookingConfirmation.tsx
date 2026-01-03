@@ -125,7 +125,10 @@ const TourBookingConfirmation = ({
                 <span className="flex items-center gap-1">
                   <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                   <span className="font-medium text-foreground">
-                    {guide.averageRating?.toFixed(1) || "5.0"}
+                    Guide Rating:{" "}
+                    {guide.averageRating
+                      ? `${guide.averageRating} / 5`
+                      : "No ratings yet"}
                   </span>
                   (Reviews)
                 </span>
@@ -230,7 +233,7 @@ const TourBookingConfirmation = ({
             onClick={handleConfirmationBooking}
             disabled={isBooking}
           >
-            {isBooking ? "Confirming..." : "Confirm & Pay Now"}
+            {isBooking ? "Confirming..." : "Confirm Booking"}
           </Button>
         </CardContent>
       </Card>

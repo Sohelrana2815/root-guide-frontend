@@ -154,7 +154,7 @@ const TourViewDetailDialog = ({
               {tour.averageRating !== undefined && (
                 <Badge className="bg-yellow-100 text-yellow-800 hover:bg-yellow-200 dark:bg-yellow-900 dark:text-yellow-100 text-sm px-3 py-1">
                   <Star className="h-3 w-3 mr-1 fill-yellow-400 text-yellow-400" />
-                  {tour.averageRating.toFixed(1)} Rating
+                  {tour.averageRating.toFixed(1)} Average Rating
                 </Badge>
               )}
             </div>

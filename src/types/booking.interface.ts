@@ -1,3 +1,5 @@
+import { IReview } from "./review.interface";
+
 export enum BookingStatus {
   PENDING = "PENDING",
   PAID = "PAID",
@@ -17,6 +19,7 @@ export interface IBooking {
   bookingDate: Date;
   totalPrice: number;
   status: BookingStatus;
+  review?: IReview;
   createdAt?: Date;
   updatedAt?: Date;
 }

@@ -1,10 +1,12 @@
 // we will fetch/get tour details here specific tour not only tour but also guide details
 
 import GuideProfileInfo from "@/components/modules/TourDetails/GuideProfileInfo";
+import GuideTourReviews from "@/components/modules/TourDetails/GuideTourReviews";
 // import GuideTourReviews from "@/components/modules/TourDetails/GuideTourReviews";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { getTourById } from "@/services/guide/toursManagement";
+import { getTourReviews } from "@/services/tourist/reviews.service";
 import { Clock, MapPin, Star, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -15,10 +17,13 @@ const TourDetailPage = async ({
   params: Promise<{ id: string }>;
 }) => {
   const { id } = await params;
-  const result = await getTourById(id);
-
-  const tour = result?.data;
+  const [tourResult, reviewResult] = await Promise.all([
+    getTourById(id),
+    getTourReviews(id),
+  ]);
+  const tour = tourResult?.data;
   const guide = tour?.guideId;
+  const reviews = reviewResult?.data || [];
 
   if (!tour) return <div className="text-center py-20">Tour not found</div>;
 
@@ -71,21 +76,18 @@ const TourDetailPage = async ({
               {tour.description}
             </p>
           </section>
-
           <section>
             <h2 className="text-2xl font-bold mb-4">Itinerary</h2>
             <div className="bg-muted/30 p-6 rounded-xl border">
               <p className="whitespace-pre-line">{tour.itinerary}</p>
             </div>
           </section>
-
           <hr />
-
           {/* Guide Component */}
           <GuideProfileInfo guide={guide} />
+          <hr />
 
-          {/* Reviews Component */}
-          {/* <GuideTourReviews tourId={id} /> */}
+          <GuideTourReviews reviews={reviews} />
         </div>
 
         {/* Right Column: Sticky Booking Card */}

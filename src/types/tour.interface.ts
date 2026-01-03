@@ -13,7 +13,7 @@ export interface ITour {
   duration: number;
   meetingPoint: string;
   maxGroupSize: number;
-  averageRating: number;
+  averageRating?: number;
   reviewCount?: number;
   image?: string;
   isDelete?: boolean;

@@ -66,7 +66,10 @@ const TourCard = ({ tour, guide }: TourCardProps) => {
             </CardTitle>
             <div className="flex items-center gap-1 text-sm font-bold text-amber-500 ml-2">
               <Star className="h-4 w-4 fill-amber-500" />
-              {tour.averageRating?.toFixed(1) || "5.0"}
+              <span className="font-bold">{tour.averageRating || "New"}</span>
+              <span className="text-muted-foreground text-xs">
+                ({tour.reviewCount})
+              </span>
             </div>
           </div>
           <CardDescription className="line-clamp-2 text-sm">

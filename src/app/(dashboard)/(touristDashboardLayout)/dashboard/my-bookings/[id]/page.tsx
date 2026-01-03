@@ -1,20 +1,30 @@
-import { getTourById } from "@/services/guide/toursManagement";
+import BookingDetails from "@/components/modules/Tourist/TourBookings/BookingDetails";
+import { getBookingById } from "@/services/tourist/booking.service";
+import { IBooking } from "@/types/booking.interface";
+import { notFound } from "next/navigation";
 
 // we will fetch/get tour details here specific tour not only tour but also guide details
 
-const BookingTourDetailPage = async ({
-  params,
-}: {
+interface TourBookingDetailPageProps {
   params: Promise<{ id: string }>;
-}) => {
-  const { id } = await params;
-  const result = await getTourById(id);
+}
 
+const TourBookingDetailPage = async ({
+  params,
+}: TourBookingDetailPageProps) => {
+  const { id } = await params;
+  const response = await getBookingById(id);
+
+  if (!response?.success || !response?.data) {
+    notFound();
+  }
+
+  const booking: IBooking = response.data;
   return (
-    <div className="container mx-auto px-4 py-8 space-y-6">
-      <h2> Booked Tour Detail Page</h2>
+    <div className="container mx-auto px-4 py-8">
+      <BookingDetails booking={booking} />
     </div>
   );
 };
 
-export default BookingTourDetailPage;
+export default TourBookingDetailPage;

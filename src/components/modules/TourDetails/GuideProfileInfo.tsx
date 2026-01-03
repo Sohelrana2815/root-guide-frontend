@@ -3,7 +3,7 @@
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { getInitials } from "@/lib/formatters";
-import { ShieldCheck, Languages } from "lucide-react";
+import { ShieldCheck, Languages, Star } from "lucide-react";
 
 export default function GuideProfileInfo({ guide }: { guide: any }) {
   return (
@@ -18,11 +18,13 @@ export default function GuideProfileInfo({ guide }: { guide: any }) {
         <div className="flex-1 space-y-3">
           <div className="flex items-center gap-2">
             <h3 className="text-xl font-bold">{guide.name}</h3>
-            {guide.isVerified && (
+            {guide.isVerified || (
               <Badge className="bg-blue-500">
                 <ShieldCheck className="w-3 h-3 mr-1" /> Verified
               </Badge>
             )}
+            <Star className="h-4 w-4 fill-yellow-500 text-yellow-400" />
+            <span className="font-bold">{guide.averageRating || "New"}</span>
           </div>
 
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground">
