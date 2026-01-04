@@ -20,10 +20,7 @@ export async function createTour(_prevState: any, formData: FormData) {
       duration: Number(formData.get("duration")) || 0,
       meetingPoint: formData.get("meetingPoint") as string,
       maxGroupSize: Number(formData.get("maxGroupSize")) || 0,
-      languages: formData
-        .getAll("languages")
-        .map(String)
-        .filter(Boolean),
+      languages: formData.getAll("languages").map(String).filter(Boolean),
       expertise: formData.getAll("expertise").map(String).filter(Boolean),
     };
     // log the payload so you can inspect shape in server console
@@ -68,10 +65,6 @@ export async function createTour(_prevState: any, formData: FormData) {
   }
 }
 
-
-
-
-
 export async function getTours(queryString?: string) {
   try {
     const response = await serverFetch.get(
@@ -97,6 +90,27 @@ export async function getTours(queryString?: string) {
       success: false,
       data: [],
       meta: { total: 0, page: 1, limit: 10 },
+      message: `${
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Something went wrong!"
+      }`,
+    };
+  }
+}
+
+export async function getPublicTours() {
+  try {
+    const response = await serverFetch.get("/tours");
+
+    const result = await response.json();
+    const data = Array.isArray(result?.data) ? result.data : [];
+
+    return data;
+  } catch (error: any) {
+    // console.log(error);
+    return {
+      success: false,
       message: `${
         process.env.NODE_ENV === "development"
           ? error.message
@@ -140,10 +154,7 @@ export async function updateTour(
       duration: Number(formData.get("duration")) as number,
       meetingPoint: formData.get("meetingPoint") as string,
       maxGroupSize: Number(formData.get("maxGroupSize")) as number,
-      languages: formData
-        .getAll("languages")
-        .map(String)
-        .filter(Boolean),
+      languages: formData.getAll("languages").map(String).filter(Boolean),
       expertise: formData.getAll("expertise").map(String).filter(Boolean),
     };
 

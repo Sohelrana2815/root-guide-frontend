@@ -17,7 +17,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import BookTourDialog from "./BookTourDialog";
-// import BookTourDialog from "./BookTourDialog";
 
 interface TourCardProps {
   tour: any;
@@ -29,112 +28,121 @@ const TourCard = ({ tour, guide }: TourCardProps) => {
 
   return (
     <>
-      <Card className="group overflow-hidden hover:shadow-xl transition-all duration-300 border-none bg-card">
+      <Card className="overflow-hidden flex flex-col h-full">
         {/* 1. Tour Hero Image Section */}
-        <div className="relative w-full aspect-16/10 overflow-hidden">
+        <div className="relative w-full aspect-video md:aspect-4/3 bg-muted">
           <Image
             src={tour.image || "/api/placeholder/400/250"}
             alt={tour.title}
             fill
             priority // Optional: helps with LCP performance
-            className="object-cover group-hover:scale-105 transition-transform duration-500 ease-in-out"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover"
           />
+          {/* Price badge overlay */}
 
-          {/* Price Badge Overlay */}
-          <div className="absolute top-3 right-3 z-10">
-            <Badge className="bg-white/90 text-primary hover:bg-white text-lg font-bold py-1 px-3 backdrop-blur-sm border-none">
-              ${tour.price}
-            </Badge>
+          <div className="absolute top-3 left-3">
+            <Badge className="text-sm px-2 py-1">${tour.price}</Badge>
           </div>
-
           {/* City Overlay */}
-          <div className="absolute bottom-3 left-3 z-10">
+          <div className="absolute top-3 right-3">
             <Badge
               variant="secondary"
-              className="flex items-center gap-1 bg-black/60 text-white border-none backdrop-blur-sm px-2 py-1"
+              className="flex items-center gap-1 text-sm px-2 py-1"
             >
-              <MapPin className="h-3 w-3" />
-              {tour.city}
+              <MapPin className="w-3 h-3" />
+              <span className="max-w-32 truncate">{tour.city}</span>
             </Badge>
           </div>
         </div>
 
-        <CardHeader className="space-y-1">
-          <div className="flex justify-between items-start">
-            <CardTitle className="text-xl line-clamp-1 flex-1">
-              {tour.title}
-            </CardTitle>
-            <div className="flex items-center gap-1 text-sm font-bold text-amber-500 ml-2">
-              <Star className="h-4 w-4 fill-amber-500" />
-              <span className="font-bold">{tour.averageRating || "New"}</span>
-              <span className="text-muted-foreground text-xs">
-                ({tour.reviewCount})
-              </span>
+        <CardHeader className="pt-4 pb-0 px-4">
+          <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+            <div>
+              <CardTitle className="line-clamp-2">{tour.title}</CardTitle>
+              <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
+                <div className="flex items-center gap-1">
+                  <Star className="w-4 h-4" />
+                  <span>{tour.averageRating ?? "New"}</span>
+                  <span className="text-xs opacity-70">
+                    ({tour.reviewCount ?? 0})
+                  </span>
+                </div>
+              </div>
             </div>
           </div>
-          <CardDescription className="line-clamp-2 text-sm">
+
+          <CardDescription className="mt-2 line-clamp-3 px-0 text-sm">
             {tour.description}
           </CardDescription>
         </CardHeader>
 
-        <CardContent className="space-y-4 pb-4">
+        <CardContent className="px-4 pt-3 pb-4 flex-1">
           {/* 2. Tour Metadata */}
-          <div className="flex items-center justify-between text-sm text-muted-foreground border-y py-3">
-            <div className="flex items-center gap-1.5">
-              <Clock className="h-4 w-4 text-primary" />
+          <div className="grid grid-cols-2 gap-3 mb-4 text-sm">
+            <div className="flex items-center gap-2">
+              <Clock className="w-4 h-4" />
               <span>{tour.duration} Hours</span>
             </div>
-            <div className="flex items-center gap-1.5">
-              <Users className="h-4 w-4 text-primary" />
+
+            <div className="flex items-center gap-2">
+              <Users className="w-4 h-4" />
               <span>Max {tour.maxGroupSize}</span>
             </div>
           </div>
 
           {/* 3. Guide Trust Section */}
-          <div className="flex items-center gap-3 bg-muted/30 p-2 rounded-lg">
-            <Avatar className="h-10 w-10 border-2 border-background">
-              <AvatarImage src={guide.photo} alt={guide.name} />
-              <AvatarFallback className="text-xs bg-primary text-primary-foreground">
-                {getInitials(guide.name || "G")}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <p className="text-xs text-muted-foreground">Tour Guide</p>
-              <p className="text-sm font-semibold truncate">{guide.name}</p>
+          <div className="flex items-center justify-between gap-3">
+            <div className="flex items-center gap-3">
+              <Avatar className="h-10 w-10">
+                {guide?.photo ? (
+                  <AvatarImage src={guide.photo} alt={guide.name} />
+                ) : (
+                  <AvatarFallback>
+                    {getInitials(guide?.name ?? "G")}
+                  </AvatarFallback>
+                )}
+              </Avatar>
+
+              <div className="min-w-0">
+                <p className="text-xs text-muted-foreground">Tour Guide</p>
+                <p className="font-medium truncate">
+                  {guide?.name ?? "Unknown"}
+                </p>
+              </div>
             </div>
+
             {/* Verified Badge */}
-            <Badge
-              variant="outline"
-              className="text-[10px] uppercase text-blue-600 border-blue-200"
-            >
+            <Badge variant="outline" className="text-sm">
               Verified
             </Badge>
           </div>
         </CardContent>
 
-        <CardFooter className="gap-2 pt-0">
-          <Link className="flex-1" href={`/tours/${tour._id}`}>
+        <CardFooter className="px-4 pb-4 pt-0">
+          <div className="w-full flex gap-3">
+            <Link href={`/tours/${tour._id}`} className="flex-1">
+              <Button
+                variant="outline"
+                className="w-full h-10 flex items-center justify-center"
+                aria-label={`View details for ${tour.title}`}
+              >
+                <Eye className="h-4 w-4 mr-2" />
+                Details
+              </Button>
+            </Link>
+
             <Button
-              variant="outline"
-              className="w-full group-hover:bg-primary/5"
+              onClick={() => setShowTourBookingModal(true)}
+              className="flex-1 h-10"
+              aria-label={`Book ${tour.title}`}
             >
-              <Eye className="h-4 w-4 mr-2" />
-              Details
+              Book Now
             </Button>
-          </Link>
-          {/* <Link
-            className="flex-1"
-            href={`/dashboard/book-tour/${guide._id}/${tour._id}`}
-          > */}
-          <Button
-            onClick={() => setShowTourBookingModal(true)}
-            className="w-full"
-          >
-            Book Now
-          </Button>
-          {/* </Link> */}
+          </div>
         </CardFooter>
       </Card>
+
       <BookTourDialog
         tour={tour}
         guide={guide}

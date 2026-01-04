@@ -28,6 +28,22 @@ export const createReview = async (reviewData: {
   }
 };
 
+export async function getPublicReviews() {
+  try {
+    const response = await serverFetch.get("/reviews/public");
+    const result = await response.json();
+    return result;
+  } catch (error: any) {
+    return {
+      success: false,
+      message:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Failed to get reviews",
+    };
+  }
+}
+
 export const getTourReviews = async (tourId: string) => {
   try {
     const res = await serverFetch.get(`/reviews/tour/${tourId}`);

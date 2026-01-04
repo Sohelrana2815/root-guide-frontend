@@ -75,6 +75,32 @@ export const getBookingById = async (id: string) => {
   }
 };
 
+export async function updateBookingStatus(id: string, status: string) {
+  try {
+    const response = await serverFetch.patch(`/bookings/${id}/status`, {
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ status }),
+    });
+    const result = await response.json();
+    if (!response.ok) {
+      throw new Error(result.message || "Failed to update booking status");
+    }
+    return result;
+  } catch (error: any) {
+    console.error("Error while updating booking status:", error);
+    return {
+      success: false,
+      data: null,
+      message:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Something went wrong while updating the booking status.",
+    };
+  }
+}
+
 export async function getGuideById(id: string) {
   try {
     const response = await serverFetch.get(`/users/guide/${id}`);

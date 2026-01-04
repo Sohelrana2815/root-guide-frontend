@@ -1,10 +1,10 @@
 
-const GuideMyBookedTours = () => {
+const GuideBookingsPage = () => {
     return (
         <div>
-            Guide MyBooked Tours
+            <h1>Guide Bookings Page</h1>
         </div>
     );
 };
 
-export default GuideMyBookedTours;
+export default GuideBookingsPage;  
