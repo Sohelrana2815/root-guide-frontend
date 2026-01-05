@@ -17,6 +17,8 @@ import {
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import Image from "next/image";
 import { formatDateTime } from "@/lib/formatters";
+import { getPaymentStatus } from "../../Guide/GuideBookings/GuideBookingColumns";
+import PaymentStatusBadge from "@/helpers/paymentStautsBadge";
 
 interface BookingDetailsProps {
   booking: IBooking;
@@ -47,6 +49,7 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
   const hasReview = !!booking.review;
   const tour = booking.tourId as any;
   const guide = booking.guideId as any;
+  const isPaid = getPaymentStatus(booking.paymentId);
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-10">
@@ -55,7 +58,11 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
         <Button variant="ghost" onClick={() => router.back()} className="gap-2">
           <ArrowLeft className="h-4 w-4" /> Back to Bookings
         </Button>
-        {getStatusBadge(booking.status)}
+        <div className="flex gap-2">
+          <PaymentStatusBadge paymentId={booking.paymentId} />
+
+          {getStatusBadge(booking.status)}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -64,8 +71,8 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
           <Card className="overflow-hidden">
             <div className="relative h-64 w-full">
               <Image
-                src={tour?.image}
-                alt={tour?.title}
+                src={tour?.image || "/placeholder.png"}
+                alt={tour?.title || "The Tour"}
                 fill
                 className="object-cover"
               />
@@ -144,7 +151,7 @@ const BookingDetails = ({ booking }: BookingDetailsProps) => {
           </Card>
 
           {/* REVIEW SECTION */}
-          {isCompleted && (
+          {isCompleted && isPaid === "PAID" && (
             <Card
               className={
                 hasReview ? "bg-card" : "bg-primary/5 border-primary/20"

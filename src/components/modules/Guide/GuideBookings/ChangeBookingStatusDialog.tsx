@@ -17,7 +17,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { updateBookingStatus } from "@/services/tourist/booking.service";
-import { BookingStatus, IBooking } from "@/types/booking.interface";
+import { BookingStatus, IBooking, ITourist, IPayment } from "@/types/booking.interface";
 import { DialogTitle } from "@radix-ui/react-dialog";
 import { AlertCircle, Loader2 } from "lucide-react";
 import { useState } from "react";
@@ -28,6 +28,22 @@ interface ChangeStatusDialogProps {
   isOpen: boolean;
   onClose: () => void;
 }
+
+// Helper function to get tourist name from populated or string data
+const getTouristName = (touristId: string | ITourist | undefined): string => {
+  if (typeof touristId === "object" && touristId) {
+    return touristId.name || "Tourist";
+  }
+  return "Tourist";
+};
+
+// Helper function to get payment status
+const getPaymentStatus = (paymentId: string | IPayment | undefined): string => {
+  if (typeof paymentId === "object" && paymentId) {
+    return paymentId.status || "UNPAID";
+  }
+  return "UNPAID";
+};
 
 export default function ChangeBookingStatusDialog({
   booking,
@@ -58,15 +74,17 @@ export default function ChangeBookingStatusDialog({
       const result = await updateBookingStatus(booking._id!, newStatus);
 
       if (result.success) {
-        toast.success("Appointment status updated successfully");
+        toast.success("Booking status updated successfully");
 
-        // Show warning or reminder if the payment status is unpaid and guide want to change the status to completed because a tourist can pay later after tour is completed
+        // Show reminder if the payment status is unpaid and guide wants to change the status to completed
+        // because a tourist can pay after the tour is completed
+        const paymentStatus = getPaymentStatus(booking.paymentId);
         if (
           newStatus === BookingStatus.COMPLETED &&
-          booking.paymentId.status === "UNPAID"
+          paymentStatus === "UNPAID"
         ) {
           setTimeout(() => {
-            toast.info("Contact with your tourist to pay you", {
+            toast.info("Remember to contact your tourist for payment", {
               duration: 5000,
             });
           }, 1000);
@@ -90,13 +108,16 @@ export default function ChangeBookingStatusDialog({
     }
   };
 
+  const touristName = getTouristName(booking.touristId);
+  const paymentStatus = getPaymentStatus(booking.paymentId);
+
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && handleClose()}>
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle>Change Booking Status</DialogTitle>
           <DialogDescription>
-            Update the status for {booking.touristId?.name}&apos;s appointment
+            Update the status for {touristName}&apos;s booking
           </DialogDescription>
         </DialogHeader>
 
@@ -133,19 +154,44 @@ export default function ChangeBookingStatusDialog({
             </Select>
           </div>
 
-          {/* Warning for Completion */}
-          {newStatus === BookingStatus.COMPLETED &&
-            booking.paymentId.status !== "UNPAID" && (
-              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-                <div className="flex items-start gap-2">
-                  <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5" />
-                  <div className="text-sm text-amber-800">
-                    <strong>Reminder:</strong> After marking as completed,
-                    please Contact to your tourist to pay you.
-                  </div>
+          {/* Warning for Completion with Unpaid Payment */}
+          {newStatus === BookingStatus.COMPLETED && paymentStatus === "UNPAID" && (
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="h-4 w-4 text-amber-600 mt-0.5" />
+                <div className="text-sm text-amber-800">
+                  <strong>Reminder:</strong> The tourist has not paid yet. After
+                  marking as completed, please contact them to complete the payment.
                 </div>
               </div>
-            )}
+            </div>
+          )}
+
+          {/* Info for Confirming Booking */}
+          {newStatus === BookingStatus.CONFIRMED && booking.status === BookingStatus.PENDING && (
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="h-4 w-4 text-blue-600 mt-0.5" />
+                <div className="text-sm text-blue-800">
+                  <strong>Info:</strong> Once confirmed, the tourist can proceed
+                  with payment now or later.
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Info for Cancelling Booking */}
+          {newStatus === BookingStatus.CANCELLED && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+              <div className="flex items-start gap-2">
+                <AlertCircle className="h-4 w-4 text-red-600 mt-0.5" />
+                <div className="text-sm text-red-800">
+                  <strong>Warning:</strong> Cancelled bookings cannot be changed back.
+                  This action is permanent.
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         <DialogFooter>

@@ -48,7 +48,7 @@ export const touristNavItems: NavSection[] = [
       {
         title: "My Wishlist",
         href: "/dashboard/my-bookings",
-        icon: "Archive",
+        icon: "Ticket",
         roles: ["TOURIST"],
       },
     ],
@@ -98,13 +98,18 @@ export const adminNavItems: NavSection[] = [
       {
         title: "Tours",
         href: "/admin/dashboard/tours-management",
-        icon: "Tours",
+        icon: "Bus",
         roles: ["ADMIN"],
       },
+    ],
+  },
+  {
+    title: "Bookings Management",
+    items: [
       {
         title: "Bookings",
         href: "/admin/dashboard/bookings",
-        icon: "Booking",
+        icon: "Ticket",
         roles: ["ADMIN"],
       },
     ],

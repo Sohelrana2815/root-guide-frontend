@@ -56,15 +56,14 @@ const GuideBookingTable = ({ bookings = [] }: GuideBookingsTableProps) => {
         getRowKey={(booking) => booking._id!}
       />
       {/* View detail dialog */}
-
       {viewBooking && (
         <GuideBookingDetailDialog
-        //   booking={viewBooking}
-        //   open={!!viewBooking}
-        //   onClose={() => {
-        //     setViewBooking(null);
-        //     router.refresh();
-        //   }}
+          booking={viewBooking}
+          open={!!viewBooking}
+          onClose={() => {
+            setViewBooking(null);
+            router.refresh();
+          }}
         />
       )}
       {/* Change Status Dialog */}
