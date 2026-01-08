@@ -29,6 +29,7 @@ const BookTourDialog = ({
 }: BookTourDialogProps) => {
   const router = useRouter();
   const [guestCount, setGuestCount] = useState("1");
+  const [bookingDate, setBookingDate] = useState<string>("");
 
   const handleCloseModal = () => {
     onClose();
@@ -39,8 +40,11 @@ const BookTourDialog = ({
     e.preventDefault();
     const count = parseInt(guestCount);
     if (count > 0 && count <= tour.maxGroupSize) {
+      const params = new URLSearchParams();
+      params.set("guestCount", String(count));
+      if (bookingDate) params.set("bookingDate", bookingDate);
       router.push(
-        `/dashboard/book-tour/${guide._id}/${tour._id}?guestCount=${count}`
+        `/dashboard/book-tour/${guide._id}/${tour._id}?${params.toString()}`
       );
     }
   };
@@ -81,6 +85,19 @@ const BookTourDialog = ({
                     Cannot exceed {tour.maxGroupSize} guests.
                   </p>
                 )}
+              </div>
+
+              <div className="grid gap-3">
+                <Label htmlFor="bookingDate">Preferred Date</Label>
+                <Input
+                  id="bookingDate"
+                  type="date"
+                  value={bookingDate}
+                  onChange={(e) => setBookingDate(e.target.value)}
+                />
+                <p className="text-xs text-muted-foreground">
+                  Optional. Choose your preferred tour date.
+                </p>
               </div>
             </div>
 

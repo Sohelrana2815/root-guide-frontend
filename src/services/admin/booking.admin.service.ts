@@ -36,4 +36,44 @@ export async function getAdminBookings(queryString?: string) {
   }
 }
 
+export async function updateBookingStatusAdmin(id: string, status: string) {
+  try {
+    const res = await serverFetch.patch(`/bookings/${id}/status`, {
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ status }),
+    });
+
+    const result = await res.json();
+    return result;
+  } catch (error: any) {
+    return {
+      success: false,
+      message:
+        process.env.NODE_ENV === "development"
+          ? error.message
+          : "Failed to update booking status",
+    };
+  }
+}
+
+export async function toggleBookingActiveAdmin(id: string) {
+  try {
+    const res = await serverFetch.patch(`/bookings/admin/${id}/toggle-active`);
+    const result = await res.json();
+    return result;
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed" };
+  }
+}
+
+export async function softDeleteBookingAdmin(id: string) {
+  try {
+    const res = await serverFetch.patch(`/bookings/admin/${id}/soft-delete`);
+    const result = await res.json();
+    return result;
+  } catch (error: any) {
+    return { success: false, message: error.message || "Failed" };
+  }
+}
+
 

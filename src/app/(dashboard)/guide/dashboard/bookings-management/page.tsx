@@ -1,4 +1,5 @@
 import GuideBookingTable from "@/components/modules/Guide/GuideBookings/GuideBookingTable";
+import RefreshButton from "@/components/shared/managementTables/RefreshButton";
 import { getGuideBookings } from "@/services/tourist/booking.service";
 import { IBooking } from "@/types/booking.interface";
 import { Suspense } from "react";
@@ -22,7 +23,7 @@ const GuideBookingsPage = async () => {
           Manage your tourist bookings
         </p>
       </div>
-
+      <RefreshButton />
       <Suspense fallback={<div>Loading Bookings...</div>}>
         <BookingsContent />
       </Suspense>

@@ -17,6 +17,8 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { initiatePayment } from "@/services/payment/payment.service";
+import { toast } from "sonner";
 
 interface TourBookingListProps {
   bookings: IBooking[];
@@ -177,13 +179,39 @@ const TourBookingList = ({ bookings }: TourBookingListProps) => {
             </div>
           </CardContent>
 
-          <CardFooter className="bg-gray-50/50 border-t p-3">
+          <CardFooter className="bg-gray-50/50 border-t p-3 space-y-2">
             <Button variant="ghost" size="sm" className="w-full group" asChild>
               <Link href={`/dashboard/my-bookings/${booking._id}`}>
                 View Booking Details
                 <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
               </Link>
             </Button>
+
+            {booking?.status !== BookingStatus.PAID && (
+              <Button
+                className="w-full"
+                onClick={async () => {
+                  try {
+                    toast.success("Redirecting to payment...");
+                    sessionStorage.setItem(
+                      "paymentReturnUrl",
+                      "/dashboard/my-bookings"
+                    );
+                    const res = await initiatePayment(booking._id);
+                    if (res.success && res.data?.paymentUrl) {
+                      window.location.replace(res.data.paymentUrl);
+                    } else {
+                      toast.error(res.message || "Failed to initiate payment");
+                    }
+                  } catch (err) {
+                    console.error(err);
+                    toast.error("Failed to initiate payment");
+                  }
+                }}
+              >
+                Pay Now
+              </Button>
+            )}
           </CardFooter>
         </Card>
       ))}

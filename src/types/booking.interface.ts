@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { IReview } from "./review.interface";
 
 export enum BookingStatus {
@@ -25,12 +26,26 @@ export interface ITour {
   price: number;
 }
 
+export enum PAYMENT_STATUS {
+  PAID = "PAID",
+  UNPAID = "UNPAID",
+  CANCELLED = "CANCELLED",
+  FAILED = "FAILED",
+  REFUNDED = "REFUNDED",
+}
+
 // Support for populated payment data
 export interface IPayment {
   _id: string;
-  status: "PAID" | "UNPAID" | "CANCELLED" | "PENDING";
+  status: PAYMENT_STATUS;
   amount: number;
   transactionId: string;
+  bookingId: string;
+  paymentMethod?: string;
+  paymentGatewayData?: any;
+  invoiceUrl?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface IBooking {
@@ -47,4 +62,6 @@ export interface IBooking {
   createdAt?: Date | string;
   updatedAt?: Date | string;
   id?: string;
+  isActive?: boolean;
+  isDeleted?: boolean;
 }

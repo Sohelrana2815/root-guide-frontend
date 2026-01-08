@@ -4,7 +4,7 @@ import GuideProfileInfo from "@/components/modules/TourDetails/GuideProfileInfo"
 import GuideTourReviews from "@/components/modules/TourDetails/GuideTourReviews";
 // import GuideTourReviews from "@/components/modules/TourDetails/GuideTourReviews";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import BookingWidget from "@/components/modules/TourDetails/BookingWidget";
 import { getTourById } from "@/services/guide/toursManagement";
 import { getTourReviews } from "@/services/tourist/reviews.service";
 import { Clock, MapPin, Star, Users } from "lucide-react";
@@ -100,11 +100,9 @@ const TourDetailPage = async ({
               </div>
             </div>
 
-            <Link href={`/tours/book-tour/${guide._id}/${tour._id}`}>
-              <Button className="w-full h-12 text-lg font-bold">
-                Book This Tour
-              </Button>
-            </Link>
+            {/* Client booking widget opens guest/date modal before creating booking */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
+            <BookingWidget tour={tour} guide={guide} />
 
             <p className="text-center text-xs text-muted-foreground mt-4">
               Secure your spot now and pay later.

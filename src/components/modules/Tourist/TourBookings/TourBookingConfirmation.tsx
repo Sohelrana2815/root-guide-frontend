@@ -69,6 +69,39 @@ const TourBookingConfirmation = ({
     }
   };
 
+  const handlePayNow = async () => {
+    setIsBooking(true);
+    try {
+      const result = await createBooking({
+        guideId: tour.guideId!,
+        tourId: tour._id as string,
+        guestCount: guestCount,
+        bookingDate: undefined,
+      });
+
+      if (result.success && result.data?.paymentUrl) {
+        toast.success("Redirecting to payment...");
+        sessionStorage.setItem("paymentReturnUrl", "/dashboard/my-bookings");
+        window.location.replace(result.data.paymentUrl);
+      } else if (result.success) {
+        setBookingSuccess(true);
+        toast.success("Tour booked successfully!");
+        setTimeout(() => {
+          router.push("/dashboard/my-bookings");
+        }, 2000);
+      } else {
+        toast.error(result.message || "Failed to book tour");
+        setIsBooking(false);
+      }
+    } catch (error) {
+      toast.error(
+        "An error occurred while booking tour. Please try again later."
+      );
+      setIsBooking(false);
+      console.error(error);
+    }
+  };
+
   if (bookingSuccess) {
     return (
       <div className="max-w-2xl mx-auto">
@@ -234,6 +267,13 @@ const TourBookingConfirmation = ({
             disabled={isBooking}
           >
             {isBooking ? "Confirming..." : "Confirm Booking"}
+          </Button>
+          <Button
+            className="w-full h-12 text-lg font-bold mt-3 bg-primary text-white"
+            onClick={handlePayNow}
+            disabled={isBooking}
+          >
+            {isBooking ? "Processing..." : "Pay Now"}
           </Button>
         </CardContent>
       </Card>
