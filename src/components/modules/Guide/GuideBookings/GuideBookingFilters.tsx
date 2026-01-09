@@ -1,3 +1,4 @@
+// @/components/modules/Guide/GuideBookings/GuideBookingFilters.tsx
 "use client";
 
 import { Input } from "@/components/ui/input";
@@ -9,25 +10,18 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
-import { Search, X, User2 } from "lucide-react";
+import { Search, X, Calendar } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState, useTransition } from "react";
 import { useDebounce } from "@/hooks/useDebounce";
 import RefreshButton from "@/components/shared/managementTables/RefreshButton";
 
-interface BookingFiltersProps {
-  guides: { _id: string; name: string }[];
-}
-
-const BookingFilters = ({ guides }: BookingFiltersProps) => {
-  console.log("Guides in filter component:", guides);
+const GuideBookingFilters = () => {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [, startTransition] = useTransition();
+  const [isPending, startTransition] = useTransition();
 
-  const [searchTerm, setSearchTerm] = useState(
-    searchParams.get("searchTerm") || ""
-  );
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("searchTerm") || "");
   const debouncedSearch = useDebounce(searchTerm, 500);
 
   const updateFilter = (key: string, value: string) => {
@@ -37,7 +31,7 @@ const BookingFilters = ({ guides }: BookingFiltersProps) => {
     } else {
       params.delete(key);
     }
-    params.set("page", "1");
+    params.set("page", "1"); // ফিল্টার বদলালে ১ নম্বর পেজে নিয়ে যাবে
 
     startTransition(() => {
       router.push(`?${params.toString()}`, { scroll: false });
@@ -48,8 +42,7 @@ const BookingFilters = ({ guides }: BookingFiltersProps) => {
     if (debouncedSearch !== (searchParams.get("searchTerm") || "")) {
       updateFilter("searchTerm", debouncedSearch);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [debouncedSearch, searchParams]);
+  }, [debouncedSearch]);
 
   const clearFilters = () => {
     setSearchTerm("");
@@ -59,43 +52,22 @@ const BookingFilters = ({ guides }: BookingFiltersProps) => {
   return (
     <div className="flex flex-wrap items-center gap-3 w-full bg-card p-4 rounded-lg border">
       {/* Search Input */}
-      <div className="relative w-full md:w-64">
+      <div className="relative w-full md:w-72">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
-          placeholder="Search Name/TXN ID..."
+          placeholder="Search Tourist Name / TXN ID..."
           className="pl-10 h-10"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
       </div>
 
-      {/* Guide Filter (NEW) */}
-      <Select
-        value={searchParams.get("guideId") || "all"}
-        onValueChange={(v) => updateFilter("guideId", v)}
-      >
-        <SelectTrigger className="w-[180px] h-10">
-          <div className="flex items-center gap-2">
-            <User2 className="h-4 w-4 text-muted-foreground" />
-            <SelectValue placeholder="Select Guide" />
-          </div>
-        </SelectTrigger>
-        <SelectContent>
-          <SelectItem value="all">All Guides</SelectItem>
-          {guides.map((guide) => (
-            <SelectItem key={guide._id} value={guide._id}>
-              {guide.name}
-            </SelectItem>
-          ))}
-        </SelectContent>
-      </Select>
-
       {/* Status Filter */}
       <Select
         value={searchParams.get("status") || "all"}
         onValueChange={(v) => updateFilter("status", v)}
       >
-        <SelectTrigger className="w-[140px] h-10">
+        <SelectTrigger className="w-[150px] h-10">
           <SelectValue placeholder="Status" />
         </SelectTrigger>
         <SelectContent>
@@ -112,8 +84,11 @@ const BookingFilters = ({ guides }: BookingFiltersProps) => {
         value={searchParams.get("days") || "all"}
         onValueChange={(v) => updateFilter("days", v)}
       >
-        <SelectTrigger className="w-[140px] h-10">
-          <SelectValue placeholder="Time Period" />
+        <SelectTrigger className="w-[150px] h-10">
+          <div className="flex items-center gap-2">
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <SelectValue placeholder="Time Period" />
+          </div>
         </SelectTrigger>
         <SelectContent>
           <SelectItem value="all">All Time</SelectItem>
@@ -137,4 +112,4 @@ const BookingFilters = ({ guides }: BookingFiltersProps) => {
   );
 };
 
-export default BookingFilters;
+export default GuideBookingFilters;

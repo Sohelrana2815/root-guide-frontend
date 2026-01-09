@@ -1,3 +1,4 @@
+import React from "react";
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
@@ -38,8 +39,10 @@ export default function RootLayout({
         >
           {children}
           <Toaster position="top-right" richColors />
-          <LoginSuccessToast />
-          <LogoutSuccessToast />
+          <React.Suspense fallback={null}>
+            <LoginSuccessToast />
+            <LogoutSuccessToast />
+          </React.Suspense>
         </ThemeProvider>
       </body>
     </html>

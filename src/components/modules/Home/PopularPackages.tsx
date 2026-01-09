@@ -36,12 +36,20 @@ const PopularPackages = ({ tours }: PopularPackagesProps) => {
           >
             {/* Minimal Image Container */}
             <div className="relative aspect-4/3 rounded-2xl overflow-hidden mb-4">
-              <Image
-                src={tour.image || "/placeholder.png"}
-                alt={tour.title}
-                fill
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
-              />
+              {tour.image ? (
+                <Image
+                  src={tour.image || "/placeholder.png"}
+                  alt={tour.title}
+                  fill
+                  priority // Optional: helps with LCP performance
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="bg-muted flex items-center justify-center h-full w-full">
+                  <MapPin className="h-10 w-10 text-muted-foreground/40" />
+                </div>
+              )}
               <div className="absolute top-4 left-4">
                 <Badge className="bg-white/90 backdrop-blur-sm text-slate-900 hover:bg-white border-none px-3 py-1 font-bold">
                   ${tour.price}{" "}

@@ -38,6 +38,22 @@ export async function getAllUsers(queryString?: string) {
   }
 }
 
+// @/services/admin/usersManagement.ts
+export async function getAllGuidesForFilter() {
+  try {
+    // এখানে "/users?role=GUIDE" এর বদলে "/users/guides-filter" ব্যবহার করুন
+    const response = await serverFetch.get("/users/guides-filter");
+    const result = await response.json();
+
+    // console.log("Guides from server:", result); // চেক করার জন্য এটি ব্যবহার করতে পারেন
+
+    return result?.data || [];
+  } catch (error) {
+    console.error("Error fetching guides:", error);
+    return [];
+  }
+}
+
 export async function updateUserRole(id: string, role: string) {
   try {
     const response = await serverFetch.patch(`/users/${id}/role`, {

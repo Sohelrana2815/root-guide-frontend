@@ -3,7 +3,14 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { formatDateTime } from "@/lib/formatters";
 import { BookingStatus, IBooking } from "@/types/booking.interface";
 import {
@@ -12,7 +19,6 @@ import {
   Users,
   CreditCard,
   User,
-  ChevronRight,
   Banknote,
 } from "lucide-react";
 import Image from "next/image";
@@ -26,61 +32,51 @@ interface TourBookingListProps {
 
 const TourBookingList = ({ bookings }: TourBookingListProps) => {
   const getStatusBadge = (status: BookingStatus) => {
-    const statusConfig: Record<
-      BookingStatus,
-      { variant: any; label: string; className?: string }
-    > = {
+    const statusConfig: Record<string, { variant: any; className: string }> = {
       [BookingStatus.PENDING]: {
         variant: "outline",
-        label: "Pending",
         className: "border-amber-500 text-amber-600 bg-amber-50",
       },
       [BookingStatus.CONFIRMED]: {
         variant: "default",
-        label: "Confirmed",
         className: "bg-blue-600 hover:bg-blue-700",
       },
       [BookingStatus.PAID]: {
         variant: "default",
-        label: "Paid",
-        className: "bg-green-600 hover:bg-green-700",
+        className: "bg-emerald-600 hover:bg-emerald-700",
       },
-      [BookingStatus.CANCELLED]: {
-        variant: "destructive",
-        label: "Cancelled",
-      },
+      [BookingStatus.CANCELLED]: { variant: "destructive", className: "" },
       [BookingStatus.COMPLETED]: {
         variant: "secondary",
-        label: "Completed",
-        className: "bg-gray-100 text-gray-800",
+        className: "bg-slate-100 text-slate-800",
       },
-      [BookingStatus.FAILED]: {
-        variant: "destructive",
-        label: "Failed",
-      },
+      [BookingStatus.FAILED]: { variant: "destructive", className: "" },
     };
 
     const config = statusConfig[status] || statusConfig[BookingStatus.PENDING];
-
     return (
-      <Badge variant={config.variant} className={config.className}>
-        {config.label}
+      <Badge
+        variant={config.variant}
+        className={`capitalize ${config.className}`}
+      >
+        {status.toLowerCase()}
       </Badge>
     );
   };
 
   if (bookings.length === 0) {
     return (
-      <Card className="border-dashed">
-        <CardContent className="flex flex-col items-center justify-center py-12">
-          <Calendar className="h-12 w-12 text-muted-foreground mb-4" />
-          <h3 className="text-lg font-semibold mb-2">No Tour booked Yet</h3>
-          <p className="text-muted-foreground text-center max-w-sm">
-            You haven&apos;t booked any Tour yet. Browse our tours and book your
-            first tour.
+      <Card className="border-dashed border-2">
+        <CardContent className="flex flex-col items-center justify-center py-16">
+          <div className="p-4 bg-muted rounded-full mb-4">
+            <Calendar className="h-10 w-10 text-muted-foreground" />
+          </div>
+          <h3 className="text-xl font-semibold">No Bookings Found</h3>
+          <p className="text-muted-foreground text-center max-w-xs mt-2">
+            Ready for an adventure? Your booked tours will appear here.
           </p>
-          <Button className="mt-4" asChild>
-            <Link href="/tours">Browse Tours</Link>
+          <Button className="mt-6" asChild>
+            <Link href="/tours">Explore Tours</Link>
           </Button>
         </CardContent>
       </Card>
@@ -88,126 +84,130 @@ const TourBookingList = ({ bookings }: TourBookingListProps) => {
   }
 
   return (
-    <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       {bookings.map((booking: IBooking | any) => (
         <Card
           key={booking._id}
-          className="overflow-hidden hover:shadow-lg transition-all border-l-4 border-l-primary/50"
+          className="flex flex-col shadow-sm hover:shadow-md transition-shadow"
         >
-          <CardContent className="pt-6 space-y-4">
-            {/* Header: Status and Payment */}
-            <div className="flex justify-between items-start">
+          {/* Top Image Section */}
+          <div className="relative h-48 w-full overflow-hidden">
+            {booking.tourId?.image ? (
+              <Image
+                src={booking.tourId.image}
+                alt={booking.tourId.title}
+                fill
+                className="object-cover"
+              />
+            ) : (
+              <div className="bg-muted flex items-center justify-center h-full w-full">
+                <MapPin className="h-10 w-10 text-muted-foreground/40" />
+              </div>
+            )}
+            <div className="absolute top-3 right-3 flex flex-col gap-2">
               {getStatusBadge(booking.status)}
+            </div>
+          </div>
+
+          <CardHeader className="p-4 pb-2">
+            <div className="space-y-1">
+              <CardTitle className="text-lg font-bold line-clamp-1">
+                {booking.tourId?.title}
+              </CardTitle>
+              <CardDescription className="flex items-center gap-1">
+                <MapPin className="h-3.5 w-3.5 text-primary" />
+                <span className="truncate">{booking.tourId?.city}</span>
+              </CardDescription>
+            </div>
+          </CardHeader>
+
+          <CardContent className="p-4 pt-0 flex-grow space-y-4">
+            {/* Stats Grid */}
+            <div className="grid grid-cols-2 gap-4 py-3 border-y border-slate-50 mt-2">
+              <div className="flex items-center gap-2">
+                <Users className="h-4 w-4 text-muted-foreground" />
+                <div className="text-sm">
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none">
+                    Guests
+                  </p>
+                  <p className="font-semibold">{booking.guestCount}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <Banknote className="h-4 w-4 text-muted-foreground" />
+                <div className="text-sm">
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none">
+                    Total
+                  </p>
+                  <p className="font-semibold text-primary">
+                    ${booking.totalPrice}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Guide & Meta Info */}
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden border">
+                  {booking.guideId?.photo ? (
+                    <Image
+                      src={booking.guideId.photo}
+                      alt="guide"
+                      width={32}
+                      height={32}
+                      className="object-cover"
+                    />
+                  ) : (
+                    <User className="h-4 w-4 text-primary" />
+                  )}
+                </div>
+                <div className="text-[12px]">
+                  <p className="text-muted-foreground leading-none mb-0.5">
+                    Guide
+                  </p>
+                  <p className="font-medium truncate max-w-[100px]">
+                    {booking.guideId?.name || "Pending..."}
+                  </p>
+                </div>
+              </div>
+
               <Badge
                 variant="outline"
-                className={
-                  booking.paymentId.status === "PAID"
-                    ? "text-green-600 border-green-200"
-                    : "text-red-500 border-red-200"
-                }
+                className={`h-fit text-[10px] gap-1 ${
+                  booking.paymentId?.status === "PAID"
+                    ? "text-emerald-600 border-emerald-200 bg-emerald-50"
+                    : "text-red-500 border-red-200 bg-red-50"
+                }`}
               >
-                <CreditCard className="h-3 w-3 mr-1" />
-                {booking.paymentId.status}
+                <CreditCard className="h-3 w-3" />
+                {booking.paymentId?.status || "UNPAID"}
               </Badge>
             </div>
 
-            {/* Tour Main Info */}
-            <div className="space-y-1">
-              <h3 className="font-bold text-xl line-clamp-1">
-                {booking.tourId?.title}
-              </h3>
-              <div className="flex items-center text-sm text-muted-foreground">
-                <MapPin className="h-4 w-4 mr-1 text-primary" />
-                {booking.tourId?.city}
-              </div>
-            </div>
-
-            {/* Booking Details Grid */}
-            <div className="grid grid-cols-2 gap-3 py-2 border-y border-gray-50">
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-slate-100 rounded-md">
-                  <Users className="h-4 w-4 text-slate-600" />
-                </div>
-                <div>
-                  <p className="text-[10px] uppercase text-muted-foreground font-bold">
-                    Guests
-                  </p>
-                  <p className="text-sm font-semibold">{booking.guestCount}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="p-2 bg-slate-100 rounded-md">
-                  <Banknote className="h-4 w-4 text-slate-600" />
-                </div>
-                <div>
-                  <p className="text-[10px] uppercase text-muted-foreground font-bold">
-                    Total
-                  </p>
-                  <p className="text-sm font-semibold">${booking.totalPrice}</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Guide Info */}
-            <div className="flex items-center gap-3 bg-primary/5 p-2 rounded-lg">
-              <div className="relative h-10 w-10 rounded-full overflow-hidden border-2 border-white shadow-sm">
-                {booking.guideId?.photo ? (
-                  <Image
-                    src={booking.guideId.photo}
-                    alt={booking.guideId.name}
-                    fill
-                    className="object-cover"
-                  />
-                ) : (
-                  <div className="bg-primary/20 flex items-center justify-center h-full w-full">
-                    <User className="h-5 w-5 text-primary" />
-                  </div>
-                )}
-              </div>
-              <div className="flex-1 min-w-0">
-                <p className="text-xs text-muted-foreground">Tour Guide</p>
-                <p className="text-sm font-medium truncate">
-                  {booking.guideId?.name || "Assigning..."}
-                </p>
-              </div>
-            </div>
-
-            {/* Date */}
-            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-              <Calendar className="h-3.5 w-3.5" />
-              <span>Booked on {formatDateTime(booking.createdAt)} </span>
+            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground pt-1">
+              <Calendar className="h-3 w-3" />
+              <span>Booked: {formatDateTime(booking.createdAt)}</span>
             </div>
           </CardContent>
 
-          <CardFooter className="bg-gray-50/50 border-t p-3 space-y-2">
-            <Button variant="ghost" size="sm" className="w-full group" asChild>
+          <CardFooter className="p-4 pt-0 gap-2">
+            <Button
+              variant="outline"
+              size="sm"
+              className="flex-1 text-xs"
+              asChild
+            >
               <Link href={`/dashboard/my-bookings/${booking._id}`}>
-                View Booking Details
-                <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                Details
               </Link>
             </Button>
 
-            {booking?.status !== BookingStatus.PAID && (
+            {booking?.paymentId?.status !== "PAID" && (
               <Button
-                className="w-full"
-                onClick={async () => {
-                  try {
-                    toast.success("Redirecting to payment...");
-                    sessionStorage.setItem(
-                      "paymentReturnUrl",
-                      "/dashboard/my-bookings"
-                    );
-                    const res = await initiatePayment(booking._id);
-                    if (res.success && res.data?.paymentUrl) {
-                      window.location.replace(res.data.paymentUrl);
-                    } else {
-                      toast.error(res.message || "Failed to initiate payment");
-                    }
-                  } catch (err) {
-                    console.error(err);
-                    toast.error("Failed to initiate payment");
-                  }
-                }}
+                size="sm"
+                className="flex-1 text-xs"
+                onClick={() => handlePayment(booking._id)}
               >
                 Pay Now
               </Button>
@@ -218,5 +218,22 @@ const TourBookingList = ({ bookings }: TourBookingListProps) => {
     </div>
   );
 };
+
+// Extracted Payment Logic for cleaner code
+async function handlePayment(bookingId: string) {
+  try {
+    toast.success("Redirecting to payment...");
+    sessionStorage.setItem("paymentReturnUrl", "/dashboard/my-bookings");
+    const res = await initiatePayment(bookingId);
+    if (res.success && res.data?.paymentUrl) {
+      window.location.replace(res.data.paymentUrl);
+    } else {
+      toast.error(res.message || "Failed to initiate payment");
+    }
+  } catch (err) {
+    console.error(err);
+    toast.error("Failed to initiate payment");
+  }
+}
 
 export default TourBookingList;

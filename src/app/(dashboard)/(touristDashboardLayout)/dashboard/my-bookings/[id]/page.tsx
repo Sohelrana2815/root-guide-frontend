@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import BookingDetails from "@/components/modules/Tourist/TourBookings/BookingDetails";
 import { getBookingById } from "@/services/tourist/booking.service";
 import { IBooking } from "@/types/booking.interface";

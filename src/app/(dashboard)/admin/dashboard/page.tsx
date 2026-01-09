@@ -1,5 +1,4 @@
-// Not My project related data and codes but the pattern are like little bit similar
-
+export const dynamic = "force-dynamic";
 import { BookingBarChart } from "@/components/shared/BookingBarChart";
 import { BookingPieChart } from "@/components/shared/BookingPieChart";
 import { DashboardSkeleton } from "@/components/shared/DashboardSkeleton";

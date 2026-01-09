@@ -32,14 +32,16 @@ export async function createBooking(data: ICreateBookingPayload) {
   }
 }
 
-export const getAllToursWithGuides = async () => {
+export const getAllToursWithGuides = async (queryString: string = "") => {
   try {
-    const res = await serverFetch.get("/tours/with-guide");
+    const res = await serverFetch.get(
+      `/tours/with-guide${queryString ? `?${queryString}` : ""}`
+    );
     const result = await res.json();
     return result;
   } catch (error) {
     console.error(error);
-    return { success: false, data: [] };
+    return { success: false, data: [], meta: { total: 0, page: 1, limit: 12 } };
   }
 };
 
@@ -54,9 +56,13 @@ export const getMyBookings = async () => {
   }
 };
 
-export const getGuideBookings = async () => {
+export const getGuideBookings = async (queryString: string = "") => {
   try {
-    const res = await serverFetch.get("/bookings/guide-bookings");
+    const url = `/bookings/guide-bookings${
+      queryString ? `?${queryString}` : ""
+    }`;
+
+    const res = await serverFetch.get(url);
     const result = await res.json();
     return result;
   } catch (error: any) {

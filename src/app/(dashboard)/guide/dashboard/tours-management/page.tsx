@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import TourManagementHeader from "@/components/modules/Guide/TourManagement/TourManagementHeader";
 import ToursFilter from "@/components/modules/Guide/TourManagement/ToursFilter";
 // import ToursFilter from "@/components/modules/Guide/TourManagement/ToursFilter";

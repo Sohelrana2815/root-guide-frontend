@@ -5,6 +5,7 @@ export enum UserStatus {
   BLOCKED = "BLOCKED",
   PENDING_APPROVAL = "PENDING_APPROVAL",
 }
+
 export interface IUser {
   _id?: string;
 

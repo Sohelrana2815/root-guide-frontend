@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   Card,
   CardContent,
@@ -38,12 +37,20 @@ const PopularDestinations = ({ tours }: PopularDestinationProps) => {
           >
             {/* Image Section */}
             <div className="relative aspect-4/3 overflow-hidden">
-              <Image
-                src={tour.image || "/placeholder.png"}
-                alt={tour.title}
-                fill
-                className="object-cover group-hover:scale-105 transition-transform duration-300"
-              />
+              {tour.image ? (
+                <Image
+                  src={tour.image || "/placeholder.png"}
+                  alt={tour.title}
+                  fill
+                  priority // Optional: helps with LCP performance
+                  sizes="(max-width: 768px) 100vw, 50vw"
+                  className="object-cover"
+                />
+              ) : (
+                <div className="bg-muted flex items-center justify-center h-full w-full">
+                  <MapPin className="h-10 w-10 text-muted-foreground/40" />
+                </div>
+              )}
               <Badge className="absolute top-4 left-4 bg-white/90 text-black hover:bg-white border-none">
                 {tour.category || "Tour"}
               </Badge>

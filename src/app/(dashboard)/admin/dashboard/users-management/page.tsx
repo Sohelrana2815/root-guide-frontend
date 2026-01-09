@@ -1,3 +1,4 @@
+export const dynamic = "force-dynamic";
 import UserManagementHeader from "@/components/modules/Admin/UsersManagement/UserManagementHeader";
 import UserTable from "@/components/modules/Admin/UsersManagement/UserTable";
 import RefreshButton from "@/components/shared/managementTables/RefreshButton";

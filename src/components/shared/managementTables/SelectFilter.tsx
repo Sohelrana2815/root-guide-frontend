@@ -17,22 +17,23 @@ interface SelectFilterProps {
 
 const SelectFilter = ({
   paramName,
-  placeholder,
+  placeholder = "Select",
   options,
 }: SelectFilterProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
+
+  // URL থেকে বর্তমান ভ্যালু নেওয়া, না থাকলে "All"
   const currentValue = searchParams.get(paramName) || "All";
+
   const handleChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
 
     if (value === "All") {
       params.delete(paramName);
-    } else if (value) {
-      params.set(paramName, value);
     } else {
-      params.delete(paramName);
+      params.set(paramName, value);
     }
 
     params.set("page", "1");
@@ -48,11 +49,13 @@ const SelectFilter = ({
       onValueChange={handleChange}
       disabled={isPending}
     >
-      <SelectTrigger>
+      <SelectTrigger className="w-[180px] bg-background">
         <SelectValue placeholder={placeholder} />
       </SelectTrigger>
       <SelectContent>
-        <SelectItem value="All">All</SelectItem>
+        {/* এখানে হার্ডকোডেড "All" এর বদলে placeholder ব্যবহার করা হয়েছে */}
+        <SelectItem value="All">{placeholder}</SelectItem>
+
         {options.map((option) => (
           <SelectItem key={option.value} value={option.value}>
             {option.label}

@@ -31,14 +31,20 @@ const TourCard = ({ tour, guide }: TourCardProps) => {
       <Card className="overflow-hidden flex flex-col h-full">
         {/* 1. Tour Hero Image Section */}
         <div className="relative w-full aspect-video md:aspect-4/3 bg-muted">
-          <Image
-            src={tour.image || "/api/placeholder/400/250"}
-            alt={tour.title}
-            fill
-            priority // Optional: helps with LCP performance
-            sizes="(max-width: 768px) 100vw, 50vw"
-            className="object-cover"
-          />
+          {tour.image ? (
+            <Image
+              src={tour.image || "/placeholder.png"}
+              alt={tour.title}
+              fill
+              priority // Optional: helps with LCP performance
+              sizes="(max-width: 768px) 100vw, 50vw"
+              className="object-cover"
+            />
+          ) : (
+            <div className="bg-muted flex items-center justify-center h-full w-full">
+              <MapPin className="h-10 w-10 text-muted-foreground/40" />
+            </div>
+          )}
           {/* Price badge overlay */}
 
           <div className="absolute top-3 left-3">

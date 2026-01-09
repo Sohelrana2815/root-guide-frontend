@@ -4,12 +4,34 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  MultiSelect,
+  MultiSelectContent,
+  MultiSelectGroup,
+  MultiSelectItem,
+  MultiSelectTrigger,
+  MultiSelectValue,
+} from "@/components/ui/multi-select";
+import { Textarea } from "@/components/ui/textarea";
 import { getInitials } from "@/lib/formatters";
 import { updateMyProfile } from "@/services/auth/auth.service";
 import { IUser } from "@/types/user.interface";
-import { Camera, Loader2, Save } from "lucide-react";
+import { LANGUAGES } from "@/constant/languages";
+import { EXPERTISE_OPTIONS } from "@/constant/expertise";
+import {
+  Briefcase,
+  Camera,
+  DollarSign,
+  Globe,
+  Heart,
+  Loader2,
+  Save,
+  User,
+} from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, { useState, useTransition } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
 
 interface MyProfileProps {
   userInfo: IUser;
@@ -21,6 +43,15 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(
+    userInfo?.languages || []
+  );
+  const [selectedExpertise, setSelectedExpertise] = useState<string[]>(
+    userInfo?.expertise || []
+  );
+  const [selectedPreferences, setSelectedPreferences] = useState<string[]>(
+    userInfo?.preferences || []
+  );
 
   const getProfilePhoto = () => {
     if (userInfo?.photo) {
@@ -59,6 +90,12 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
     if (userInfo?._id) {
       formData.append("id", userInfo._id);
     }
+
+    // Add array fields
+    selectedLanguages.forEach((lang) => formData.append("languages", lang));
+    selectedExpertise.forEach((exp) => formData.append("expertise", exp));
+    selectedPreferences.forEach((pref) => formData.append("preferences", pref));
+
     startTransition(async () => {
       const result = await updateMyProfile(formData);
 
@@ -83,51 +120,154 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
       </div>
       <form onSubmit={handleSubmit}>
         {/* Profile Card */}
-        <Card className="lg:col-span-1">
+        <Card className="lg:col-span-1 h-fit">
           <CardHeader>
-            <CardTitle>Profile Picture</CardTitle>
+            <CardTitle>Profile Summary</CardTitle>
           </CardHeader>
-          <CardContent className="flex flex-col items-center space-y-4">
-            <div className="relative">
-              <Avatar className="h-32 w-32">
-                {previewImage || profilePhoto ? (
-                  <AvatarImage
-                    src={previewImage || (profilePhoto as string)}
-                    alt={userInfo.name}
+          <CardContent className="flex flex-col items-center space-y-6">
+            {/* Identity Section */}
+            <div className="flex flex-col items-center space-y-4 w-full">
+              <div className="relative">
+                <Avatar className="h-32 w-32 border-2 border-primary/10">
+                  {previewImage || profilePhoto ? (
+                    <AvatarImage
+                      src={previewImage || (profilePhoto as string)}
+                      alt={userInfo.name}
+                      className="object-cover"
+                    />
+                  ) : (
+                    <AvatarFallback className="text-3xl bg-primary/5 text-primary">
+                      {getInitials(userInfo.name)}
+                    </AvatarFallback>
+                  )}
+                </Avatar>
+                <label
+                  htmlFor="file"
+                  className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 cursor-pointer shadow-lg hover:scale-105 transition-transform"
+                >
+                  <Camera className="h-4 w-4" />
+                  <Input
+                    type="file"
+                    id="file"
+                    name="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                    disabled={isPending}
                   />
-                ) : (
-                  <AvatarFallback className="text-3xl">
-                    {getInitials(userInfo.name)}
-                  </AvatarFallback>
-                )}
-              </Avatar>
-              <label
-                htmlFor="file"
-                className="absolute bottom-0 right-0 bg-primary text-primary-foreground rounded-full p-2 cursor-pointer hover:bg-primary/90 transition-colors"
-              >
-                <Camera className="h-4 w-4" />
-                <Input
-                  type="file"
-                  id="file"
-                  name="file"
-                  accept="image/*"
-                  className="hidden"
-                  onChange={handleImageChange}
-                  disabled={isPending}
-                />
-              </label>
+                </label>
+              </div>
+
+              <div className="text-center">
+                <h2 className="font-bold text-xl">{userInfo.name}</h2>
+                <p className="text-sm text-muted-foreground">
+                  {userInfo.email}
+                </p>
+                <Badge variant="secondary" className="mt-2 capitalize">
+                  <User className="w-3 h-3 mr-1" />{" "}
+                  {userInfo.role.toLowerCase()}
+                </Badge>
+              </div>
             </div>
 
-            <div className="text-center">
-              <p className="font-semibold text-lg">{userInfo.name}</p>
-              <p className="text-sm text-muted-foreground">{userInfo.email}</p>
-              <p className="text-xs text-muted-foreground mt-1 capitalize">
-                {userInfo.role.replace("_", " ")}
-              </p>
+            <Separator />
+
+            {/* Details Section */}
+            <div className="w-full space-y-4">
+              {/* Bio (Common) */}
+              {userInfo.bio && (
+                <div className="space-y-1">
+                  <p className="text-xs font-semibold uppercase text-muted-foreground">
+                    About Me
+                  </p>
+                  <p className="text-sm italic text-foreground/80 leading-relaxed">
+                    &quot;{userInfo.bio}&quot;
+                  </p>
+                </div>
+              )}
+
+              {/* Languages (Common) */}
+              <div className="space-y-2">
+                <div className="flex items-center text-xs font-semibold uppercase text-muted-foreground">
+                  <Globe className="w-3 h-3 mr-1" /> Languages
+                </div>
+                <div className="flex flex-wrap gap-1">
+                  {userInfo.languages && userInfo.languages.length > 0 ? (
+                    userInfo.languages.map((lang) => (
+                      <Badge
+                        key={lang}
+                        variant="outline"
+                        className="text-[10px]"
+                      >
+                        {lang}
+                      </Badge>
+                    ))
+                  ) : (
+                    <span className="text-xs text-muted-foreground">
+                      None listed
+                    </span>
+                  )}
+                </div>
+              </div>
+
+              {/* GUIDE Specifics */}
+              {userInfo.role === "GUIDE" && (
+                <>
+                  <div className="space-y-2">
+                    <div className="flex items-center text-xs font-semibold uppercase text-muted-foreground">
+                      <Briefcase className="w-3 h-3 mr-1" /> Expertise
+                    </div>
+                    <div className="flex flex-wrap gap-1">
+                      {userInfo.expertise?.map((exp) => (
+                        <Badge
+                          key={exp}
+                          className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-none text-[10px]"
+                        >
+                          {exp}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="flex justify-between items-center p-3 bg-primary/5 rounded-lg">
+                    <span className="text-xs font-semibold text-muted-foreground">
+                      DAILY RATE
+                    </span>
+                    <div className="flex items-center font-bold text-primary">
+                      <DollarSign className="w-4 h-4" />
+                      <span>{userInfo.dailyRate || "0.00"}</span>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              {/* TOURIST Specifics */}
+              {userInfo.role === "TOURIST" && (
+                <div className="space-y-2">
+                  <div className="flex items-center text-xs font-semibold uppercase text-muted-foreground">
+                    <Heart className="w-3 h-3 mr-1" /> Travel Preferences
+                  </div>
+                  <div className="flex flex-wrap gap-1">
+                    {userInfo.preferences?.length ? (
+                      userInfo.preferences.map((pref) => (
+                        <Badge
+                          key={pref}
+                          className="bg-pink-100 text-pink-700 hover:bg-pink-100 border-none text-[10px]"
+                        >
+                          {pref}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-xs text-muted-foreground">
+                        No preferences set
+                      </span>
+                    )}
+                  </div>
+                </div>
+              )}
             </div>
           </CardContent>
         </Card>
-        {/* Profile Information Card */}
 
         {/* Profile Information Card */}
         <Card className="lg:col-span-2 mt-4">
@@ -170,6 +310,7 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
                   className="bg-muted"
                 />
               </div>
+
               {/* contact number */}
               <div className="space-y-2">
                 <Label htmlFor="phoneNumber">Contact Number</Label>
@@ -192,6 +333,123 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
                 />
               </div>
             </div>
+
+            {/* Bio Field - Common for All */}
+            <div className="space-y-2">
+              <Label htmlFor="bio">Bio</Label>
+              <Textarea
+                id="bio"
+                name="bio"
+                placeholder="Tell us about yourself..."
+                defaultValue={profileData?.bio || ""}
+                disabled={isPending}
+                required
+                rows={4}
+              />
+            </div>
+
+            {/* Languages Field - Common for All */}
+            <div className="space-y-2">
+              <Label htmlFor="languages">Languages Spoken</Label>
+              <MultiSelect
+                values={selectedLanguages}
+                onValuesChange={(values) =>
+                  setSelectedLanguages(
+                    Array.isArray(values) ? values : [values]
+                  )
+                }
+              >
+                <MultiSelectTrigger className="w-full">
+                  <MultiSelectValue placeholder="Select languages..." />
+                </MultiSelectTrigger>
+                <MultiSelectContent>
+                  <MultiSelectGroup>
+                    {LANGUAGES.map((lang) => (
+                      <MultiSelectItem key={lang.value} value={lang.value}>
+                        {lang.label}
+                      </MultiSelectItem>
+                    ))}
+                  </MultiSelectGroup>
+                </MultiSelectContent>
+              </MultiSelect>
+            </div>
+
+            {/* GUIDE Specific Fields */}
+            {userInfo.role === "GUIDE" && (
+              <>
+                {/* Expertise Field */}
+                <div className="space-y-2">
+                  <Label htmlFor="expertise">Areas of Expertise</Label>
+                  <MultiSelect
+                    values={selectedExpertise}
+                    onValuesChange={(values) =>
+                      setSelectedExpertise(
+                        Array.isArray(values) ? values : [values]
+                      )
+                    }
+                  >
+                    <MultiSelectTrigger className="w-full">
+                      <MultiSelectValue placeholder="Select areas of expertise..." />
+                    </MultiSelectTrigger>
+                    <MultiSelectContent>
+                      <MultiSelectGroup>
+                        {EXPERTISE_OPTIONS.map((opt) => (
+                          <MultiSelectItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </MultiSelectItem>
+                        ))}
+                      </MultiSelectGroup>
+                    </MultiSelectContent>
+                  </MultiSelect>
+                </div>
+
+                {/* Daily Rate Field */}
+                <div className="space-y-2">
+                  <Label htmlFor="dailyRate">Daily Rate ($)</Label>
+                  <Input
+                    id="dailyRate"
+                    name="dailyRate"
+                    type="number"
+                    placeholder="Enter your daily rate"
+                    defaultValue={profileData?.dailyRate || 10}
+                    disabled={isPending}
+                    step="0.01"
+                    min="0"
+                  />
+                </div>
+              </>
+            )}
+
+            {/* TOURIST Specific Fields */}
+            {userInfo.role === "TOURIST" && (
+              <>
+                {/* Travel Preferences Field */}
+                <div className="space-y-2">
+                  <Label htmlFor="preferences">Travel Preferences</Label>
+                  <MultiSelect
+                    values={selectedPreferences}
+                    onValuesChange={(values) =>
+                      setSelectedPreferences(
+                        Array.isArray(values) ? values : [values]
+                      )
+                    }
+                  >
+                    <MultiSelectTrigger className="w-full">
+                      <MultiSelectValue placeholder="Select your travel preferences..." />
+                    </MultiSelectTrigger>
+                    <MultiSelectContent>
+                      <MultiSelectGroup>
+                        {EXPERTISE_OPTIONS.map((opt) => (
+                          <MultiSelectItem key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </MultiSelectItem>
+                        ))}
+                      </MultiSelectGroup>
+                    </MultiSelectContent>
+                  </MultiSelect>
+                </div>
+              </>
+            )}
 
             <div className="flex justify-end pt-4">
               <Button type="submit" disabled={isPending}>

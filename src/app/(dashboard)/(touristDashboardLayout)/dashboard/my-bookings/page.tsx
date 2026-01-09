@@ -1,3 +1,6 @@
+export const dynamic = "force-dynamic";
+
+import { Suspense } from "react";
 import TourBookingList from "@/components/modules/Tourist/TourBookings/TourBookingList";
 import { getMyBookings } from "@/services/tourist/booking.service";
 import { IBooking } from "@/types/booking.interface";
@@ -14,7 +17,9 @@ const MyBookedToursPage = async () => {
           View and manage your bookings and enjoy your adventures.
         </p>
       </div>
-      <TourBookingList bookings={bookings} />
+      <Suspense fallback={<div>Loading bookings...</div>}>
+        <TourBookingList bookings={bookings} />
+      </Suspense>
     </div>
   );
 };
