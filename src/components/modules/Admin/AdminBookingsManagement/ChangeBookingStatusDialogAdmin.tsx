@@ -19,7 +19,8 @@ import { DialogTitle } from "@radix-ui/react-dialog";
 import { Loader2, AlertCircle } from "lucide-react";
 import { BookingStatus, IBooking } from "@/types/booking.interface";
 import { updateBookingStatusAdmin } from "@/services/admin/booking.admin.service";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 interface Props {
@@ -44,8 +45,12 @@ export default function ChangeBookingStatusDialogAdmin({
 }: Props) {
   const [newStatus, setNewStatus] = useState<BookingStatus>(booking.status);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const router = useRouter();
+  const [, startTransition] = useTransition();
 
-  const allowed = validTransitions[booking.status] || [];
+  const allowed = Array.from(
+    new Set([booking.status, ...(validTransitions[booking.status] || [])])
+  );
 
   const handleSubmit = async () => {
     if (newStatus === booking.status) {
@@ -64,6 +69,10 @@ export default function ChangeBookingStatusDialogAdmin({
             "This booking is now cancelled and cannot be modified."
           );
         }
+        // Refresh server data so parent table reflects new status
+        startTransition(() => {
+          router.refresh();
+        });
         onClose();
       } else {
         toast.error(result.message || "Failed to update status");

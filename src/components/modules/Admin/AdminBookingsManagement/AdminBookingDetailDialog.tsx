@@ -54,13 +54,14 @@ const AdminBookingDetailDialog = ({ booking, open, onClose }: Props) => {
               <p className="text-muted-foreground">Status</p>
               <Badge variant="outline">{booking.status}</Badge>
             </div>
-            <div>
+            <div className="space-y-3">
               <p className="text-muted-foreground">Payment</p>
               <Badge
                 variant={payment?.status === "PAID" ? "default" : "secondary"}
               >
                 {payment?.status || "UNPAID"}
               </Badge>
+              <p className="text-sm">{payment?.transactionId}</p>
             </div>
           </div>
 

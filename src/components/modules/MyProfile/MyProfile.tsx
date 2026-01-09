@@ -317,6 +317,7 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
                 <Input
                   id="phoneNumber"
                   name="phoneNumber"
+                  required
                   defaultValue={profileData?.phoneNumber || ""}
                   disabled={isPending}
                 />
@@ -328,6 +329,7 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
                 <Input
                   id="address"
                   name="address"
+                  required
                   defaultValue={profileData?.address || ""}
                   disabled={isPending}
                 />
@@ -336,12 +338,15 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
 
             {/* Bio Field - Common for All */}
             <div className="space-y-2">
-              <Label htmlFor="bio">Bio</Label>
+              <Label htmlFor="bio">Bio (Minimum 10 characters)</Label>
               <Textarea
                 id="bio"
                 name="bio"
                 placeholder="Tell us about yourself..."
-                defaultValue={profileData?.bio || ""}
+                defaultValue={
+                  profileData?.bio ||
+                  "Passionate about exploring new horizons and connecting with people from all walks of life. Let's make every journey memorable!"
+                }
                 disabled={isPending}
                 required
                 rows={4}

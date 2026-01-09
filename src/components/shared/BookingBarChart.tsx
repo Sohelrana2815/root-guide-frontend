@@ -63,7 +63,7 @@ export function BookingBarChart({ data }: BookingBarChartProps) {
   // Handle empty data
   if (formattedData.length === 0) {
     return (
-      <Card className="col-span-4">
+      <Card className="col-span-1">
         <CardHeader>
           <CardTitle>Appointment Trends</CardTitle>
           <CardDescription>Monthly appointment statistics</CardDescription>
@@ -78,7 +78,7 @@ export function BookingBarChart({ data }: BookingBarChartProps) {
   }
 
   return (
-    <Card className="col-span-4">
+    <Card className="col-span-1">
       <CardHeader>
         <CardTitle>Appointment Trends</CardTitle>
         <CardDescription>Monthly appointment statistics</CardDescription>

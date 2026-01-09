@@ -37,7 +37,7 @@ async function AdminDashboardContent() {
         />
         <StatsCard
           title="Admin Profit"
-          value={`$${data.revenue.adminProfit}`}
+          value={`$${data.revenue.adminProfit.toFixed(2)}`}
           iconName="DollarSign"
           description="Admin commission"
           iconClassName="bg-emerald-100"
