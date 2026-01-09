@@ -1,36 +1,162 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+### 1. `.env.example` File
 
-## Getting Started
+Create this file in your root directory to guide other developers on what environment variables are needed.
 
-First, run the development server:
+```env
+# API URL (Backend Connection)
+NEXT_PUBLIC_BASE_API_URL=https://root-guide-backend.vercel.app/api
+
+# JWT Configuration (For client-side decoding if needed)
+JWT_ACCESS_SECRET=your_jwt_access_secret
+JWT_REFRESH_SECRET=your_jwt_refresh_secret
+
+# Environment
+NODE_ENV=development
+
+```
+
+---
+
+### 2. `README.md` File
+
+```markdown
+# 🗺️ Root Guide Frontend
+
+Root Guide is a modern, high-performance web application designed for tour management. It provides a seamless interface for Tourists to book trips, Guides to manage their earnings/tours, and Admins to oversee the entire platform ecosystem.
+
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://root-guide-frontend.vercel.app)
+[![Backend API](https://img.shields.io/badge/Backend-API-blue)](https://root-guide-backend.vercel.app)
+
+---
+
+## 🚀 Tech Stack
+
+- **Framework:** [Next.js 16.0.10](https://nextjs.org/) (App Router)
+- **Library:** [React 19](https://react.dev/)
+- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
+- **UI Components:** [Radix UI](https://www.radix-ui.com/) & [Lucide React](https://lucide.dev/)
+- **Visualizations:** [Recharts](https://recharts.org/) (Data Dashboards)
+- **State Management:** React Hooks & Server Actions
+- **Forms & Validation:** [Zod](https://zod.dev/)
+- **Animations:** [Swiper.js](https://swiperjs.com/) & [tw-animate-css](https://www.npmjs.com/package/tw-animate-css)
+
+---
+
+## 📊 Dashboard Overviews
+
+The application features three distinct, data-driven dashboards using **Recharts** for visual analytics:
+
+### 🎒 Tourist Dashboard
+- **Stats:** Total trips taken, total amount spent, upcoming trips, and pending reviews.
+- **Visuals:** - **Pie Chart:** Distribution of booking statuses.
+    - **Bar Chart:** Monthly appointment/booking overview.
+
+### 🗺️ Guide Dashboard
+- **Stats:** Total earnings, active bookings (confirmed), successfully completed tours, pending requests, average rating, and total reviews.
+- **Visuals:** - **Booking Status Distribution:** Pie chart for status overview.
+    - **Growth Chart:** Monthly booking trends.
+
+### 👑 Admin Dashboard
+- **Stats:** Total transaction volume, **Platform Profit (15% commission)**, total bookings, total tourists, total guides, and active tours.
+- **Visuals:** - **Financial Overview:** Monthly booking volume vs. booking statuses.
+    - **User Distribution:** Comprehensive charts on platform growth.
+
+---
+
+## 📂 Folder Structure
+
+```text
+src/
+├── app/                # Next.js App Router (Pages & Layouts)
+├── components/         
+│   ├── modules/        # Feature-specific components (Guide, Admin, Tourist)
+│   ├── shared/         # Reusable UI (Buttons, Tables, Navbar, Footer)
+│   └── ui/             # Radix UI primitives & Shadcn-like components
+├── services/           # API call logic & Server Actions
+├── hooks/              # Custom React hooks
+├── types/              # TypeScript interfaces & Zod schemas
+├── lib/                # Utility functions (formatting, tailwind merge)
+└── assets/             # Global images and icons
+
+```
+
+---
+
+## ⚙️ Getting Started
+
+### 1. Clone the repository
+
+```bash
+git clone [https://github.com/Sohelrana2815/root-guide-frontend.git](https://github.com/Sohelrana2815/root-guide-frontend.git)
+cd root-guide-frontend
+
+```
+
+### 2. Install Dependencies
+
+```bash
+npm install
+
+```
+
+### 3. Environment Setup
+
+Create a `.env.local` file and add your environment variables:
+
+```bash
+NEXT_PUBLIC_BASE_API_URL=http://localhost:5000/api
+JWT_ACCESS_SECRET=your_secret
+
+```
+
+### 4. Run the Development Server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](https://www.google.com/search?q=http://localhost:3000) to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 🛠️ Key Functionalities
 
-## Learn More
+### 💳 Payment Integration
 
-To learn more about Next.js, take a look at the following resources:
+Seamlessly integrated with the backend **SSLCommerz** flow. Users can track payment success/failure/cancellation directly through dedicated frontend routes.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 🖼️ Responsive UI
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Fully optimized for mobile, tablet, and desktop views using Tailwind CSS v4. Includes a specialized **Swiper.js** slider for tour gallery and featured guides.
 
-## Deploy on Vercel
+### 🔐 Secure Routing
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+Role-based middleware protection ensures that Tourists, Guides, and Admins can only access their respective dashboards and actions.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+---
+
+## 📦 Scripts Summary
+
+* `npm run dev`: Runs the app in development mode.
+* `npm run build`: Builds the production application.
+* `npm run start`: Starts the production server.
+* `npm run lint`: Runs ESLint for code quality checks.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! If you have a suggestion that would make this better, please fork the repo and create a pull request.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📄 License
+
+Distributed under the **MIT License**.
