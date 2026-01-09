@@ -56,7 +56,10 @@ export function BookingBarChart({ data }: BookingBarChartProps) {
 
   // Format data for recharts
   const formattedData = data.map((item) => ({
-    month: typeof item.month === "string" ? item.month : format(item.month, "MMM yyyy"),
+    month:
+      typeof item.month === "string"
+        ? item.month
+        : format(item.month, "MMM yyyy"),
     appointments: Number(item.count),
   }));
 
