@@ -159,4 +159,4 @@ Contributions are welcome! If you have a suggestion that would make this better,
 
 ## 📄 License
 
-Distributed under the **MIT License**.
+Distributed under the **MIT License**
