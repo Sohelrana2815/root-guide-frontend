@@ -7,12 +7,14 @@ import { MapPin, Star, ArrowRight } from "lucide-react";
 import SectionHeader from "./SectionHeader";
 
 interface PopularPackagesProps {
-  tours: ITour[];
+  tours?: ITour[];
 }
 
-const PopularPackages = ({ tours }: PopularPackagesProps) => {
+const PopularPackages = ({ tours = [] }: PopularPackagesProps) => {
+  // Guard tours in case a non-array is passed from parent
+  const safeTours = Array.isArray(tours) ? tours : [];
   // Fixed sorting logic to handle potential undefined createdAt
-  const featuredPackages = [...tours]
+  const featuredPackages = [...safeTours]
     .sort((a, b) => {
       const timeA = new Date(a.createdAt ?? 0).getTime();
       const timeB = new Date(b.createdAt ?? 0).getTime();

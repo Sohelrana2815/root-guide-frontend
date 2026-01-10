@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { PieChart as PieChartIcon } from "lucide-react";
 import {
   Cell,
   Legend,
@@ -52,7 +51,6 @@ export function BookingPieChart({
           <CardTitle className="text-base font-medium">{title}</CardTitle>
           <CardDescription>{description}</CardDescription>
         </div>
-        <PieChartIcon className="h-4 w-4 text-muted-foreground" />
       </CardHeader>
       <CardContent className="flex-1 pb-0">
         <div className="h-75 w-full">

@@ -109,14 +109,8 @@ export async function getPublicTours() {
     return data;
   } catch (error: any) {
     // console.log(error);
-    return {
-      success: false,
-      message: `${
-        process.env.NODE_ENV === "development"
-          ? error.message
-          : "Something went wrong!"
-      }`,
-    };
+    // On error, always return an empty array so callers can safely iterate
+    return [];
   }
 }
 

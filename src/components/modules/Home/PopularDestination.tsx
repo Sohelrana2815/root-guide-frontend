@@ -14,12 +14,14 @@ import { ITour } from "@/types/tour.interface";
 import SectionHeader from "./SectionHeader";
 
 interface PopularDestinationProps {
-  tours: ITour[];
+  tours?: ITour[];
 }
 
 const PopularDestinations = ({ tours }: PopularDestinationProps) => {
+  // Guard the incoming `tours` so non-array values won't crash SSR
+  const safeTours = Array.isArray(tours) ? tours : [];
   // Filter for high ratings and slice
-  const topRatedTours = tours
+  const topRatedTours = safeTours
     // .filter((t) => (t.averageRating ?? 0) >= 4)
     .slice(0, 6);
   return (
