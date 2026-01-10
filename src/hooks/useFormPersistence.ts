@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { startTransition } from "react";
 
 type StorageKey = string;
@@ -39,6 +39,7 @@ export function useFormPersistence<T extends Record<string, any>>(
     onRestore,
   } = options;
   const storage = useSessionStorage ? sessionStorage : localStorage;
+  const prevSuccessRef = useRef<boolean | undefined>(undefined);
 
   // Load persisted data on mount
   useEffect(() => {
@@ -66,8 +67,12 @@ export function useFormPersistence<T extends Record<string, any>>(
   // Persist on error, reset on success
   useEffect(() => {
     if (!state) return;
-
+    // Only act when success state transitions (avoid loops caused by
+    // calling setFormData/onRestore which changes formData and retriggers
+    // this effect). Track previous success and only run reset once.
     if (state?.success) {
+      if (prevSuccessRef.current === true) return;
+      prevSuccessRef.current = true;
       if (resetOnSuccess) {
         try {
           storage.removeItem(storageKey);
@@ -79,6 +84,7 @@ export function useFormPersistence<T extends Record<string, any>>(
         });
       }
     } else if (state && !state.success) {
+      prevSuccessRef.current = false;
       // persist current form values on error
       try {
         storage.setItem(storageKey, JSON.stringify(formData));

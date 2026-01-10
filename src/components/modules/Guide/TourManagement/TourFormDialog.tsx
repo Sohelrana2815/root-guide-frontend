@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import InputFieldError from "@/components/shared/InputFieldError";
 import { Button } from "@/components/ui/button";
@@ -22,6 +23,7 @@ import { LANGUAGES } from "@/constant/languages";
 import { createTour, updateTour } from "@/services/guide/toursManagement";
 import { ITour } from "@/types/tour.interface";
 import { useActionState, useEffect, useRef, useState } from "react";
+import { useFormPersistence } from "@/hooks/useFormPersistence";
 import { toast } from "sonner";
 
 interface ITourFormDialogProps {
@@ -46,57 +48,108 @@ const TourFormDialog = ({
     null
   );
 
-  // 1. Sanitize Initial State
-  const [selectedLanguages, setSelectedLanguages] = useState<string[]>(() => {
-    const initial =
-      isEdit && Array.isArray(tour?.languages) ? tour!.languages : [];
-    return [...new Set(initial)]; // Ensures uniqueness
-  });
+  // 1. Draft state for the whole form (controlled) so we can persist it easily
+  const defaultDraft = {
+    title: "",
+    description: "",
+    itinerary: "",
+    category: "",
+    selectedLanguages: [] as string[],
+    selectedExpertise: [] as string[],
+    city: "",
+    price: "",
+    duration: "",
+    meetingPoint: "",
+    maxGroupSize: "",
+  };
 
-  const [selectedExpertise, setSelectedExpertise] = useState<string[]>(() => {
-    const initial =
-      isEdit && Array.isArray(tour?.expertise) ? tour!.expertise : [];
-    return [...new Set(initial)]; // Ensures uniqueness
+  const [draft, setDraft] = useState(() => {
+    if (isEdit && tour) {
+      return {
+        title: tour.title ?? "",
+        description: tour.description ?? "",
+        itinerary: tour.itinerary ?? "",
+        category: tour.category ?? "",
+        selectedLanguages: Array.isArray(tour.languages)
+          ? [...new Set(tour.languages)]
+          : [],
+        selectedExpertise: Array.isArray(tour.expertise)
+          ? [...new Set(tour.expertise)]
+          : [],
+        city: tour.city ?? "",
+        price: tour.price != null ? String(tour.price) : "",
+        duration: tour.duration != null ? String(tour.duration) : "",
+        meetingPoint: tour.meetingPoint ?? "",
+        maxGroupSize:
+          tour.maxGroupSize != null ? String(tour.maxGroupSize) : "",
+      } as typeof defaultDraft;
+    }
+    return defaultDraft as typeof defaultDraft;
   });
   // Track manual submit to show toasts only when user actually submitted
   const hasSubmittedRef = useRef(false);
 
-  // Reset on successful action (same behavior you had)
+  // Persist draft on error and clear on success
+  const storageKey = `tour-form-draft${isEdit && tourId ? `-${tourId}` : ""}`;
+  useFormPersistence(
+    state,
+    draft,
+    setDraft,
+    {
+      storageKey,
+      resetOnSuccess: true,
+      useSessionStorage: true,
+      onRestore: (parsed) => {
+        // parsed may be either the full draft shape or a legacy shape
+        const restored = parsed || {};
+        setDraft((prev) => ({ ...prev, ...(restored as any) }));
+      },
+    }
+  );
 
+  // Keep existing success/error UI behavior
   useEffect(() => {
     if (!open || !state || !hasSubmittedRef.current) return;
 
     if (state?.success) {
       toast.success(state.message);
-      // reset selected arrays
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSelectedLanguages([]);
-      setSelectedExpertise([]);
       hasSubmittedRef.current = false;
       onSuccess();
       onClose();
+      setDraft(defaultDraft);
     } else if (state.success === false) {
       toast.error(state.message);
       hasSubmittedRef.current = false;
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state, onSuccess, onClose, open]);
 
-  // When opening dialog for edit, prefill selected arrays from tour
-  // 2. Sanitize the Prefill Effect
+  // When opening dialog for edit, ensure draft is populated from tour if available
   useEffect(() => {
     if (!open) return;
     if (isEdit && tour) {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setSelectedLanguages([
-        ...new Set(Array.isArray(tour.languages) ? tour.languages : []),
-      ]);
-      setSelectedExpertise([
-        ...new Set(Array.isArray(tour.expertise) ? tour.expertise : []),
-      ]);
+      setDraft((prev) => ({ ...prev, ...{
+        title: tour.title ?? "",
+        description: tour.description ?? "",
+        itinerary: tour.itinerary ?? "",
+        category: tour.category ?? "",
+        selectedLanguages: Array.isArray(tour.languages)
+          ? [...new Set(tour.languages)]
+          : [],
+        selectedExpertise: Array.isArray(tour.expertise)
+          ? [...new Set(tour.expertise)]
+          : [],
+        city: tour.city ?? "",
+        price: tour.price != null ? String(tour.price) : "",
+        duration: tour.duration != null ? String(tour.duration) : "",
+        meetingPoint: tour.meetingPoint ?? "",
+        maxGroupSize:
+          tour.maxGroupSize != null ? String(tour.maxGroupSize) : "",
+      } }));
     } else {
-      setSelectedLanguages([]);
-      setSelectedExpertise([]);
+      setDraft(defaultDraft);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, isEdit, tour]);
   // wrapper to set flag and run action
   const handleSubmit = async (formData: FormData) => {
@@ -121,7 +174,7 @@ const TourFormDialog = ({
         >
           <div className="flex-1 overflow-y-auto px-6 space-y-4 pb-4">
             {/* Hidden inputs for languages */}
-            {Array.from(new Set(selectedLanguages)).map((lang) => (
+            {Array.from(new Set(draft.selectedLanguages || [])).map((lang) => (
               <input
                 key={`lang-hidden-${lang}`}
                 type="hidden"
@@ -129,7 +182,7 @@ const TourFormDialog = ({
                 value={lang}
               />
             ))}
-            {selectedExpertise.map((exp) => (
+            {(draft.selectedExpertise || []).map((exp) => (
               <input
                 key={`exp-hidden-${exp}`}
                 type="hidden"
@@ -144,7 +197,8 @@ const TourFormDialog = ({
               <Input
                 name="title"
                 placeholder="e.g., Hands-on Scavenger Hunt"
-                defaultValue={isEdit ? tour?.title : undefined}
+                value={draft.title ?? ""}
+                onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
               />
               <InputFieldError state={state} field="title" />
             </Field>
@@ -155,7 +209,8 @@ const TourFormDialog = ({
                 name="description"
                 type="text"
                 placeholder="Short description"
-                defaultValue={isEdit ? tour?.description : undefined}
+                value={draft.description ?? ""}
+                onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
               />
               <InputFieldError state={state} field="description" />
             </Field>
@@ -166,7 +221,8 @@ const TourFormDialog = ({
                 name="itinerary"
                 type="text"
                 placeholder="Itinerary"
-                defaultValue={isEdit ? tour?.itinerary : undefined}
+                value={draft.itinerary ?? ""}
+                onChange={(e) => setDraft((d) => ({ ...d, itinerary: e.target.value }))}
               />
               <InputFieldError state={state} field="itinerary" />
             </Field>
@@ -177,7 +233,8 @@ const TourFormDialog = ({
                 name="category"
                 type="text"
                 placeholder="Category"
-                defaultValue={isEdit ? tour?.category : undefined}
+                value={draft.category ?? ""}
+                onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))}
               />
               <InputFieldError state={state} field="category" />
             </Field>
@@ -185,11 +242,9 @@ const TourFormDialog = ({
             <Field>
               <FieldLabel>Languages you speak</FieldLabel>
               <MultiSelect
-                values={selectedLanguages}
+                values={draft.selectedLanguages}
                 onValuesChange={(values) =>
-                  setSelectedLanguages(
-                    Array.isArray(values) ? values : [values]
-                  )
+                  setDraft((d) => ({ ...d, selectedLanguages: Array.isArray(values) ? values : [values] }))
                 }
               >
                 <MultiSelectTrigger className="w-full">
@@ -211,11 +266,9 @@ const TourFormDialog = ({
             <Field>
               <FieldLabel>Expertise (what you offer)</FieldLabel>
               <MultiSelect
-                values={selectedExpertise}
+                values={draft.selectedExpertise}
                 onValuesChange={(values) =>
-                  setSelectedExpertise(
-                    Array.isArray(values) ? values : [values]
-                  )
+                  setDraft((d) => ({ ...d, selectedExpertise: Array.isArray(values) ? values : [values] }))
                 }
               >
                 <MultiSelectTrigger className="w-full">
@@ -239,7 +292,8 @@ const TourFormDialog = ({
               <Input
                 name="city"
                 placeholder="City"
-                defaultValue={isEdit ? tour?.city : undefined}
+                value={draft.city ?? ""}
+                onChange={(e) => setDraft((d) => ({ ...d, city: e.target.value }))}
               />
               <InputFieldError state={state} field="city" />
             </Field>
@@ -250,7 +304,8 @@ const TourFormDialog = ({
                 name="price"
                 type="number"
                 placeholder="e.g., 30"
-                defaultValue={isEdit ? String(tour?.price ?? "") : undefined}
+                value={draft.price ?? ""}
+                onChange={(e) => setDraft((d) => ({ ...d, price: e.target.value }))}
               />
               <InputFieldError state={state} field="price" />
             </Field>
@@ -261,7 +316,8 @@ const TourFormDialog = ({
                 name="duration"
                 type="number"
                 placeholder="e.g., 4.5"
-                defaultValue={isEdit ? String(tour?.duration ?? "") : undefined}
+                value={draft.duration ?? ""}
+                onChange={(e) => setDraft((d) => ({ ...d, duration: e.target.value }))}
               />
               <InputFieldError state={state} field="duration" />
             </Field>
@@ -271,7 +327,8 @@ const TourFormDialog = ({
               <Input
                 name="meetingPoint"
                 placeholder="Meeting point"
-                defaultValue={isEdit ? tour?.meetingPoint : undefined}
+                value={draft.meetingPoint ?? ""}
+                onChange={(e) => setDraft((d) => ({ ...d, meetingPoint: e.target.value }))}
               />
               <InputFieldError state={state} field="meetingPoint" />
             </Field>
@@ -282,9 +339,8 @@ const TourFormDialog = ({
                 name="maxGroupSize"
                 type="number"
                 placeholder="e.g., 16"
-                defaultValue={
-                  isEdit ? String(tour?.maxGroupSize ?? "") : undefined
-                }
+                value={draft.maxGroupSize ?? ""}
+                onChange={(e) => setDraft((d) => ({ ...d, maxGroupSize: e.target.value }))}
                 min="0"
               />
               <InputFieldError state={state} field="maxGroupSize" />
