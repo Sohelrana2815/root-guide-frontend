@@ -12,33 +12,33 @@ JWT_REFRESH_SECRET=your_jwt_refresh_secret
 
 # Environment
 NODE_ENV=development
-
 ```
 
----
-
-### 2. `README.md` File
-
-```markdown
 # 🗺️ Root Guide Frontend
 
 Root Guide is a modern, high-performance web application designed for tour management. It provides a seamless interface for Tourists to book trips, Guides to manage their earnings/tours, and Admins to oversee the entire platform ecosystem.
 
-[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen)](https://root-guide-frontend.vercel.app)
-[![Backend API](https://img.shields.io/badge/Backend-API-blue)](https://root-guide-backend.vercel.app)
+<div align="center">
+
+[![Live Demo](https://img.shields.io/badge/Live-Demo-brightgreen?style=for-the-badge&logo=vercel)](https://root-guide-frontend.vercel.app)
+[![Backend API](https://img.shields.io/badge/Backend-API-blue?style=for-the-badge&logo=express)](https://root-guide-backend.vercel.app)
+
+</div>
 
 ---
 
 ## 🚀 Tech Stack
 
-- **Framework:** [Next.js 16.0.10](https://nextjs.org/) (App Router)
-- **Library:** [React 19](https://react.dev/)
-- **Styling:** [Tailwind CSS v4](https://tailwindcss.com/)
-- **UI Components:** [Radix UI](https://www.radix-ui.com/) & [Lucide React](https://lucide.dev/)
-- **Visualizations:** [Recharts](https://recharts.org/) (Data Dashboards)
-- **State Management:** React Hooks & Server Actions
-- **Forms & Validation:** [Zod](https://zod.dev/)
-- **Animations:** [Swiper.js](https://swiperjs.com/) & [tw-animate-css](https://www.npmjs.com/package/tw-animate-css)
+| Category | Technology Used |
+| :--- | :--- |
+| **Framework** | [Next.js 16.0.10](https://nextjs.org/) (App Router) |
+| **Library** | [React 19](https://react.dev/) |
+| **Styling** | [Tailwind CSS v4](https://tailwindcss.com/) |
+| **UI Components** | [Radix UI](https://www.radix-ui.com/) & [Lucide React](https://lucide.dev/) |
+| **Visualizations** | [Recharts](https://recharts.org/) (Data Dashboards) |
+| **State/Data** | React Hooks & Server Actions |
+| **Validation** | [Zod](https://zod.dev/) |
+| **Animations** | [Swiper.js](https://swiperjs.com/) & [tw-animate-css](https://www.npmjs.com/package/tw-animate-css) |
 
 ---
 
@@ -47,19 +47,24 @@ Root Guide is a modern, high-performance web application designed for tour manag
 The application features three distinct, data-driven dashboards using **Recharts** for visual analytics:
 
 ### 🎒 Tourist Dashboard
-- **Stats:** Total trips taken, total amount spent, upcoming trips, and pending reviews.
-- **Visuals:** - **Pie Chart:** Distribution of booking statuses.
-    - **Bar Chart:** Monthly appointment/booking overview.
+- **Key Stats:** Total trips taken, Total spent, Upcoming trips, Pending reviews.
+- **Visual Analytics:**
+  - 🥧 **Pie Chart:** Distribution of booking statuses.
+  - 📊 **Bar Chart:** Monthly appointment/booking overview.
 
 ### 🗺️ Guide Dashboard
-- **Stats:** Total earnings, active bookings (confirmed), successfully completed tours, pending requests, average rating, and total reviews.
-- **Visuals:** - **Booking Status Distribution:** Pie chart for status overview.
-    - **Growth Chart:** Monthly booking trends.
+- **Key Stats:** Total earnings, Active bookings, Completed tours, Average rating.
+- **Visual Analytics:**
+  - 📈 **Growth Chart:** Monthly booking trends.
+  - 🎯 **Status Tracker:** Booking status distribution overview.
 
 ### 👑 Admin Dashboard
-- **Stats:** Total transaction volume, **Platform Profit (15% commission)**, total bookings, total tourists, total guides, and active tours.
-- **Visuals:** - **Financial Overview:** Monthly booking volume vs. booking statuses.
-    - **User Distribution:** Comprehensive charts on platform growth.
+- **Key Stats:** Transaction volume, **Platform Profit (15% fee)**, Total users (Guides/Tourists).
+- **Visual Analytics:**
+  - 💰 **Financial Overview:** Monthly booking volume vs. Revenue.
+  - 👥 **User Distribution:** Comprehensive charts on platform growth.
+
+
 
 ---
 
@@ -68,19 +73,15 @@ The application features three distinct, data-driven dashboards using **Recharts
 ```text
 src/
 ├── app/                # Next.js App Router (Pages & Layouts)
-├── components/         
-│   ├── modules/        # Feature-specific components (Guide, Admin, Tourist)
-│   ├── shared/         # Reusable UI (Buttons, Tables, Navbar, Footer)
-│   └── ui/             # Radix UI primitives & Shadcn-like components
+├── components/         # UI Logic
+│   ├── modules/        # Feature-specific (Guide, Admin, Tourist)
+│   ├── shared/         # Reusable (Tables, Navbar, Footer)
+│   └── ui/             # Radix primitives & Custom UI
 ├── services/           # API call logic & Server Actions
 ├── hooks/              # Custom React hooks
-├── types/              # TypeScript interfaces & Zod schemas
-├── lib/                # Utility functions (formatting, tailwind merge)
-└── assets/             # Global images and icons
-
-```
-
----
+├── types/              # TS Interfaces & Zod schemas
+├── lib/                # Utils (Formatting, Tailwind Merge)
+└── assets/             # Global images & icons
 
 ## ⚙️ Getting Started
 
