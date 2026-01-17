@@ -2,23 +2,31 @@ import { Button } from "@/components/ui/button";
 import { Users, Map, Award, ArrowRight } from "lucide-react";
 import SectionHeader from "./SectionHeader";
 import Link from "next/link";
+import { getGlobalMeta } from "@/services/meta/globalMeta.service";
+import { IGlobalMeta } from "@/types/meta.interface";
 
-const TrustAndCTA = () => {
+const TrustAndCTA = async () => {
+  const result = await getGlobalMeta();
+  const data: IGlobalMeta = result.data || {
+    totalTourists: 0,
+    totalGuides: 0,
+    totalDestinations: 0,
+  };
   const stats = [
     {
       icon: <Users className="w-6 h-6 text-primary" />,
       label: "Happy Travelers",
-      value: "50k+",
+      value: `${data.totalTourists}+`,
     },
     {
       icon: <Map className="w-6 h-6 text-primary" />,
       label: "Destinations",
-      value: "120+",
+      value: `${data.totalDestinations}`,
     },
     {
       icon: <Award className="w-6 h-6 text-primary" />,
       label: "Expert Guides",
-      value: "500+",
+      value: `${data.totalGuides}+`,
     },
   ];
 

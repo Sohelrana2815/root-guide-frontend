@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use server";
 import { serverFetch } from "@/lib/server-fetch";
 import { getUserInfo } from "@/services/auth/getUserInfo";
@@ -24,7 +25,8 @@ export const getDashboardMetaData = async () => {
   try {
     const result = await res.json();
     return result;
-  } catch (err) {
+  } catch (err: any) {
+    console.log(err);
     return { success: false, message: "Failed to parse dashboard data" };
   }
 };

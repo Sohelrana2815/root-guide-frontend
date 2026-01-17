@@ -53,6 +53,12 @@ export interface ITouristDashboardMeta {
   pieChartData?: Array<{ _id: string; count: number }>;
 }
 
+export interface IGlobalMeta {
+  totalTourists: number;
+  totalGuides: number;
+  totalDestinations: number;
+}
+
 export type IDashboardMeta =
   | IAdminDashboardMeta
   | IGuideDashboardMeta
