@@ -38,7 +38,7 @@ const UserDropdown = ({ userInfo }: UserDropdownProps) => {
   ).toUpperCase();
 
   return (
-    <DropdownMenu>
+    <DropdownMenu modal={false}>
       <DropdownMenuTrigger asChild>
         {userInfo.photo ? (
           <Image
