@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Users, Map, Award, ArrowRight } from "lucide-react";
 import SectionHeader from "./SectionHeader";
+import Link from "next/link";
 
 const TrustAndCTA = () => {
   const stats = [
@@ -57,14 +58,16 @@ const TrustAndCTA = () => {
               verified local guides.
             </p>
           </div>
-          <Button
-            size="lg"
-            variant="secondary"
-            className="group h-14 px-8 text-lg font-bold"
-          >
-            Start Booking Now
-            <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-          </Button>
+          <Link href="/tours">
+            <Button
+              size="lg"
+              variant="secondary"
+              className="group h-14 px-8 text-lg font-bold"
+            >
+              Start Booking Now
+              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </Button>
+          </Link>
         </div>
 
         {/* Subtle decorative background element */}

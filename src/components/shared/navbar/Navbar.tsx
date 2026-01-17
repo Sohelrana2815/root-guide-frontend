@@ -3,18 +3,19 @@ import { getCookie } from "@/services/auth/tokenHandlers";
 import Link from "next/link";
 import NavbarMenuClient from "./NavbarMenuClient";
 import { Button } from "@/components/ui/button";
-import LogoutButton from "../auth/LogoutButton";
 import { getUserInfo } from "@/services/auth/getUserInfo"; // আপনার ফাংশনটি ইম্পোর্ট করুন
+
+import UserDropdown from "@/components/modules/Dashboard/UserDropdown";
 
 const Navbar = async () => {
   const accessToken = await getCookie("accessToken");
-  const user = accessToken ? await getUserInfo() : null;
-  const role = user?.role;
+  const userInfo = accessToken ? await getUserInfo() : null;
+  const role = userInfo?.role;
 
   // আপনার রিকোয়ারমেন্ট অনুযায়ী ডায়নামিক নেভিগেশন আইটেম
   const getNavItems = () => {
     // ১. যখন ইউজার লগআউট অবস্থায় (Guest)
-    if (!accessToken || !user) {
+    if (!accessToken || !userInfo) {
       return [
         { href: "/", label: "Home" },
         { href: "/tours", label: "Explore Tours" },
@@ -88,13 +89,9 @@ const Navbar = async () => {
           {/* RIGHT: Buttons & Dark Mode */}
           <div className="flex items-center gap-4">
             {accessToken ? (
-              <div className="flex items-center gap-3">
-                {/* প্রোফাইল নেম দেখাতে চাইলে নিচের লাইনটি ব্যবহার করতে পারেন */}
-                <span className="hidden md:inline text-xs text-muted-foreground">
-                  Hi, {user.name}
-                </span>
-                <LogoutButton />
-              </div>
+              <>
+                <UserDropdown userInfo={userInfo} />
+              </>
             ) : (
               <div className="hidden sm:flex items-center gap-2">
                 <Link href="/login">
