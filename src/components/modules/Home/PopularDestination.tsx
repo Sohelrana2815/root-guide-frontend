@@ -100,8 +100,9 @@ const PopularDestinations = ({ tours }: PopularDestinationProps) => {
               </div>
               <Button
                 asChild
+                variant="outline"
                 size="sm"
-                className="rounded-full px-5 bg-slate-900 hover:bg-black transition-all"
+                className="rounded-full px-5 dark:border-none  transition-all bg-blue-100 hover:bg-blue-200 dark:hover:text-blue-500"
               >
                 <Link href={`/tours/${tour._id}`}>Details</Link>
               </Button>
