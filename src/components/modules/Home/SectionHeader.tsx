@@ -29,7 +29,7 @@ const SectionHeader = ({
       {linkHref && (
         <Link
           href={linkHref}
-          className="text-blue-600 font-semibold hover:text-blue-700 transition-colors flex items-center gap-1 group"
+          className="text-blue-400 font-semibold hover:text-blue-500 transition-colors flex items-center gap-1 group"
         >
           {linkText}
           <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-1" />

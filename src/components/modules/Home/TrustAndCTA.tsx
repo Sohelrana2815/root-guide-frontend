@@ -35,9 +35,9 @@ const TrustAndCTA = () => {
         {stats.map((stat, index) => (
           <div
             key={index}
-            className="flex flex-col items-center  text-center p-6 rounded-2xl bg-muted/10 border border-muted/20"
+            className="flex flex-col items-center  text-center p-6 rounded-2xl bg-card border border-primary/20 shadow-sm hover:shadow-md transition-all"
           >
-            <div className="mb-4 p-3 rounded-full bg-primary/10">
+            <div className="mb-4 p-3 rounded-full bg-card border border-primary/80">
               {stat.icon}
             </div>
             <h3 className="text-3xl font-bold text-foreground">{stat.value}</h3>

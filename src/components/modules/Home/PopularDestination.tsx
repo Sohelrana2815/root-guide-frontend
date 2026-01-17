@@ -35,7 +35,7 @@ const PopularDestinations = ({ tours }: PopularDestinationProps) => {
         {topRatedTours.map((tour: ITour) => (
           <Card
             key={tour._id}
-            className="overflow-hidden group border-none shadow-sm hover:shadow-md transition-all"
+            className="overflow-hidden group border border-primary/20 shadow-sm hover:shadow-md transition-all"
           >
             {/* Image Section */}
             <div className="relative aspect-4/3 overflow-hidden">

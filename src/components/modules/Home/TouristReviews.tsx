@@ -16,10 +16,9 @@ const TouristReviews = ({ reviews }: { reviews: any[] }) => {
         <SectionHeader
           title="Voices of Our Travelers"
           subtitle="Hear from the community of adventurers who have explored the world's most breathtaking landscapes with us."
-          
         />
       </section>
-      <section className="py-20  bg-card max-w-4/5 mx-auto p-4">
+      <section className="py-20  bg-card max-w-4/5 mx-auto p-4 border border-primary/20 shadow-sm rounded-md dark:shadow dark:shadow-primary/80">
         <div className="max-w-4xl mx-auto px-4">
           <Swiper
             modules={[Pagination]}
