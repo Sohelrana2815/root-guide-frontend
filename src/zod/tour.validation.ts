@@ -19,9 +19,11 @@ export const createTourZodSchema = z.object({
     .min(10, "Itinerary details must be provided"),
 
   // 2. Search & Filter Fields
-  category: z.string({ error: "Category is required" }).trim(),
+  category: z.string().trim().min(1, { error: "Category is required" }),
 
-  city: z.string({ error: "City is required" }).trim(),
+  city: z.string().trim().min(1, {
+    error: "City is required",
+  }),
   // new available Languages and expertise
   languages: z
     .array(z.string({ error: "Languages must be array of strings" }))
@@ -31,15 +33,15 @@ export const createTourZodSchema = z.object({
     .min(1, { error: "Give at least 1 expertise" }),
 
   // 3. Logistics & Pricing
-  price: z
+  price: z.coerce
     .number({ error: "Price is required" })
-    .min(0, "Price cannot be negative"),
+    .min(1, "Price must be at least 1"),
 
   duration: z
     .number({ error: "Duration is required" })
     .min(0.5, "Duration must be at least 30 minutes (0.5 hours)"),
 
-  meetingPoint: z.string({ error: "Meeting point is required" }).trim(),
+  meetingPoint: z.string().trim().min(1, "Meeting point is required"),
 
   maxGroupSize: z
     .number({ error: "Max group size is required" })

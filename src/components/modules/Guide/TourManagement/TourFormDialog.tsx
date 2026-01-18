@@ -45,7 +45,7 @@ const TourFormDialog = ({
 
   const [state, formAction, pending] = useActionState(
     isEdit ? updateTour.bind(null, tourId!) : createTour,
-    null
+    null,
   );
 
   // 1. Draft state for the whole form (controlled) so we can persist it easily
@@ -91,21 +91,16 @@ const TourFormDialog = ({
 
   // Persist draft on error and clear on success
   const storageKey = `tour-form-draft${isEdit && tourId ? `-${tourId}` : ""}`;
-  useFormPersistence(
-    state,
-    draft,
-    setDraft,
-    {
-      storageKey,
-      resetOnSuccess: true,
-      useSessionStorage: true,
-      onRestore: (parsed) => {
-        // parsed may be either the full draft shape or a legacy shape
-        const restored = parsed || {};
-        setDraft((prev) => ({ ...prev, ...(restored as any) }));
-      },
-    }
-  );
+  useFormPersistence(state, draft, setDraft, {
+    storageKey,
+    resetOnSuccess: true,
+    useSessionStorage: true,
+    onRestore: (parsed) => {
+      // parsed may be either the full draft shape or a legacy shape
+      const restored = parsed || {};
+      setDraft((prev) => ({ ...prev, ...(restored as any) }));
+    },
+  });
 
   // Keep existing success/error UI behavior
   useEffect(() => {
@@ -118,7 +113,10 @@ const TourFormDialog = ({
       onClose();
       setDraft(defaultDraft);
     } else if (state.success === false) {
-      toast.error(state.message);
+      const firstError = state.errors?.[0]?.message;
+      const displayMessage =
+        firstError || state.message || "Something went wrong";
+      toast.error(displayMessage);
       hasSubmittedRef.current = false;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -128,24 +126,27 @@ const TourFormDialog = ({
   useEffect(() => {
     if (!open) return;
     if (isEdit && tour) {
-      setDraft((prev) => ({ ...prev, ...{
-        title: tour.title ?? "",
-        description: tour.description ?? "",
-        itinerary: tour.itinerary ?? "",
-        category: tour.category ?? "",
-        selectedLanguages: Array.isArray(tour.languages)
-          ? [...new Set(tour.languages)]
-          : [],
-        selectedExpertise: Array.isArray(tour.expertise)
-          ? [...new Set(tour.expertise)]
-          : [],
-        city: tour.city ?? "",
-        price: tour.price != null ? String(tour.price) : "",
-        duration: tour.duration != null ? String(tour.duration) : "",
-        meetingPoint: tour.meetingPoint ?? "",
-        maxGroupSize:
-          tour.maxGroupSize != null ? String(tour.maxGroupSize) : "",
-      } }));
+      setDraft((prev) => ({
+        ...prev,
+        ...{
+          title: tour.title ?? "",
+          description: tour.description ?? "",
+          itinerary: tour.itinerary ?? "",
+          category: tour.category ?? "",
+          selectedLanguages: Array.isArray(tour.languages)
+            ? [...new Set(tour.languages)]
+            : [],
+          selectedExpertise: Array.isArray(tour.expertise)
+            ? [...new Set(tour.expertise)]
+            : [],
+          city: tour.city ?? "",
+          price: tour.price != null ? String(tour.price) : "",
+          duration: tour.duration != null ? String(tour.duration) : "",
+          meetingPoint: tour.meetingPoint ?? "",
+          maxGroupSize:
+            tour.maxGroupSize != null ? String(tour.maxGroupSize) : "",
+        },
+      }));
     } else {
       setDraft(defaultDraft);
     }
@@ -198,7 +199,9 @@ const TourFormDialog = ({
                 name="title"
                 placeholder="e.g., Hands-on Scavenger Hunt"
                 value={draft.title ?? ""}
-                onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, title: e.target.value }))
+                }
               />
               <InputFieldError state={state} field="title" />
             </Field>
@@ -210,7 +213,9 @@ const TourFormDialog = ({
                 type="text"
                 placeholder="Short description"
                 value={draft.description ?? ""}
-                onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, description: e.target.value }))
+                }
               />
               <InputFieldError state={state} field="description" />
             </Field>
@@ -222,7 +227,9 @@ const TourFormDialog = ({
                 type="text"
                 placeholder="Itinerary"
                 value={draft.itinerary ?? ""}
-                onChange={(e) => setDraft((d) => ({ ...d, itinerary: e.target.value }))}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, itinerary: e.target.value }))
+                }
               />
               <InputFieldError state={state} field="itinerary" />
             </Field>
@@ -234,7 +241,9 @@ const TourFormDialog = ({
                 type="text"
                 placeholder="Category"
                 value={draft.category ?? ""}
-                onChange={(e) => setDraft((d) => ({ ...d, category: e.target.value }))}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, category: e.target.value }))
+                }
               />
               <InputFieldError state={state} field="category" />
             </Field>
@@ -244,7 +253,12 @@ const TourFormDialog = ({
               <MultiSelect
                 values={draft.selectedLanguages}
                 onValuesChange={(values) =>
-                  setDraft((d) => ({ ...d, selectedLanguages: Array.isArray(values) ? values : [values] }))
+                  setDraft((d) => ({
+                    ...d,
+                    selectedLanguages: Array.isArray(values)
+                      ? values
+                      : [values],
+                  }))
                 }
               >
                 <MultiSelectTrigger className="w-full">
@@ -268,7 +282,12 @@ const TourFormDialog = ({
               <MultiSelect
                 values={draft.selectedExpertise}
                 onValuesChange={(values) =>
-                  setDraft((d) => ({ ...d, selectedExpertise: Array.isArray(values) ? values : [values] }))
+                  setDraft((d) => ({
+                    ...d,
+                    selectedExpertise: Array.isArray(values)
+                      ? values
+                      : [values],
+                  }))
                 }
               >
                 <MultiSelectTrigger className="w-full">
@@ -293,7 +312,9 @@ const TourFormDialog = ({
                 name="city"
                 placeholder="City"
                 value={draft.city ?? ""}
-                onChange={(e) => setDraft((d) => ({ ...d, city: e.target.value }))}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, city: e.target.value }))
+                }
               />
               <InputFieldError state={state} field="city" />
             </Field>
@@ -305,7 +326,9 @@ const TourFormDialog = ({
                 type="number"
                 placeholder="e.g., 30"
                 value={draft.price ?? ""}
-                onChange={(e) => setDraft((d) => ({ ...d, price: e.target.value }))}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, price: e.target.value }))
+                }
               />
               <InputFieldError state={state} field="price" />
             </Field>
@@ -317,7 +340,9 @@ const TourFormDialog = ({
                 type="number"
                 placeholder="e.g., 4.5"
                 value={draft.duration ?? ""}
-                onChange={(e) => setDraft((d) => ({ ...d, duration: e.target.value }))}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, duration: e.target.value }))
+                }
               />
               <InputFieldError state={state} field="duration" />
             </Field>
@@ -328,7 +353,9 @@ const TourFormDialog = ({
                 name="meetingPoint"
                 placeholder="Meeting point"
                 value={draft.meetingPoint ?? ""}
-                onChange={(e) => setDraft((d) => ({ ...d, meetingPoint: e.target.value }))}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, meetingPoint: e.target.value }))
+                }
               />
               <InputFieldError state={state} field="meetingPoint" />
             </Field>
@@ -340,7 +367,9 @@ const TourFormDialog = ({
                 type="number"
                 placeholder="e.g., 16"
                 value={draft.maxGroupSize ?? ""}
-                onChange={(e) => setDraft((d) => ({ ...d, maxGroupSize: e.target.value }))}
+                onChange={(e) =>
+                  setDraft((d) => ({ ...d, maxGroupSize: e.target.value }))
+                }
                 min="0"
               />
               <InputFieldError state={state} field="maxGroupSize" />

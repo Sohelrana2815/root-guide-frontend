@@ -44,13 +44,13 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(
-    userInfo?.languages || []
+    userInfo?.languages || [],
   );
   const [selectedExpertise, setSelectedExpertise] = useState<string[]>(
-    userInfo?.expertise || []
+    userInfo?.expertise || [],
   );
   const [selectedPreferences, setSelectedPreferences] = useState<string[]>(
-    userInfo?.preferences || []
+    userInfo?.preferences || [],
   );
 
   const getProfilePhoto = () => {
@@ -360,7 +360,7 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
                 values={selectedLanguages}
                 onValuesChange={(values) =>
                   setSelectedLanguages(
-                    Array.isArray(values) ? values : [values]
+                    Array.isArray(values) ? values : [values],
                   )
                 }
               >
@@ -389,7 +389,7 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
                     values={selectedExpertise}
                     onValuesChange={(values) =>
                       setSelectedExpertise(
-                        Array.isArray(values) ? values : [values]
+                        Array.isArray(values) ? values : [values],
                       )
                     }
                   >
@@ -435,7 +435,7 @@ const MyProfile = ({ userInfo }: MyProfileProps) => {
                     values={selectedPreferences}
                     onValuesChange={(values) =>
                       setSelectedPreferences(
-                        Array.isArray(values) ? values : [values]
+                        Array.isArray(values) ? values : [values],
                       )
                     }
                   >

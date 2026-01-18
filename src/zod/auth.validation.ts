@@ -30,7 +30,7 @@ export const registerValidationZodSchema = z
     {
       message: "At least one expertise is required for guides.",
       path: ["expertise"],
-    }
+    },
   );
 
 export const loginValidationZodSchema = z.object({
@@ -54,16 +54,14 @@ export const updateUserZodSchema = z.object({
     .min(6, { error: "Password must be at least 6 characters" })
     .regex(
       /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*])[\s\S]{6,}$/,
-      "Password must contain at least 1 uppercase letter, 1 digit, and 1 special character (!@#$%^&*)"
+      "Password must contain at least 1 uppercase letter, 1 digit, and 1 special character (!@#$%^&*)",
     )
     .optional(),
   // Must have at least 1 uppercase letter
 
   userStatus: z.enum(Object.values(UserStatus) as [string]).optional(),
 
-  role: z
-    .enum(["TOURIST", "GUIDE", "ADMIN"] as const)
-    .optional(),
+  role: z.enum(["TOURIST", "GUIDE", "ADMIN"] as const).optional(),
   isDeleted: z.boolean({ error: "isDeleted must be true or false" }).optional(),
   isVerified: z
     .boolean({ error: "isVerified must be true or false" })

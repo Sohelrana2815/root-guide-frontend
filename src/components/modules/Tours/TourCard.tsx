@@ -12,7 +12,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { getInitials } from "@/lib/formatters";
-import { Clock, Eye, MapPin, Star, Users } from "lucide-react";
+import { Clock, MapPin, Star, Users } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
@@ -64,13 +64,16 @@ const TourCard = ({ tour, guide }: TourCardProps) => {
 
         <CardHeader className="pt-4 pb-0 px-4">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
-            <div>
+            <div className="flex items-center justify-between w-full">
               <CardTitle className="line-clamp-2">{tour.title}</CardTitle>
               <div className="flex items-center gap-2 text-sm text-muted-foreground mt-1">
-                <div className="flex items-center gap-1">
-                  <Star className="w-4 h-4" />
-                  <span>{tour.averageRating ?? "New"}</span>
-                  <span className="text-xs opacity-70">
+                <div className="flex items-center gap-1 bg-yellow-400/10 px-2 py-0.5 rounded-full">
+                  <Star className="w-3 h-3 fill-yellow-400 text-yellow-400" />
+
+                  <span className="text-xs font-bold text-yellow-700 dark:text-yellow-400">
+                    {tour.averageRating?.toFixed(1) || "0.0"}
+                  </span>
+                  <span className="text-xs font-bold text-yellow-700 dark:text-yellow-400">
                     ({tour.reviewCount ?? 0})
                   </span>
                 </div>
@@ -119,7 +122,7 @@ const TourCard = ({ tour, guide }: TourCardProps) => {
             </div>
 
             {/* Verified Badge */}
-            <Badge variant="outline" className="text-sm">
+            <Badge className="text-sm rounded-full px-5 dark:border-none  transition-all bg-blue-100 hover:bg-blue-200 dark:bg-card text-foreground">
               Verified
             </Badge>
           </div>
@@ -130,17 +133,18 @@ const TourCard = ({ tour, guide }: TourCardProps) => {
             <Link href={`/tours/${tour._id}`} className="flex-1">
               <Button
                 variant="outline"
-                className="w-full h-10 flex items-center justify-center"
+                size="sm"
+                className="w-full flex items-center justify-center rounded-full"
                 aria-label={`View details for ${tour.title}`}
               >
-                <Eye className="h-4 w-4 mr-2" />
                 Details
               </Button>
             </Link>
 
             <Button
+              size="sm"
               onClick={() => setShowTourBookingModal(true)}
-              className="flex-1 h-10"
+              className="w-1/2 flex-1 rounded-full"
               aria-label={`Book ${tour.title}`}
             >
               Book Now

@@ -9,7 +9,6 @@ import { getTourById } from "@/services/guide/toursManagement";
 import { getTourReviews } from "@/services/tourist/reviews.service";
 import { Clock, MapPin, Star, Users } from "lucide-react";
 import Image from "next/image";
-import Link from "next/link";
 
 const TourDetailPage = async ({
   params,
@@ -31,18 +30,20 @@ const TourDetailPage = async ({
     <div className="container mx-auto px-4 py-8">
       {/* 1. Hero Section */}
       <div className="relative h-[60vh] w-full rounded-2xl overflow-hidden mb-8">
-        <Image
-          src={tour.image || "/api/placeholder/1200/800"}
-          alt={tour.title || "Tour image"}
-          fill
-          className="object-cover"
-          priority
-        />
-        {!tour.image && (
-          <div className="absolute inset-0 flex items-center justify-center bg-secondary/20">
-            <span className="text-muted-foreground">No image available</span>
+        {tour.image ? (
+          <Image
+            src={tour.image || "/placeholder.png"}
+            alt={tour.title || "Tour image"}
+            fill
+            className="object-cover"
+            priority
+          />
+        ) : (
+          <div className="bg-muted flex items-center justify-center h-full w-full">
+            <MapPin className="h-10 w-10 text-muted-foreground/40" />
           </div>
         )}
+
         <div className="absolute inset-0 bg-linear-to-t from-black/60 to-transparent" />
         <div className="absolute bottom-8 left-8 text-white">
           <Badge className="mb-4 bg-primary text-white border-none">
@@ -101,7 +102,6 @@ const TourDetailPage = async ({
             </div>
 
             {/* Client booking widget opens guest/date modal before creating booking */}
-            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <BookingWidget tour={tour} guide={guide} />
 
             <p className="text-center text-xs text-muted-foreground mt-4">

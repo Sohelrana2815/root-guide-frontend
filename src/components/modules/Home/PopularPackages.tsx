@@ -95,7 +95,7 @@ const PopularPackages = ({ tours = [] }: PopularPackagesProps) => {
               <div className="pt-2">
                 <Link
                   href={`/tours/${tour._id}`}
-                  className="inline-flex items-center gap-2 text-sm font-bold text-blue-600 hover:text-blue-700 transition-all group/link"
+                  className="inline-flex items-center gap-2 text-sm font-bold hover:text-blue-500 dark:text-blue-100  dark:hover:text-blue-500 transition-all group/link"
                 >
                   Learn More
                   <ArrowRight className="w-4 h-4 transition-transform group-hover/link:translate-x-1" />
