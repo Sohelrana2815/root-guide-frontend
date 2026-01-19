@@ -84,97 +84,48 @@ const TourBookingList = ({ bookings }: TourBookingListProps) => {
   }
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
       {bookings.map((booking: IBooking | any) => (
         <Card
           key={booking._id}
-          className="flex flex-col shadow-sm hover:shadow-md transition-shadow"
+          className="group flex flex-col border-border bg-card overflow-hidden hover:shadow-xl transition-all duration-300"
         >
-          {/* Top Image Section */}
-          <div className="relative h-48 w-full overflow-hidden">
+          {/* 1. Image Section: Flush with top/sides + Hover Zoom */}
+          <div className="relative aspect-4/3 w-full overflow-hidden">
             {booking.tourId?.image ? (
               <Image
                 src={booking.tourId.image}
                 alt={booking.tourId.title}
                 fill
-                className="object-cover"
+                className="object-cover transition-transform duration-500 group-hover:scale-110"
               />
             ) : (
               <div className="bg-muted flex items-center justify-center h-full w-full">
-                <MapPin className="h-10 w-10 text-muted-foreground/40" />
+                <MapPin className="h-10 w-10 text-muted-foreground/20" />
               </div>
             )}
-            <div className="absolute top-3 right-3 flex flex-col gap-2">
-              {getStatusBadge(booking.status)}
+
+            {/* Status Badge - Glassmorphism style */}
+            <div className="absolute top-4 right-4 z-10">
+              <div className="backdrop-blur-md rounded-lg overflow-hidden shadow-sm">
+                {getStatusBadge(booking.status)}
+              </div>
             </div>
           </div>
 
-          <CardHeader className="p-4 pb-2">
-            <div className="space-y-1">
-              <CardTitle className="text-lg font-bold line-clamp-1">
-                {booking.tourId?.title}
-              </CardTitle>
-              <CardDescription className="flex items-center gap-1">
-                <MapPin className="h-3.5 w-3.5 text-primary" />
-                <span className="truncate">{booking.tourId?.city}</span>
-              </CardDescription>
-            </div>
-          </CardHeader>
-
-          <CardContent className="p-4 pt-0 flex-grow space-y-4">
-            {/* Stats Grid */}
-            <div className="grid grid-cols-2 gap-4 py-3 border-y border-slate-50 mt-2">
-              <div className="flex items-center gap-2">
-                <Users className="h-4 w-4 text-muted-foreground" />
-                <div className="text-sm">
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none">
-                    Guests
-                  </p>
-                  <p className="font-semibold">{booking.guestCount}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Banknote className="h-4 w-4 text-muted-foreground" />
-                <div className="text-sm">
-                  <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none">
-                    Total
-                  </p>
-                  <p className="font-semibold text-primary">
-                    ${booking.totalPrice}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            {/* Guide & Meta Info */}
+          {/* 2. Content Section: Standardized P-5 Padding */}
+          <CardContent className="p-5 flex-grow space-y-3">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center overflow-hidden border">
-                  {booking.guideId?.photo ? (
-                    <Image
-                      src={booking.guideId.photo}
-                      alt="guide"
-                      width={32}
-                      height={32}
-                      className="object-cover"
-                    />
-                  ) : (
-                    <User className="h-4 w-4 text-primary" />
-                  )}
-                </div>
-                <div className="text-[12px]">
-                  <p className="text-muted-foreground leading-none mb-0.5">
-                    Guide
-                  </p>
-                  <p className="font-medium truncate max-w-[100px]">
-                    {booking.guideId?.name || "Pending..."}
-                  </p>
-                </div>
+              <div className="flex items-center gap-1.5 text-muted-foreground">
+                <MapPin className="w-3.5 h-3.5 text-blue-500" />
+                <span className="text-xs uppercase tracking-widest font-semibold">
+                  {booking.tourId?.city || "Unknown"}
+                </span>
               </div>
 
               <Badge
                 variant="outline"
-                className={`h-fit text-[10px] gap-1 ${
+                className={`h-fit text-[10px] font-bold gap-1 px-2 py-0.5 rounded-full ${
                   booking.paymentId?.status === "PAID"
                     ? "text-emerald-600 border-emerald-200 bg-emerald-50"
                     : "text-red-500 border-red-200 bg-red-50"
@@ -185,28 +136,93 @@ const TourBookingList = ({ bookings }: TourBookingListProps) => {
               </Badge>
             </div>
 
-            <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground pt-1">
-              <Calendar className="h-3 w-3" />
-              <span>Booked: {formatDateTime(booking.createdAt)}</span>
+            <h3 className="text-lg font-bold text-foreground group-hover:text-blue-600 transition-colors line-clamp-1">
+              {booking.tourId?.title}
+            </h3>
+
+            {/* Stats Grid - Aligned with your TourCard metadata style */}
+            <div className="grid grid-cols-2 gap-4 py-3 border-y border-border/50 mt-2">
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+                  <Users className="h-4 w-4 text-blue-600" />
+                </div>
+                <div className="text-sm">
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none">
+                    Guests
+                  </p>
+                  <p className="font-bold">{booking.guestCount}</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="p-1.5 bg-emerald-50 dark:bg-emerald-900/20 rounded-lg">
+                  <Banknote className="h-4 w-4 text-emerald-600" />
+                </div>
+                <div className="text-sm">
+                  <p className="text-[10px] text-muted-foreground uppercase font-bold leading-none">
+                    Total
+                  </p>
+                  <p className="font-bold text-foreground">
+                    ${booking.totalPrice}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Guide Section */}
+            <div className="flex items-center justify-between pt-1">
+              <div className="flex items-center gap-2">
+                <div className="h-8 w-8 rounded-full bg-slate-100 dark:bg-slate-800 flex items-center justify-center overflow-hidden border border-border">
+                  {booking.guideId?.photo ? (
+                    <Image
+                      src={booking.guideId.photo}
+                      alt="guide"
+                      width={32}
+                      height={32}
+                      className="object-cover"
+                    />
+                  ) : (
+                    <User className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </div>
+                <div className="text-[12px]">
+                  <p className="text-muted-foreground leading-none mb-0.5">
+                    Guide
+                  </p>
+                  <p className="font-semibold truncate max-w-[100px]">
+                    {booking.guideId?.name || "Pending..."}
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-1 text-[10px] text-muted-foreground font-medium">
+                <Calendar className="h-3 w-3" />
+                <span>
+                  {new Date(booking.createdAt).toLocaleDateString("en-US", {
+                    year: "numeric",
+                    month: "2-digit",
+                    day: "2-digit",
+                  })}
+                </span>
+              </div>
             </div>
           </CardContent>
 
-          <CardFooter className="p-4 pt-0 gap-2">
+          {/* 3. Footer Section: Standardized bg-slate-50/50 and Rounded Buttons */}
+          <CardFooter className="px-5 py-4 gap-3 border-t border-border/50 bg-slate-50/50 dark:bg-transparent">
             <Button
               variant="outline"
               size="sm"
-              className="flex-1 text-xs"
+              className="flex-1 rounded-full font-bold text-xs transition-all hover:bg-blue-50"
               asChild
             >
               <Link href={`/dashboard/my-bookings/${booking._id}`}>
-                Details
+                View Details
               </Link>
             </Button>
 
             {booking?.paymentId?.status !== "PAID" && (
               <Button
                 size="sm"
-                className="flex-1 text-xs"
+                className="flex-1 rounded-full font-bold text-xs shadow-md hover:shadow-lg transition-all"
                 onClick={() => handlePayment(booking._id)}
               >
                 Pay Now

@@ -8,15 +8,23 @@ import TravelByActivity from "@/components/modules/Home/TravelByActivity";
 import SpecialOffer from "@/components/modules/Home/SpecialOffer";
 import { getPublicReviews } from "@/services/tourist/reviews.service";
 import TouristReviews from "@/components/modules/Home/TouristReviews";
+import { getGlobalMeta } from "@/services/meta/globalMeta.service";
+import { IGlobalMeta } from "@/types/meta.interface";
 
 export default async function HomePage() {
-  const [tourResult, reviewResult] = await Promise.all([
+  const [tourResult, reviewResult, meta] = await Promise.all([
     getPublicTours(),
     getPublicReviews(),
+    getGlobalMeta(),
   ]);
 
   const tours = tourResult || [];
   const reviews = reviewResult?.data || [];
+  const metaData: IGlobalMeta = meta?.data || {
+    totalTourists: 0,
+    totalGuides: 0,
+    totalDestinations: 0,
+  };
   return (
     <main>
       <Hero
@@ -26,7 +34,7 @@ export default async function HomePage() {
             Explore <span className="text-blue-400">Amazing</span> Places
           </>
         }
-        subtitle="Join over 10,000+ travelers finding their perfect getaway with handpicked local guides."
+        subtitle={`Join over ${metaData.totalTourists}+ travelers finding their perfect getaway with handpicked local guides.`}
         ctaText="Start Your Adventure"
         ctaHref="/tours"
       />

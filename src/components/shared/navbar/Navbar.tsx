@@ -28,8 +28,9 @@ const Navbar = async () => {
       return [
         { href: "/", label: "Home" },
         { href: "/tours", label: "Explore Tours" },
+        { href: "/dashboard/", label: "Tourist Dashboard" },
         { href: "/dashboard/my-bookings", label: "My Bookings" },
-        { href: "/my-profile", label: "Profile" },
+        { href: "/my-profile", label: "My Profile" },
       ];
     }
 
@@ -38,8 +39,16 @@ const Navbar = async () => {
       return [
         { href: "/", label: "Home" },
         { href: "/tours", label: "Explore" },
-        { href: "/guide/dashboard", label: "Dashboard" },
-        { href: "/my-profile", label: "Profile" },
+        { href: "/guide/dashboard", label: "Guide Dashboard" },
+        {
+          href: "/guide/dashboard/tours-management",
+          label: "Manage Your Tours",
+        },
+        {
+          href: "/guide/dashboard/bookings-management",
+          label: "Bookings Received",
+        },
+        { href: "/my-profile", label: "My Profile" },
       ];
     }
 
@@ -47,10 +56,20 @@ const Navbar = async () => {
     if (role === "ADMIN") {
       return [
         { href: "/", label: "Home" },
+        { href: "/tours", label: "See All Tours" },
         { href: "/admin/dashboard", label: "Admin Dashboard" },
-        { href: "/admin/dashboard/users-management", label: "Manage Users" },
-        { href: "/admin/dashboard/tours-management", label: "Manage Listings" },
-        { href: "/my-profile", label: "Profile" },
+        {
+          href: "/admin/dashboard/users-management",
+          label: "Manage All Users",
+        },
+        {
+          href: "/admin/dashboard/tours-management",
+          label: "Manage All Tours",
+        },
+        {
+          href: "/admin/dashboard/bookings-management",
+          label: "Manage All Bookings",
+        },
       ];
     }
 

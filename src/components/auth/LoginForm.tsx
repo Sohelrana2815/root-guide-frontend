@@ -7,6 +7,7 @@ import { useActionState, useEffect, useState, startTransition } from "react";
 import { loginUser } from "@/services/auth/loginUser";
 import { toast } from "sonner";
 import InputFieldError from "../shared/InputFieldError";
+import AdminCredentialsFiller from "@/utils/AdminCredentialsFiller";
 
 const LoginForm = ({ redirect }: { redirect?: string }) => {
   const [state, formAction, isPending] = useActionState(loginUser, null);
@@ -16,6 +17,13 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
     email: "",
     password: "",
   });
+
+  //
+
+  const handleAutoFill = (credentials: { email: string; password: string }) => {
+    setFormData(credentials);
+    toast.success("Admin credentials filled!");
+  };
 
   useEffect(() => {
     if (state?.success) {
@@ -40,6 +48,7 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
 
   return (
     <form action={formAction}>
+      <AdminCredentialsFiller onFill={handleAutoFill} />
       {redirect && <input type="hidden" name="redirect" value={redirect} />}
       <FieldGroup>
         {/* email */}
