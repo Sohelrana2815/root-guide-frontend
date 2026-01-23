@@ -24,7 +24,7 @@ export async function createTour(_prevState: any, formData: FormData) {
       expertise: formData.getAll("expertise").map(String).filter(Boolean),
     };
     // log the payload so you can inspect shape in server console
-    console.log("createTour - raw payload from form:", payload);
+    // console.log("createTour - raw payload from form:", payload);
 
     if (zodValidator(payload, createTourZodSchema).success === false) {
       return zodValidator(payload, createTourZodSchema);

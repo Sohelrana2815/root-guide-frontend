@@ -10,12 +10,15 @@ import { getPublicReviews } from "@/services/tourist/reviews.service";
 import TouristReviews from "@/components/modules/Home/TouristReviews";
 import { getGlobalMeta } from "@/services/meta/globalMeta.service";
 import { IGlobalMeta } from "@/types/meta.interface";
+import { getHighRatedGuides } from "@/services/public/users.service";
+import HighRatedGuides from "@/components/modules/Guide/HighRatedGuides/HighRatedGuides";
 
 export default async function HomePage() {
-  const [tourResult, reviewResult, meta] = await Promise.all([
+  const [tourResult, reviewResult, meta, highRatedGuides] = await Promise.all([
     getPublicTours(),
     getPublicReviews(),
     getGlobalMeta(),
+    getHighRatedGuides(),
   ]);
 
   const tours = tourResult || [];
@@ -25,6 +28,12 @@ export default async function HomePage() {
     totalGuides: 0,
     totalDestinations: 0,
   };
+
+  const topGuides = Array.isArray(highRatedGuides?.data)
+    ? highRatedGuides.data
+    : []
+  console.log("Top Guides", topGuides);
+
   return (
     <main>
       <Hero
@@ -41,7 +50,7 @@ export default async function HomePage() {
 
       {/* Spacer to allow the floating search bar room to breathe */}
       <div className="h-32" />
-
+      <HighRatedGuides guides={topGuides} />
       <PopularPackages tours={tours} />
       <TouristReviews reviews={reviews} />
       <TravelByActivity />

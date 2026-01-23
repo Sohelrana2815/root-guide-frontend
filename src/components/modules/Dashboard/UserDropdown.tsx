@@ -46,7 +46,7 @@ const UserDropdown = ({ userInfo }: UserDropdownProps) => {
             alt={userInfo.name || ""}
             width={30}
             height={30}
-            className="rounded-full ring ring-primary cursor-pointer"
+            className="rounded-full w-9 h-9 object-cover ring ring-primary cursor-pointer"
           />
         ) : (
           <Button variant="outline" size="icon" className="rounded-full ">

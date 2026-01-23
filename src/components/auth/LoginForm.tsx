@@ -22,7 +22,9 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
 
   const handleAutoFill = (credentials: { email: string; password: string }) => {
     setFormData(credentials);
-    toast.success("Admin credentials filled!");
+    toast.success("Admin credentials filled!", {
+      position: "bottom-right",
+    });
   };
 
   useEffect(() => {
@@ -32,7 +34,9 @@ const LoginForm = ({ redirect }: { redirect?: string }) => {
         setFormData({ email: "", password: "" });
       });
     } else if (state && !state.success && state.message) {
-      toast.error(state.message);
+      toast.error(state.message, {
+        position: "bottom-right",
+      });
     }
   }, [state]);
   // Handle input changes

@@ -20,7 +20,7 @@ const PopularPackages = ({ tours = [] }: PopularPackagesProps) => {
       const timeB = new Date(b.createdAt ?? 0).getTime();
       return timeB - timeA;
     })
-    .slice(0, 6);
+    .slice(0, 8);
   if (featuredPackages.length === 0) return null;
 
   return (

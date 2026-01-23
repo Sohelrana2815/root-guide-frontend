@@ -10,7 +10,9 @@ const LogoutSuccessToast = () => {
 
   useEffect(() => {
     if (searchParams.get("logout") === "true") {
-      toast.success("Logout successful");
+      toast.success("Logout successful", {
+        position: "bottom-right",
+      });
 
       const newUrl = new URL(window.location.href);
       newUrl.searchParams.delete("logout");

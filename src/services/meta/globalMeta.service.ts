@@ -9,7 +9,7 @@ export const getGlobalMeta = async () => {
       next: { revalidate: 3600 },
     });
     const result = await res.json();
-    console.log("From server action:", result);
+    // console.log("From server action:", result);
     return result;
   } catch (error: any) {
     console.log(error);
