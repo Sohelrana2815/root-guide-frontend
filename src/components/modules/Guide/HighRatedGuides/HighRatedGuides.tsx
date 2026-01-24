@@ -21,10 +21,10 @@ const HighRatedGuides = ({ guides }: { guides: Guide[] }) => {
       <div className="container mx-auto px-4">
         {/* Header Section */}
         <div className="mb-20 text-center">
-          <h2 className="text-4xl font-bold tracking-tight text-slate-900 sm:text-5xl">
-            Meet Our <span className="text-blue-500">Elite</span> Guides
+          <h2 className="text-4xl font-bold tracking-tight text-foreground sm:text-5xl">
+            Meet Our <span className="text-primary">Elite</span> Guides
           </h2>
-          <p className="mt-4 text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
             Handpicked professionals with a consistent 4.0+ rating, dedicated to
             making your journey unforgettable.
           </p>
@@ -69,7 +69,7 @@ const HighRatedGuides = ({ guides }: { guides: Guide[] }) => {
                 {/* Content Side */}
                 <div className="w-full md:w-1/2 space-y-6">
                   <div className="space-y-2">
-                    <h3 className="text-3xl lg:text-5xl font-bold text-slate-900 leading-tight">
+                    <h3 className="text-3xl lg:text-5xl font-bold text-foreground leading-tight">
                       {guide.name}
                     </h3>
                     <div className="flex flex-wrap gap-2 pt-2">
@@ -84,7 +84,7 @@ const HighRatedGuides = ({ guides }: { guides: Guide[] }) => {
                     </div>
                   </div>
 
-                  <p className="text-lg text-slate-600 leading-relaxed italic">
+                  <p className="text-lg text-muted-foreground leading-relaxed italic">
                     &quot;
                     {guide.bio ||
                       "Passionate about sharing the hidden gems of the world with curious travelers."}
@@ -99,7 +99,7 @@ const HighRatedGuides = ({ guides }: { guides: Guide[] }) => {
                           <Badge
                             key={exp}
                             variant="secondary"
-                            className="bg-slate-100 text-slate-700 hover:bg-blue-50"
+                            className="bg-blue-100 dark:bg-slate-800 text-foreground hover:bg-blue-50"
                           >
                             {exp}
                           </Badge>
@@ -111,11 +111,11 @@ const HighRatedGuides = ({ guides }: { guides: Guide[] }) => {
                   <div className="pt-6">
                     <Button
                       size="lg"
-                      className="bg-black hover:bg-blue-600 text-white rounded-full px-8 py-6 group transition-all"
+                      className="bg-background border border-blue-600 hover:bg-blue-600 text-foreground rounded-full py-6 px-8  group transition-all"
                       // onClick={() => handleOpenDetails(guide._id)} - For later use
                     >
                       View Full Profile
-                      <ArrowRight className="ml-2 w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                      <ArrowRight className=" w-5 h-5 group-hover:translate-x-1 transition-transform" />
                     </Button>
                   </div>
                 </div>
