@@ -31,7 +31,7 @@ export default async function HomePage() {
 
   const topGuides = Array.isArray(highRatedGuides?.data)
     ? highRatedGuides.data
-    : []
+    : [];
   console.log("Top Guides", topGuides);
 
   return (
