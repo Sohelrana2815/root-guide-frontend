@@ -26,7 +26,7 @@ const BookingFilters = ({ guides }: BookingFiltersProps) => {
   const [, startTransition] = useTransition();
 
   const [searchTerm, setSearchTerm] = useState(
-    searchParams.get("searchTerm") || ""
+    searchParams.get("searchTerm") || "",
   );
   const debouncedSearch = useDebounce(searchTerm, 500);
 
@@ -59,7 +59,7 @@ const BookingFilters = ({ guides }: BookingFiltersProps) => {
   return (
     <div className="flex flex-wrap items-center gap-3 w-full bg-card p-4 rounded-lg border">
       {/* Search Input */}
-      <div className="relative w-full md:w-64">
+      <div className="relative w-full lg:w-1/3">
         <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
         <Input
           placeholder="Search Name/TXN ID..."
@@ -74,7 +74,7 @@ const BookingFilters = ({ guides }: BookingFiltersProps) => {
         value={searchParams.get("guideId") || "all"}
         onValueChange={(v) => updateFilter("guideId", v)}
       >
-        <SelectTrigger className="w-[180px] h-10">
+        <SelectTrigger className="w-45 h-10">
           <div className="flex items-center gap-2">
             <User2 className="h-4 w-4 text-muted-foreground" />
             <SelectValue placeholder="Select Guide" />
@@ -95,7 +95,7 @@ const BookingFilters = ({ guides }: BookingFiltersProps) => {
         value={searchParams.get("status") || "all"}
         onValueChange={(v) => updateFilter("status", v)}
       >
-        <SelectTrigger className="w-[140px] h-10">
+        <SelectTrigger className="w-35 h-10">
           <SelectValue placeholder="Status" />
         </SelectTrigger>
         <SelectContent>
@@ -112,7 +112,7 @@ const BookingFilters = ({ guides }: BookingFiltersProps) => {
         value={searchParams.get("days") || "all"}
         onValueChange={(v) => updateFilter("days", v)}
       >
-        <SelectTrigger className="w-[140px] h-10">
+        <SelectTrigger className="w-35 h-10">
           <SelectValue placeholder="Time Period" />
         </SelectTrigger>
         <SelectContent>
@@ -122,7 +122,7 @@ const BookingFilters = ({ guides }: BookingFiltersProps) => {
         </SelectContent>
       </Select>
 
-      <RefreshButton variant="outline" />
+      <RefreshButton variant="default" />
 
       {searchParams.toString() && (
         <Button

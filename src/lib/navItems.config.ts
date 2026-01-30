@@ -77,6 +77,17 @@ export const guideNavItems: NavSection[] = [
 
 export const adminNavItems: NavSection[] = [
   {
+    title: "Admin",
+    items: [
+      {
+        title: "Create Admin",
+        href: "/admin/dashboard/create-admin",
+        icon: "UserPlus",
+        roles: ["ADMIN"],
+      },
+    ],
+  },
+  {
     title: "Users Management",
     items: [
       {

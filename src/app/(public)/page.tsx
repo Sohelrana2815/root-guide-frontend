@@ -49,7 +49,7 @@ export default async function HomePage() {
       />
 
       {/* Spacer to allow the floating search bar room to breathe */}
-      <div className="h-32" />
+      <div className="" />
       <HighRatedGuides guides={topGuides} />
       <PopularPackages tours={tours} />
       <TouristReviews reviews={reviews} />

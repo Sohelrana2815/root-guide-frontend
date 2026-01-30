@@ -2,6 +2,7 @@
 import { MapPin, Users, Calendar, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useDatePicker } from "@/hooks/useDatePicker";
+import Link from "next/link";
 
 export default function HeroSearch() {
   const { dateInputRef, openPicker } = useDatePicker();
@@ -66,10 +67,12 @@ export default function HeroSearch() {
               </div>
             </div>
 
-            <Button className="w-full md:w-auto bg-slate-900 hover:bg-black text-white  rounded-xl h-12 font-medium transition-all flex items-center justify-center gap-2 border-0">
-              <Search className="w-4 h-4" />
-              <span>Search</span>
-            </Button>
+            <Link href="/tours">
+              <Button className="w-full md:w-auto bg-slate-900 hover:bg-black text-white  rounded-xl h-12 font-medium transition-all flex items-center justify-center gap-2 border-0">
+                <Search className="w-4 h-4" />
+                <span>Search</span>
+              </Button>
+            </Link>
           </div>
         </div>
       </div>

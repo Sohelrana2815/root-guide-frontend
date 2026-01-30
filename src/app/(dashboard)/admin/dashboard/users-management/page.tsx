@@ -25,12 +25,12 @@ const AdminUsersManagementPage = async ({
   return (
     <div className="space-y-6">
       <UserManagementHeader />
-      <div className="flex space-x-2">
+      <div className="flex space-x-2 bg-muted/30 p-4 rounded-xl border">
         <SearchFilter paramName="searchTerm" />
         <SelectFilter
           options={[
             ...new Set<string>(
-              usersResult.data.map((user: IUser) => user.role)
+              usersResult.data.map((user: IUser) => user.role),
             ),
           ].map((role) => ({
             label: role,

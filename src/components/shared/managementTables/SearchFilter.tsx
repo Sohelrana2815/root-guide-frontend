@@ -41,7 +41,7 @@ const SearchFilter = ({
   }, [debouncedValue, paramName, router, searchParams]);
 
   return (
-    <div className="relative">
+    <div className="relative lg:w-1/3 ">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
       <Input
         placeholder={placeholder}

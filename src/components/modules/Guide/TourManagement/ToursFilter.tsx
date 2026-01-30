@@ -42,15 +42,15 @@ const ToursFilter = ({ languages, categories }: ToursFilterProps) => {
 
   // --- Local States initialized from URL ---
   const [searchTerm, setSearchTerm] = useState(
-    searchParams.get("searchTerm") || ""
+    searchParams.get("searchTerm") || "",
   );
 
   const [category, setCategory] = useState(
-    searchParams.get("category") || "all"
+    searchParams.get("category") || "all",
   );
 
   const [selectedLanguages, setSelectedLanguages] = useState<string[]>(
-    searchParams.getAll("language") // Matches your backend interface key: 'language'
+    searchParams.getAll("language"), // Matches your backend interface key: 'language'
   );
   const debouncedSearch = useDebounce(searchTerm, 500);
 
@@ -81,7 +81,7 @@ const ToursFilter = ({ languages, categories }: ToursFilterProps) => {
   // --- Language Handlers (Multi-select) ---
   const toggleLanguage = (lang: string) => {
     setSelectedLanguages((prev) =>
-      prev.includes(lang) ? prev.filter((l) => l !== lang) : [...prev, lang]
+      prev.includes(lang) ? prev.filter((l) => l !== lang) : [...prev, lang],
     );
   };
 
@@ -109,10 +109,10 @@ const ToursFilter = ({ languages, categories }: ToursFilterProps) => {
     (category !== "all" ? 1 : 0);
 
   return (
-    <div className="space-y-3 w-full">
+    <div className="space-y-3 w-full bg-muted/30 p-4 rounded-xl border">
       <div className="flex flex-wrap items-center gap-3">
         {/* 1. Search Bar (Title, Itinerary, City) */}
-        <div className="relative w-full md:w-72">
+        <div className="relative w-full lg:w-1/3">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
             placeholder="Search tours..."

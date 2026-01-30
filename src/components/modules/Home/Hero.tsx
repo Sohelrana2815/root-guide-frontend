@@ -1,6 +1,6 @@
 "use client";
 import Image, { StaticImageData } from "next/image";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import HeroSearch from "./HeroSearch";
 
@@ -19,39 +19,56 @@ const Hero: React.FC<HeroProps> = ({
   ctaHref = "/tours",
   backgroundImage = "/assets/images/hero.jpg",
 }) => {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setMounted(true);
+  }, []);
+
   return (
-    <section className="relative w-full min-h-[70vh] flex items-center justify-center overflow-hidden">
-      {/* Background Image */}
-      <div className="absolute inset-0 z-0">
-        <Image
-          src={backgroundImage}
-          alt="Hero background"
-          fill
-          priority
-          className="object-cover"
-        />
-        {/* Subtle Gradient Overlay */}
-        <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
-      </div>
+    // বাইরের এই ট্যাগটি সার্ভার এবং ক্লায়েন্ট দুই জায়গাতেই একই থাকবে
+    <section className="relative w-full min-h-[75vh] flex items-center justify-center overflow-hidden bg-gray-900 border border-primary">
+      
+      {/* শুধুমাত্র মাউন্ট হওয়ার পর ডাইনামিক জিনিসগুলো দেখাবো */}
+      {mounted ? (
+        <>
+          <div className="absolute inset-0 z-0">
+            <Image
+              src={backgroundImage}
+              alt="Hero background"
+              fill
+              priority
+              className="object-cover"
+            />
+            <div className="absolute inset-0 bg-black/40 backdrop-blur-[1px]" />
+          </div>
 
-      {/* Content Area */}
-      <div className="container relative z-10 mx-auto px-6 pt-20 pb-32 text-center text-white">
-        <h1 className="text-4xl md:text-7xl font-bold tracking-tight mb-6">
-          {title}
-        </h1>
-        <p className="max-w-2xl mx-auto text-lg md:text-xl text-white/90 mb-10 leading-relaxed">
-          {subtitle}
-        </p>
+          <div className="container relative z-10 mx-auto px-6 pt-20 pb-32 text-center text-white">
+            <h1 className="text-4xl md:text-7xl font-bold tracking-tight mb-6">
+              {title}
+            </h1>
+            
+            {/* subtitle এর ভেতর ডাইনামিক ডেটা থাকায় suppressHydrationWarning দিন */}
+            <p suppressHydrationWarning className="max-w-2xl mx-auto text-lg md:text-xl text-white/90 mb-10 leading-relaxed">
+              {subtitle}
+            </p>
 
-        <Link
-          href={ctaHref}
-          className="inline-flex items-center px-8 py-4 bg-blue-600 hover:bg-blue-700 transition-colors rounded-full text-white font-semibold shadow-xl hover:shadow-2xl"
-        >
-          {ctaText}
-        </Link>
-        {/*  */}
-        <HeroSearch />
-      </div>
+            <Link
+              href={ctaHref}
+              className="inline-flex items-center px-8 py-4 bg-blue-600 hover:bg-blue-700 transition-colors rounded-full text-white font-semibold shadow-xl hover:shadow-2xl"
+            >
+              {ctaText}
+            </Link>
+            <HeroSearch />
+          </div>
+        </>
+      ) : (
+        // সার্ভার রেন্ডারিং এর সময় এই খালি অংশটি থাকবে যা <section> এর গঠন ঠিক রাখবে
+        <div className="container relative z-10 mx-auto px-6 pt-20 pb-32 opacity-0">
+           <div className="h-20" /> 
+        </div>
+      )}
     </section>
   );
 };
