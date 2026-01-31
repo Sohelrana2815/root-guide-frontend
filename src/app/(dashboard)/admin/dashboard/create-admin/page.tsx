@@ -9,18 +9,18 @@ import {
 
 import { ShieldCheck } from "lucide-react"; // Optional icon for admin feel
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 const CreateAdminPage = async () => {
   return (
     <div className="min-h-screen w-full flex items-center justify-center p-4 bg-background">
-      <Card className="w-full max-w-lg shadow-xl border-slate-200 overflow-hidden">
+      <Card className="w-full max-w-lg shadow-xl overflow-hidden">
         {/* Top accent bar for Admin Page */}
-        <div className="h-1.5 bg-blue-600 w-full" />
+        <div className="h-1.5 bg-primary w-full" />
 
         <CardHeader className="space-y-2 text-center pt-8">
           <div className="mx-auto bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center mb-2">
-            <ShieldCheck className="text-blue-600 w-6 h-6" />
+            <ShieldCheck className="text-primary w-6 h-6" />
           </div>
           <CardTitle className="text-3xl font-extrabold tracking-tight text-foreground">
             Create New Admin

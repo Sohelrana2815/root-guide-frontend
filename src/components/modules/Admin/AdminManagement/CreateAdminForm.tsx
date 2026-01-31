@@ -13,8 +13,8 @@ const CreateAdminForm = () => {
           <FieldLabel htmlFor="name">Full Name</FieldLabel>
           <Input
             id="name"
-            placeholder="e.g. Abdullah Al Mamun"
-            className="h-11 border-slate-200 focus:border-blue-500"
+            placeholder="e.g. John Doe"
+            className="h-11 focus:border-blue-500"
           />
         </Field>
 
@@ -24,8 +24,7 @@ const CreateAdminForm = () => {
           <Input
             id="email"
             type="email"
-            placeholder="admin@company.com"
-            className="h-11 border-slate-200 focus:border-blue-500"
+            className="h-11 focus:border-blue-500"
           />
         </Field>
 
@@ -35,18 +34,7 @@ const CreateAdminForm = () => {
           <Input
             id="password"
             type="password"
-            placeholder="••••••••"
-            className="h-11 border-slate-200 focus:border-blue-500"
-          />
-        </Field>
-
-        {/* Admin Role/Designation (Optional Design) */}
-        <Field className="flex flex-col gap-1.5">
-          <FieldLabel htmlFor="designation">Designation</FieldLabel>
-          <Input
-            id="designation"
-            placeholder="e.g. Senior Moderator"
-            className="h-11 border-slate-200 focus:border-blue-500"
+            className="h-11 focus:border-blue-500"
           />
         </Field>
       </FieldGroup>
