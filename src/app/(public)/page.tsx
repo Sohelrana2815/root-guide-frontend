@@ -13,6 +13,8 @@ import { IGlobalMeta } from "@/types/meta.interface";
 import { getHighRatedGuides } from "@/services/public/users.service";
 import HighRatedGuides from "@/components/modules/Guide/HighRatedGuides/HighRatedGuides";
 
+export const dynamic = 'force-dynamic';
+
 export default async function HomePage() {
   const [tourResult, reviewResult, meta, highRatedGuides] = await Promise.all([
     getPublicTours(),
