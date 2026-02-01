@@ -8,7 +8,7 @@ import { registerValidationZodSchema } from "@/zod/auth.validation";
 
 export const registerUser = async (
   _currentState: any,
-  formData: any
+  formData: any,
 ): Promise<any> => {
   try {
     // console.log(formData.get("role"));
@@ -27,10 +27,10 @@ export const registerUser = async (
 
     const validatedPayload = zodValidator(
       payload,
-      registerValidationZodSchema
+      registerValidationZodSchema,
     ).data;
 
-    const res = await serverFetch.post(`/auth/register`, {
+    const res = await serverFetch.post("/auth/register", {
       body: JSON.stringify(validatedPayload),
       headers: { "Content-Type": "application/json" },
     });

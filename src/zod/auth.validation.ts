@@ -32,6 +32,35 @@ export const registerValidationZodSchema = z
       path: ["expertise"],
     },
   );
+export const createAdminZodSchema = z.object({
+  name: z
+    .string({ error: "Name is required" })
+    .nonempty({ error: "Name is required" })
+    .trim()
+    .min(4, "Name must be at least 4 characters long")
+    .max(12, "Name must be at most 12 characters long")
+    .max(12, "Name must be at most 12 characters long"),
+  email: z.email({ error: "Email is required" }),
+  password: z
+    .string()
+    .trim()
+    .min(5, { error: "Password must be at least 5 characters" })
+    .max(20, { error: "Password cannot exceed 20 characters." })
+    // Must have at least 1 uppercase letter
+    .regex(/^(?=.*[A-Z]).+$/, {
+      error: "Password must contain at least 1 uppercase letter",
+    })
+    // Must have at least 1 digit
+    .regex(/^(?=.*\d).+$/, {
+      error: "Password must contain at least one digit",
+    })
+    // Must have at least 1 special character (!@#$%^&*)
+    .regex(/^(?=.*[!@#$%^&*]).+$/, {
+      error: "Password must contain at least one special character (!@#$%^&*)",
+    }),
+  // Admin role is required
+  role: z.enum(["ADMIN"], { error: "Admin role is required" }),
+});
 
 export const loginValidationZodSchema = z.object({
   email: z.email("Please provide a valid email").nonempty("Email is required"),
