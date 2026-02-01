@@ -62,11 +62,11 @@ const RegisterForm = () => {
       onSubmit={() => {
         console.log(
           "Submitting selectedLanguages (client):",
-          selectedLanguages
+          selectedLanguages,
         );
         console.log(
           "Submitting selectedExpertise (client):",
-          selectedExpertise
+          selectedExpertise,
         );
       }}
       className="flex items-center"
