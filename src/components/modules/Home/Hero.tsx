@@ -17,7 +17,7 @@ const Hero: React.FC<HeroProps> = ({
   subtitle = "Discover handpicked experiences and hidden gems around the globe.",
   ctaText = "Explore Now",
   ctaHref = "/tours",
-  backgroundImage = "/assets/images/hero.jpg",
+  backgroundImage = "/assets/images/hero.webp",
 }) => {
   const [mounted, setMounted] = useState(false);
 
@@ -29,7 +29,6 @@ const Hero: React.FC<HeroProps> = ({
   return (
     // বাইরের এই ট্যাগটি সার্ভার এবং ক্লায়েন্ট দুই জায়গাতেই একই থাকবে
     <section className="relative w-full min-h-[75vh] flex items-center justify-center overflow-hidden bg-gray-900 border border-primary">
-      
       {/* শুধুমাত্র মাউন্ট হওয়ার পর ডাইনামিক জিনিসগুলো দেখাবো */}
       {mounted ? (
         <>
@@ -48,9 +47,12 @@ const Hero: React.FC<HeroProps> = ({
             <h1 className="text-4xl md:text-7xl font-bold tracking-tight mb-6">
               {title}
             </h1>
-            
+
             {/* subtitle এর ভেতর ডাইনামিক ডেটা থাকায় suppressHydrationWarning দিন */}
-            <p suppressHydrationWarning className="max-w-2xl mx-auto text-lg md:text-xl text-white/90 mb-10 leading-relaxed">
+            <p
+              suppressHydrationWarning
+              className="max-w-2xl mx-auto text-lg md:text-xl text-white/90 mb-10 leading-relaxed"
+            >
               {subtitle}
             </p>
 
@@ -66,7 +68,7 @@ const Hero: React.FC<HeroProps> = ({
       ) : (
         // সার্ভার রেন্ডারিং এর সময় এই খালি অংশটি থাকবে যা <section> এর গঠন ঠিক রাখবে
         <div className="container relative z-10 mx-auto px-6 pt-20 pb-32 opacity-0">
-           <div className="h-20" /> 
+          <div className="h-20" />
         </div>
       )}
     </section>

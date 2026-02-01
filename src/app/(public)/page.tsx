@@ -1,5 +1,5 @@
 import Hero from "@/components/modules/Home/Hero";
-import heroImg from "@/assets/images/hero.jpg";
+import heroImg from "@/assets/images/hero-img3.jpg";
 import PopularDestinations from "@/components/modules/Home/PopularDestination";
 import { getPublicTours } from "@/services/guide/toursManagement";
 import PopularPackages from "@/components/modules/Home/PopularPackages";
@@ -13,7 +13,7 @@ import { IGlobalMeta } from "@/types/meta.interface";
 import { getHighRatedGuides } from "@/services/public/users.service";
 import HighRatedGuides from "@/components/modules/Guide/HighRatedGuides/HighRatedGuides";
 
-export const dynamic = 'force-dynamic';
+export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
   const [tourResult, reviewResult, meta, highRatedGuides] = await Promise.all([
