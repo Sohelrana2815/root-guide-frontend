@@ -24,6 +24,7 @@ export default function HeroSearch() {
                 <input
                   className="bg-transparent outline-none text-sm w-full placeholder:text-muted-foreground"
                   placeholder="Where to?"
+                  readOnly
                 />
               </div>
             </div>
@@ -42,6 +43,8 @@ export default function HeroSearch() {
                   type="date"
                   ref={dateInputRef}
                   onClick={(e) => e.stopPropagation()}
+                  readOnly
+                  disabled
                   className="bg-transparent outline-none text-sm w-full cursor-pointer
                   
                     "
@@ -58,6 +61,7 @@ export default function HeroSearch() {
                 </span>
                 <input
                   type="number"
+                  readOnly
                   min={1}
                   className="bg-transparent outline-none text-sm w-full 
                     placeholder:text-muted-foreground

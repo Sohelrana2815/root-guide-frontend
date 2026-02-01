@@ -1,5 +1,7 @@
 import Hero from "@/components/modules/Home/Hero";
-import heroImg from "@/assets/images/hero-img3.jpg";
+import heroImg1 from "@/assets/images/hero-img1.webp";
+import heroImg2 from "@/assets/images/hero-img2.webp";
+import heroImg3 from "@/assets/images/hero-img3.webp";
 import PopularDestinations from "@/components/modules/Home/PopularDestination";
 import { getPublicTours } from "@/services/guide/toursManagement";
 import PopularPackages from "@/components/modules/Home/PopularPackages";
@@ -39,7 +41,7 @@ export default async function HomePage() {
   return (
     <main>
       <Hero
-        backgroundImage={heroImg}
+        images={[heroImg1, heroImg2, heroImg3]}
         title={
           <>
             Explore <span className="text-blue-400">Amazing</span> Places
