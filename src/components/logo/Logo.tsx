@@ -7,7 +7,7 @@ const Logo = () => {
     <Link href="/" className="flex items-center gap-2">
       {/* image from public/logo.png */}
       <Image
-        src="/logo/logo13.png"
+        src="/logo/logo.png"
         alt="Root Guide"
         width={50}
         height={100}
