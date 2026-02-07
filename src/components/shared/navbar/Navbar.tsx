@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { getUserInfo } from "@/services/auth/getUserInfo"; // আপনার ফাংশনটি ইম্পোর্ট করুন
 
 import UserDropdown from "@/components/modules/Dashboard/UserDropdown";
+import Logo from "@/components/logo/Logo";
 
 const Navbar = async () => {
   const accessToken = await getCookie("accessToken");
@@ -84,12 +85,16 @@ const Navbar = async () => {
         <div className="flex items-center justify-between h-16">
           {/* LEFT: Mobile Menu + Logo */}
           <div className="flex items-center gap-4">
-            <NavbarMenuClient navItems={navItems} />
-            <Link href="/" className="flex items-center gap-2">
+            {/* <NavbarMenuClient navItems={navItems} /> */}
+            {/* <Link href="/" className="flex items-center gap-2">
               <span className="self-center text-xl font-bold text-foreground">
                 Root <span className="text-primary">Guide</span>
               </span>
-            </Link>
+            </Link> */}
+            <div className="flex items-center gap-4 hover:cursor-pointer">
+              <NavbarMenuClient navItems={navItems} />
+              <Logo />
+            </div>
           </div>
 
           {/* CENTER: Desktop Links (Filtered by Role) */}

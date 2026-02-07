@@ -21,7 +21,7 @@ const NavbarMenuClient = ({ navItems }: { navItems: NavItem[] }) => {
       <button
         type="button"
         onClick={toggleMenu}
-        className="lg:hidden p-2 text-gray-600 hover:text-primary focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-md"
+        className="lg:hidden p-2 hover:cursor-pointer text-gray-600 hover:text-primary focus:outline-none focus:ring-2 focus:ring-blue-300 rounded-md"
         aria-label="Open menu"
       >
         <Menu className="w-6 h-6 text-muted-foreground" />
