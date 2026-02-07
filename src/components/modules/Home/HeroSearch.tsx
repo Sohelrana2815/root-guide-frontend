@@ -1,82 +1,107 @@
 "use client";
-import { MapPin, Users, Calendar, Search } from "lucide-react";
+import { MapPin, Compass, Calendar, Users, Star, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useDatePicker } from "@/hooks/useDatePicker";
 import Link from "next/link";
+import { useState } from "react";
+
+const popularDestinations = [
+  { name: "Cox's Bazar", slug: "coxs-bazar", tours: 45 },
+  { name: "Sundarban", slug: "sundarban", tours: 32 },
+  { name: "Saint Martin", slug: "saint-martin", tours: 28 },
+];
+
+const tourCategories = [
+  { name: "Adventure Tours", icon: Compass, href: "/tours?category=adventure" },
+  { name: "Beach Tours", icon: MapPin, href: "/tours?category=beach" },
+  { name: "Wildlife Tours", icon: TrendingUp, href: "/tours?category=wildlife" },
+];
 
 export default function HeroSearch() {
-  const { dateInputRef, openPicker } = useDatePicker();
+  const [selectedDestination, setSelectedDestination] = useState("");
 
   return (
     <>
-      {/* Floating Search Bar */}
+      {/* Interactive Destination Explorer */}
+      <div className="w-full max-w-5xl px-4 pb-4 mx-auto md:absolute md:left-1/2 md:-bottom-20 md:-translate-x-1/2">
+        <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-2xl p-4 md:p-6 border border-border text-foreground">
+          {/* Popular Destinations */}
+          <div className="mb-4">
+            <div className="flex items-center gap-2 mb-3">
+              <MapPin className="w-5 h-5 text-primary" />
+              <h3 className="text-sm font-semibold text-foreground">Popular Destinations</h3>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {popularDestinations.map((destination) => (
+                <Link
+                  key={destination.slug}
+                  href={`/tours?destination=${destination.slug}`}
+                  className="group relative px-4 py-2 bg-muted/10 hover:bg-primary/5 rounded-lg transition-all duration-200 border border-border hover:border-primary/30"
+                  onMouseEnter={() => setSelectedDestination(destination.name)}
+                  onMouseLeave={() => setSelectedDestination("")}
+                >
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium text-foreground group-hover:text-primary">
+                      {destination.name}
+                    </span>
+                    <span className="text-xs text-muted-foreground">({destination.tours} tours)</span>
+                  </div>
+                  {selectedDestination === destination.name && (
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground text-card-foreground text-xs px-2 py-1 rounded whitespace-nowrap shadow-sm">
+                      Explore {destination.name}
+                    </div>
+                  )}
+                </Link>
+              ))}
+            </div>
+          </div>
 
-      <div className="absolute left-1/2 -bottom-12 md:-bottom-16 -translate-x-1/2 w-full max-w-5xl px-4 pb-2 ">
-        <div className="bg-secondary rounded-2xl shadow-2xl p-2 md:p-4 text-muted-foreground ">
-          <div className="flex flex-col md:flex-row items-center gap-4">
-            {/* Destination */}
-            <div className="flex-1 flex items-center gap-3 px-4 py-2 border-r-0 md:border-r border-slate-100 w-full">
-              <MapPin className="w-5 h-5 text-blue-500" />
-              <div className="flex flex-col items-start">
-                <span className="text-[10px] uppercase font-bold text-foreground">
-                  Location
-                </span>
-                <input
-                  className="bg-transparent outline-none text-sm w-full placeholder:text-muted-foreground"
-                  placeholder="Where to?"
-                  readOnly
-                />
-              </div>
+          {/* Quick Categories */}
+          <div className="flex flex-col sm:flex-row items-center gap-3">
+            <div className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Compass className="w-4 h-4 text-muted-foreground" />
+              <span>Quick browse:</span>
+            </div>
+            <div className="flex flex-wrap gap-2 flex-1">
+              {tourCategories.map((category) => {
+                const Icon = category.icon;
+                return (
+                  <Link
+                    key={category.name}
+                    href={category.href}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-primary/10 hover:bg-primary/20 text-primary rounded-md transition-colors text-sm font-medium"
+                  >
+                    <Icon className="w-3.5 h-3.5" />
+                    {category.name}
+                  </Link>
+                );
+              })}
             </div>
 
-            {/* Date */}
-            <div
-              className="flex-1 flex items-center gap-3 px-4 py-2 border-r-0 md:border-r border-slate-100 w-full cursor-pointer "
-              onClick={openPicker}
-            >
-              <Calendar className="w-5 h-5 text-blue-500" />
-              <div className="flex flex-col items-start">
-                <span className="text-[10px] uppercase font-bold text-foreground">
-                  Date
-                </span>
-                <input
-                  type="date"
-                  ref={dateInputRef}
-                  onClick={(e) => e.stopPropagation()}
-                  readOnly
-                  disabled
-                  className="bg-transparent outline-none text-sm w-full cursor-pointer
-                  
-                    "
-                />
-              </div>
-            </div>
-
-            {/* Pax */}
-            <div className="flex-1 flex items-center gap-3 px-4 py-2 w-full ">
-              <Users className="w-5 h-5 text-blue-500" />
-              <div className="flex flex-col items-start">
-                <span className="text-[10px] uppercase font-bold text-foreground">
-                  Guests
-                </span>
-                <input
-                  type="number"
-                  readOnly
-                  min={1}
-                  className="bg-transparent outline-none text-sm w-full 
-                    placeholder:text-muted-foreground
-                    "
-                  placeholder="Add guests"
-                />
-              </div>
-            </div>
-
+            {/* View All Tours Button (use design system Button) */}
             <Link href="/tours">
-              <Button className="w-full md:w-auto bg-slate-900 hover:bg-black text-white  rounded-xl h-12 font-medium transition-all flex items-center justify-center gap-2 border-0">
-                <Search className="w-4 h-4" />
-                <span>Search</span>
+              <Button size="lg">
+                <Star className="w-4 h-4" />
+                View All Tours
               </Button>
             </Link>
+          </div>
+
+          {/* Stats Bar */}
+          <div className="mt-4 pt-4 border-t border-border flex items-center justify-between text-xs text-muted-foreground">
+            <div className="flex items-center gap-4">
+              <span className="flex items-center gap-1 text-muted-foreground">
+                <Users className="w-3 h-3 text-muted-foreground" />
+                5000+ Happy Travelers
+              </span>
+              <span className="flex items-center gap-1 text-muted-foreground">
+                <Calendar className="w-3 h-3 text-muted-foreground" />
+                100+ Tours Available
+              </span>
+            </div>
+            <span className="flex items-center gap-1 text-primary">
+              <TrendingUp className="w-3 h-3 text-primary" />
+              Best Price Guaranteed
+            </span>
           </div>
         </div>
       </div>

@@ -47,9 +47,9 @@ const Hero: React.FC<HeroProps> = ({
   }, [nextSlide]);
 
   return (
-    <section className="relative w-full min-h-[75vh] lg:min-h-[85vh] flex items-center justify-center overflow-hidden bg-gray-900">
+    <section className="relative w-full h-[60vh] md:h-[70vh] lg:h-[80vh] flex items-center justify-center overflow-hidden bg-gray-900">
       {/* ১. ব্যাকগ্রাউন্ড স্লাইডার অংশ */}
-      <div className="absolute inset-0 z-0">
+      <div className="absolute inset-0 ">
         <AnimatePresence mode="wait">
           <motion.div
             key={currentIndex}
@@ -100,9 +100,12 @@ const Hero: React.FC<HeroProps> = ({
               {ctaText}
             </Link>
           </div>
-
-          <HeroSearch />
         </motion.div>
+
+        {/* HeroSearch positioned outside animation to prevent layout shift */}
+        <div className="hidden lg:block">
+          <HeroSearch />
+        </div>
       </div>
 
       {/* ৩. ম্যানুয়াল নেভিগেশন বাটন (ঐচ্ছিক) */}

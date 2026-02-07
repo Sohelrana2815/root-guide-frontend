@@ -79,7 +79,7 @@ const Navbar = async () => {
   const navItems = getNavItems();
 
   return (
-    <nav className="bg-background fixed w-full z-20 top-0 left-0 border-b border-primary/80">
+    <nav className="bg-background fixed w-full z-[999] top-0 left-0 border-b border-primary/80">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           {/* LEFT: Mobile Menu + Logo */}
