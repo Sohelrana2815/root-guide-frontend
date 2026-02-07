@@ -12,7 +12,7 @@ const Logo = () => {
         width={50}
         height={100}
         priority
-        className="block"
+        className="block w-12.5 h-25 md:w-15 md:h-30 object-contain"
       />
       {/* site name: hidden on very small screens */}
       <span className="hidden sm:inline self-center text-xl font-bold text-foreground">

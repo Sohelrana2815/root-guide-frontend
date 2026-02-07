@@ -117,14 +117,18 @@ const Navbar = async () => {
                 <UserDropdown userInfo={userInfo} />
               </>
             ) : (
-              <div className="hidden sm:flex items-center gap-2">
+              <div className="sm:flex items-center gap-2 ">
                 <Link href="/login">
-                  <Button variant="ghost" size="sm">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="mr-2 md:mr-0 text-xs md:text-sm"
+                  >
                     Login
                   </Button>
                 </Link>
                 <Link href="/register">
-                  <Button size="sm">Register</Button>
+                  <Button size="sm" className="mr-2 md:mr-0 text-xs md:text-sm">Register</Button>
                 </Link>
               </div>
             )}
