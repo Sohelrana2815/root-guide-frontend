@@ -52,7 +52,7 @@ export default function HeroSearch({ tours, metaData, cities, categories }: Hero
 
   return (
     <>
-      {/* Interactive Destination Explorer */}
+      {/* Interactive Destination Explorers */}
       <div className="w-full max-w-5xl px-4 pb-4 mx-auto md:absolute md:left-1/2 md:-bottom-20 md:-translate-x-1/2">
         <div className="bg-card/95 backdrop-blur-md rounded-2xl shadow-2xl p-4 md:p-6 border border-border text-foreground">
           {/* Popular Destinations */}
