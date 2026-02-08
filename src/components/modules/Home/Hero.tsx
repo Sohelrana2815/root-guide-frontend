@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 import Image, { StaticImageData } from "next/image";
 import React, { useEffect, useState, useCallback } from "react";
@@ -13,6 +14,11 @@ interface HeroProps {
   ctaHref?: string;
   // এখন আমরা একাধিক ইমেজ সাপোর্ট করবো
   images?: (string | StaticImageData)[];
+  // Props for HeroSearch
+  tours?: any[];
+  metaData?: any;
+  cities?: string[];
+  categories?: string[];
 }
 
 const Hero: React.FC<HeroProps> = ({
@@ -25,6 +31,10 @@ const Hero: React.FC<HeroProps> = ({
     "/assets/images/hero2.webp",
     "/assets/images/hero3.webp",
   ],
+  tours = [],
+  metaData = {},
+  cities = [],
+  categories = [],
 }) => {
   const [mounted, setMounted] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -104,7 +114,12 @@ const Hero: React.FC<HeroProps> = ({
 
         {/* HeroSearch positioned outside animation to prevent layout shift */}
         <div className="hidden lg:block">
-          <HeroSearch />
+          <HeroSearch 
+            tours={tours}
+            metaData={metaData}
+            cities={cities}
+            categories={categories}
+          />
         </div>
       </div>
 

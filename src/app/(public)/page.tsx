@@ -14,15 +14,28 @@ import { getGlobalMeta } from "@/services/meta/globalMeta.service";
 import { IGlobalMeta } from "@/types/meta.interface";
 import { getHighRatedGuides } from "@/services/public/users.service";
 import HighRatedGuides from "@/components/modules/Guide/HighRatedGuides/HighRatedGuides";
+import {
+  getCategories,
+  getPopularCities,
+} from "@/services/public/tours.service";
 
 export const dynamic = "force-dynamic";
 
 export default async function HomePage() {
-  const [tourResult, reviewResult, meta, highRatedGuides] = await Promise.all([
+  const [
+    tourResult,
+    reviewResult,
+    meta,
+    highRatedGuides,
+    popularCities,
+    categories,
+  ] = await Promise.all([
     getPublicTours(),
     getPublicReviews(),
     getGlobalMeta(),
     getHighRatedGuides(),
+    getPopularCities(),
+    getCategories(),
   ]);
 
   const tours = tourResult || [];
@@ -33,10 +46,14 @@ export default async function HomePage() {
     totalDestinations: 0,
   };
 
+  const cities = popularCities?.data || [];
+  const categoriesList = categories?.data || [];
+
   const topGuides = Array.isArray(highRatedGuides?.data)
     ? highRatedGuides.data
     : [];
-  console.log("Top Guides", topGuides);
+
+  // console.log("Top Guides", topGuides);
 
   return (
     <main>
@@ -50,6 +67,10 @@ export default async function HomePage() {
         subtitle={`Join over ${metaData.totalTourists}+ travelers finding their perfect getaway with handpicked local guides.`}
         ctaText="Start Your Adventure"
         ctaHref="/tours"
+        tours={tours}
+        metaData={metaData}
+        cities={cities}
+        categories={categoriesList}
       />
 
       {/* Spacer to allow the floating search bar room to breathe */}

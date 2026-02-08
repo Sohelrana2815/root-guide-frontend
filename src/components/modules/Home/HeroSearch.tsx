@@ -1,23 +1,54 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
-import { MapPin, Compass, Calendar, Users, Star, TrendingUp } from "lucide-react";
+import {
+  MapPin,
+  Compass,
+  Calendar,
+  Users,
+  Star,
+  TrendingUp,
+  Mountain,
+  Camera,
+  Trees,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
-import { useState } from "react";
+import { IGlobalMeta } from "@/types/meta.interface";
 
-const popularDestinations = [
-  { name: "Cox's Bazar", slug: "coxs-bazar", tours: 45 },
-  { name: "Sundarban", slug: "sundarban", tours: 32 },
-  { name: "Saint Martin", slug: "saint-martin", tours: 28 },
-];
+interface HeroSearchProps {
+  tours: any[];
+  metaData: IGlobalMeta;
+  cities: string[];
+  categories: string[];
+}
 
-const tourCategories = [
-  { name: "Adventure Tours", icon: Compass, href: "/tours?category=adventure" },
-  { name: "Beach Tours", icon: MapPin, href: "/tours?category=beach" },
-  { name: "Wildlife Tours", icon: TrendingUp, href: "/tours?category=wildlife" },
-];
+export default function HeroSearch({ tours, metaData, cities, categories }: HeroSearchProps) {
+  // Map real cities to the format expected by the component
+  const popularDestinations = cities.map((city, index) => ({
+    name: city.charAt(0).toUpperCase() + city.slice(1), // Capitalize first letter
+    slug: city.toLowerCase().replace(/\s+/g, '-'), // Convert to slug format
+    tours: (index + 1) * 5 + 10, // Consistent tour count based on index
+  }));
 
-export default function HeroSearch() {
-  const [selectedDestination, setSelectedDestination] = useState("");
+  // Map real categories to the format expected by the component
+  const getCategoryIcon = (category: string) => {
+    switch (category.toLowerCase()) {
+      case 'adventure':
+        return Mountain;
+      case 'photography':
+        return Camera;
+      case 'nature':
+        return Trees;
+      default:
+        return Compass; // Default icon for other categories
+    }
+  };
+
+  const tourCategories = categories.map((category) => ({
+    name: category.charAt(0).toUpperCase() + category.slice(1),
+    icon: getCategoryIcon(category),
+    href: `/tours?category=${category.toLowerCase()}`,
+  }));
 
   return (
     <>
@@ -28,28 +59,28 @@ export default function HeroSearch() {
           <div className="mb-4">
             <div className="flex items-center gap-2 mb-3">
               <MapPin className="w-5 h-5 text-primary" />
-              <h3 className="text-sm font-semibold text-foreground">Popular Destinations</h3>
+              <h3 className="text-sm font-semibold text-foreground">
+                Popular Destinations
+              </h3>
             </div>
             <div className="flex flex-wrap gap-2">
               {popularDestinations.map((destination) => (
                 <Link
                   key={destination.slug}
-                  href={`/tours?destination=${destination.slug}`}
+                  href={`/tours?searchTerm=${destination.slug}`}
                   className="group relative px-4 py-2 bg-muted/10 hover:bg-primary/5 rounded-lg transition-all duration-200 border border-border hover:border-primary/30"
-                  onMouseEnter={() => setSelectedDestination(destination.name)}
-                  onMouseLeave={() => setSelectedDestination("")}
+                  // remove onMouseEnter/onMouseLeave
                 >
                   <div className="flex items-center gap-2">
                     <span className="text-sm font-medium text-foreground group-hover:text-primary">
                       {destination.name}
                     </span>
-                    <span className="text-xs text-muted-foreground">({destination.tours} tours)</span>
+                    <span className="text-xs text-muted-foreground">
+                      {/* ({destination.tours} tours) */}
+                    </span>
                   </div>
-                  {selectedDestination === destination.name && (
-                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-foreground text-card-foreground text-xs px-2 py-1 rounded whitespace-nowrap shadow-sm">
-                      Explore {destination.name}
-                    </div>
-                  )}
+
+                  {/* tooltip block removed */}
                 </Link>
               ))}
             </div>
@@ -91,11 +122,11 @@ export default function HeroSearch() {
             <div className="flex items-center gap-4">
               <span className="flex items-center gap-1 text-muted-foreground">
                 <Users className="w-3 h-3 text-muted-foreground" />
-                5000+ Happy Travelers
+                {metaData.totalTourists.toLocaleString()}+ Happy Travelers
               </span>
               <span className="flex items-center gap-1 text-muted-foreground">
                 <Calendar className="w-3 h-3 text-muted-foreground" />
-                100+ Tours Available
+                {tours.length}+ Tours Available
               </span>
             </div>
             <span className="flex items-center gap-1 text-primary">
