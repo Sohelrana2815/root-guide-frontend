@@ -12,7 +12,7 @@ interface HeroProps {
   subtitle?: React.ReactNode;
   ctaText?: string;
   ctaHref?: string;
-  // এখন আমরা একাধিক ইমেজ সাপোর্ট করবো
+  // এখন আমরা একাধিক ইমেজ সাপোর্ট করবো s
   images?: (string | StaticImageData)[];
   // Props for HeroSearch
   tours?: any[];
